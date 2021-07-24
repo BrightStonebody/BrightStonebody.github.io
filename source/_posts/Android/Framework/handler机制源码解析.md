@@ -114,6 +114,8 @@ Message next() {
                     msg = msg.next;
                 } while (msg != null && !msg.isAsynchronous());
             }
+
+            // 处理 msg 
             if (msg != null) {
                 if (now < msg.when) {
                     // Next message is not ready.  Set a timeout to wake up when it is ready.
@@ -134,7 +136,7 @@ Message next() {
                 nextPollTimeoutMillis = -1;
             }
 
-            // 因为上面一旦找到msg,直接return,所以执行到这里已经msg一定为null
+
             // msg为null, 有可能是消息队列为空, 有可能是msg的时间没有到
 
             // Process the quit message now that all pending messages have been handled.
@@ -150,6 +152,7 @@ Message next() {
             // Idle handles only run if the queue is empty or if the first message
             // in the queue (possibly a barrier) is due to be handled in the future.
             // 当获取到的message为空, 或者message的执行时间没有到
+            // 当前没有msg可以处理的，开始处理 idleHandler
             if (pendingIdleHandlerCount < 0
                     && (mMessages == null || now < mMessages.when)) {
                 pendingIdleHandlerCount = mIdleHandlers.size();
@@ -219,7 +222,7 @@ public static interface IdleHandler {
     boolean queueIdle();
 }
 ```
-MessageQueue中有两个IdleHandler的集合, IdleHandler是一个接, 实现了这个接口的handler可以用来在MessageQueue空闲时, 做一些操作, 即 获取message为null时(可能是队列为空, 也可能是时间没到)
+MessageQueue中有两个IdleHandler的集合, IdleHandler是一个接口, 实现了这个接口的handler可以用来在MessageQueue空闲时, 做一些操作, 即 获取message为null时(可能是队列为空, 也可能是时间没到)
 
 #### 3. 同步栅栏 Barrier
 
