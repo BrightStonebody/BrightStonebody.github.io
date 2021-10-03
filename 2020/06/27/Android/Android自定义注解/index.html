@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="因为要自定义一个页面导航工具，需要使用自定义注解">
+<meta name="keywords" content="注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android自定义注解">
+<meta property="og:url" content="http://yoursite.com/2020/06/27/Android/Android自定义注解/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="因为要自定义一个页面导航工具，需要使用自定义注解">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-10-03T01:57:41.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android自定义注解">
+<meta name="twitter:description" content="因为要自定义一个页面导航工具，需要使用自定义注解">
+
+<link rel="canonical" href="http://yoursite.com/2020/06/27/Android/Android自定义注解/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Android自定义注解 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/27/Android/Android自定义注解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android自定义注解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-27 11:06:02" itemprop="dateCreated datePublished" datetime="2020-06-27T11:06:02+08:00">2020-06-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>因为要自定义一个页面导航工具，需要使用自定义注解</p><a id="more"></a>
+<h2 id="1-创建Java-Library"><a href="#1-创建Java-Library" class="headerlink" title="1. 创建Java Library"></a>1. 创建Java Library</h2><p>创建两个新的module，<strong>创建时module一定要选择Java Library</strong></p>
+<p>两个module分别是:</p>
+<ul>
+<li>libnavannotation 注解</li>
+<li>libnavcompile 注解处理器</li>
+</ul>
+<h2 id="2-定义注解"><a href="#2-定义注解" class="headerlink" title="2. 定义注解"></a>2. 定义注解</h2><p>定义两个注解ActivityDestination, FragmentDestination</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(AnnotationTarget.CLASS)</span></span><br><span class="line"><span class="meta">@Retention(AnnotationRetention.BINARY)</span></span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">ActivityDestination</span></span>(</span><br><span class="line">    <span class="keyword">val</span> pageUrl: String,</span><br><span class="line">    <span class="keyword">val</span> needLogin: <span class="built_in">Boolean</span> = <span class="literal">false</span>,</span><br><span class="line">    <span class="keyword">val</span> asStarter: <span class="built_in">Boolean</span> = <span class="literal">false</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(AnnotationTarget.CLASS)</span></span><br><span class="line"><span class="meta">@Retention(AnnotationRetention.BINARY)</span></span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">FragmentDestination</span></span>(</span><br><span class="line">    <span class="keyword">val</span> pageUrl: String,</span><br><span class="line">    <span class="keyword">val</span> needLogin: <span class="built_in">Boolean</span> = <span class="literal">false</span>,</span><br><span class="line">    <span class="keyword">val</span> asStarter: <span class="built_in">Boolean</span> = <span class="literal">false</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="3-定义注解处理器（关键）"><a href="#3-定义注解处理器（关键）" class="headerlink" title="3. 定义注解处理器（关键）"></a>3. 定义注解处理器（关键）</h2><h3 id="3-1-配置build-gradle"><a href="#3-1-配置build-gradle" class="headerlink" title="3.1 配置build.gradle"></a>3.1 配置build.gradle</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'java-library'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'kotlin'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'kotlin-kapt'</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">    implementation <span class="string">"org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"</span></span><br><span class="line"></span><br><span class="line">    implementation <span class="string">'com.alibaba:fastjson:1.2.59'</span></span><br><span class="line"></span><br><span class="line">    implementation project(<span class="string">':libnavannotation'</span>)</span><br><span class="line">    implementation <span class="string">'com.google.auto.service:auto-service:1.0-rc6'</span></span><br><span class="line"><span class="comment">//    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc6'</span></span><br><span class="line">    kapt <span class="string">'com.google.auto.service:auto-service:1.0-rc6'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sourceCompatibility = <span class="string">"8"</span></span><br><span class="line">targetCompatibility = <span class="string">"8"</span></span><br></pre></td></tr></table></figure>
+<p>需要注意以下几点：</p>
+<ul>
+<li>如果注解处理器是使用kotlin编写的，那么，一定要添加<code>kotlin-kapt</code>插件</li>
+<li>implementation 导入annotation注解模块</li>
+<li>导入auto-service注解处理器依赖，如果是纯Java代码，可以使用<code>annotationProcessor &#39;com.google.auto.service:auto-service:1.0-rc6&#39;</code>， <strong>如果是kotlin代码，必须使用<code>kapt &#39;com.google.auto.service:auto-service:1.0-rc6&#39;</code>。</strong> 我这里还implementation了auto-service</li>
+</ul>
+<h3 id="3-2-编写注解处理器"><a href="#3-2-编写注解处理器" class="headerlink" title="3.2 编写注解处理器"></a>3.2 编写注解处理器</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@AutoService(Processor::class)</span></span><br><span class="line"><span class="meta">@SupportedSourceVersion(SourceVersion.RELEASE_8)</span></span><br><span class="line"><span class="meta">@SupportedAnnotationTypes(</span></span><br><span class="line"><span class="meta">    <span class="meta-string">"com.example.libnavannotation.ActivityDestination"</span>,</span></span><br><span class="line"><span class="meta">    <span class="meta-string">"com.example.libnavannotation.FragmentDestination"</span></span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NavProcessor</span> : <span class="type">AbstractProcessor</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">init</span><span class="params">(processingEnv: <span class="type">ProcessingEnvironment</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>(processingEnv)</span><br><span class="line">        </span><br><span class="line">        ...</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">process</span><span class="params">(annotations: <span class="type">Set</span>&lt;<span class="type">TypeElement</span>&gt;, roundEnv: <span class="type">RoundEnvironment</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>注意注解处理器类上面的几个注解</strong></p>
+<h3 id="3-3-创建processor-configuration-file"><a href="#3-3-创建processor-configuration-file" class="headerlink" title="3.3 创建processor configuration file"></a>3.3 创建processor configuration file</h3><p>这里取决于gradle的版本，<strong>高版本必须创建processor配置文件，否则不会执行注解处理器的代码</strong></p>
+<ul>
+<li>需要在注解处理器所在module的 main 底下新建一个package，名称为 resources</li>
+<li>在 <code>resources</code> 底下新建文件 <code>META-INF/services/javax.annotation.processing.Processor</code></li>
+<li>在 <code>javax.annotation.processing.Processor</code> 下写入 注解处理器的全名称  eg: <code>com.example.libnavcompiler.NavProcessor</code></li>
+</ul>
+<h2 id="4-使用注解"><a href="#4-使用注解" class="headerlink" title="4. 使用注解"></a>4. 使用注解</h2><p>在Android工程module中配置build.gradle</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'kotlin-android'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'kotlin-android-extensions'</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'kotlin-kapt'</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">    implementation <span class="string">"org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"</span></span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    implementation project(<span class="string">":libnavannotation"</span>)</span><br><span class="line"><span class="comment">//    annotationProcessor project(":libnavcompiler")</span></span><br><span class="line">    kapt project(<span class="string">":libnavcompiler"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>导入 注解module、注解处理器module<br>kotlin相关的注意事项和 注解处理器module 中的一样</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FragmentDestination(pageUrl = <span class="meta-string">"main/tabs/home"</span>, asStarter = true)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomeFragment</span> : <span class="type">Fragment</span></span>() &#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在build中点击<code>make project</code>，即可执行直接处理器中的代码。如果遇到不成功，可以<code>rebuild</code>再试一次</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://juejin.im/post/5cb7ebeee51d456e8833394b#heading-0" target="_blank" rel="noopener">教你如何完全解析Kotlin中的注解</a></p>
+<p><a href="https://juejin.im/post/5e58dca26fb9a07cb24aa1d6#heading-4" target="_blank" rel="noopener">Android 开发之 自定义注解处理器</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/注解/" rel="tag"># 注解</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/06/18/Android/gradle相关基础/" rel="next" title="gradle相关基础">
+                  <i class="fa fa-chevron-left"></i> gradle相关基础
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/07/15/Android/kotlin协程/" rel="prev" title="kotlin协程">
+                  kotlin协程 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-创建Java-Library"><span class="nav-text">1. 创建Java Library</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-定义注解"><span class="nav-text">2. 定义注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-定义注解处理器（关键）"><span class="nav-text">3. 定义注解处理器（关键）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-配置build-gradle"><span class="nav-text">3.1 配置build.gradle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-编写注解处理器"><span class="nav-text">3.2 编写注解处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-创建processor-configuration-file"><span class="nav-text">3.3 创建processor configuration file</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-使用注解"><span class="nav-text">4. 使用注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
