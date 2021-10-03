@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Jni入门参考:JNI 开发流程 - JNI/NDK 开发指南 - 极客学院Wiki">
+<meta name="keywords" content="jni">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jni入门">
+<meta property="og:url" content="http://yoursite.com/2019/04/13/Java/Jni入门/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="Jni入门参考:JNI 开发流程 - JNI/NDK 开发指南 - 极客学院Wiki">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-10-03T01:57:41.031Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jni入门">
+<meta name="twitter:description" content="Jni入门参考:JNI 开发流程 - JNI/NDK 开发指南 - 极客学院Wiki">
+
+<link rel="canonical" href="http://yoursite.com/2019/04/13/Java/Jni入门/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Jni入门 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/Java/Jni入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jni入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-13 13:12:47" itemprop="dateCreated datePublished" datetime="2019-04-13T13:12:47+08:00">2019-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Jni入门"><a href="#Jni入门" class="headerlink" title="Jni入门"></a>Jni入门</h1><p>参考:<br><a href="http://wiki.jikexueyuan.com/project/jni-ndk-developer-guide/workflow.html" target="_blank" rel="noopener">JNI 开发流程 - JNI/NDK 开发指南 - 极客学院Wiki</a></p><a id="more"></a>
+<h3 id="1、编写native方法，使用javah创建头文件"><a href="#1、编写native方法，使用javah创建头文件" class="headerlink" title="1、编写native方法，使用javah创建头文件"></a>1、编写native方法，使用javah创建头文件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> String <span class="title">sayHello</span><span class="params">(String name)</span></span>; <span class="comment">// 1.声明这是一个native函数，由本地代码实现</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javah -jni -classpath JniCalcINterface</span><br></pre></td></tr></table></figure>
+<p>参数说明：<br>classpath：类搜索路径，这里表示从当前的 bin 目录下查找<br>d：将生成的头文件放到当前的 jni 目录下<br>o： 指定生成的头文件名称，默认以类全路径名生成（包名+类名.h）</p>
+<p><strong>注意：-d和-o只能使用其中一个参数。</strong></p>
+<p>创建的.h文件如下<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* DO NOT EDIT THIS FILE - it is machine generated */</span>  </span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;jni.h&gt;  </span></span></span><br><span class="line"><span class="comment">/* Header for class com_study_jnilearn_HelloWorld */</span>  </span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _Included_com_study_jnilearn_HelloWorld  </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _Included_com_study_jnilearn_HelloWorld  </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus  </span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;  </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  </span></span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment"> * Class:     com_study_jnilearn_HelloWorld </span></span><br><span class="line"><span class="comment"> * Method:    sayHello </span></span><br><span class="line"><span class="comment"> * Signature: (Ljava/lang/String;)Ljava/lang/String; </span></span><br><span class="line"><span class="comment"> */</span>  </span><br><span class="line">JNIEXPORT jstring JNICALL Java_com_study_jnilearn_HelloWorld_sayHello  </span><br><span class="line">  (JNIEnv *, jclass, jstring);  </span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus  </span></span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure></p>
+<p>**注意 extern “C”表示兼容C语言，当调用C编写的.h头文件或者函数的时候，一定要写在extern “C”后面</p>
+<h3 id="3、编译出so文件"><a href="#3、编译出so文件" class="headerlink" title="3、编译出so文件"></a>3、编译出so文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -fPIC -shared HelloWorld.c -o libHelloWorld.so</span><br></pre></td></tr></table></figure>
+<p>参数含义:</p>
+<p>-L </p>
+<ul>
+<li>表示要链接的库所在的目录。-L.  表示要链接的库在当前目录， -L/usr/lib 表示要连接的库在/usr/lib下。目录在/usr/lib时，系统会自动搜索这个目录，可以不用指明。</li>
+</ul>
+<p>-l (L的小写)</p>
+<ul>
+<li>表示需要链接库的名称，注意不是库文件名称，比如库文件为 libtest.so，那么库名称为test</li>
+</ul>
+<p>-include</p>
+<ul>
+<li>包含头文件，这个很少用，因为一般情况下在源码中，都有指定头文件。</li>
+</ul>
+<p>-I (i 的大写)</p>
+<ul>
+<li>指定头文件的所在的目录，可以使用相对路径。</li>
+</ul>
+<p>-shared </p>
+<ul>
+<li>指定生成动态链接库</li>
+</ul>
+<p>-fPIC</p>
+<ul>
+<li>表示编译为位置独立的代码，不用此选项的话编译后的代码是位置相关的所以动态载入时事通过代码拷贝的方式来满足不同进程的需要，而不能达到真正代码共享的目的。</li>
+</ul>
+<p>-o </p>
+<ul>
+<li>指定编译后动态库生成的路径和文件名</li>
+</ul>
+<h3 id="4、加载动态库"><a href="#4、加载动态库" class="headerlink" title="4、加载动态库"></a>4、加载动态库</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span>&#123;</span><br><span class="line">    System.loadLibrary(<span class="string">"HelloWorld"</span>);  <span class="comment">//方式一</span></span><br><span class="line">    System.load(<span class="string">"/Users/yangxin/Desktop/libHelloWorld.jnilib"</span> <span class="comment">//方式二);</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>方式1：只需要指定动态库的名字即可，不需要加lib前缀，也不要加.so、.dll和.jnilib后缀<br>方式2：指定动态库的绝对路径名，需要加上前缀和后缀 <strong>推荐使用这种方法</strong></p>
+<p>如果使用方式1，java 会去 java.library.path 系统属性指定的目录下查找动态库文件，如果没有找到会抛出java.lang.UnsatisfiedLinkError异常。<br>有两种方式可以让 Java 从 java.library.path 找到动态链接库文件，聪明的你应该已经想到了。</p>
+<ul>
+<li><p>将动态链接库拷贝到java.library.path目录下, linux可以拷贝到/usr/local/lib目录下</p>
+</li>
+<li><p>给 jvm 添加“-Djava.library.path=动态链接库搜索目录”参数，指定系统属性 java.library.path 的值 java -Djava.library.path=/Users/yangxin/Desktop Linux/Unix 环境下可以通过设置 LD_LIBRARY_PATH 环境变量，指定库的搜索目录。</p>
+</li>
+</ul>
+<h3 id="5、运行java程序"><a href="#5、运行java程序" class="headerlink" title="5、运行java程序"></a>5、运行java程序</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jni/" rel="tag"># jni</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/04/13/Android/自定义ViewGroup/" rel="next" title="自定义ViewGroup">
+                  <i class="fa fa-chevron-left"></i> 自定义ViewGroup
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/04/14/Android/Handler防止内存泄露/" rel="prev" title="Handler防止内存泄露">
+                  Handler防止内存泄露 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Jni入门"><span class="nav-text">Jni入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、编写native方法，使用javah创建头文件"><span class="nav-text">1、编写native方法，使用javah创建头文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、编译出so文件"><span class="nav-text">3、编译出so文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、加载动态库"><span class="nav-text">4、加载动态库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、运行java程序"><span class="nav-text">5、运行java程序</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
