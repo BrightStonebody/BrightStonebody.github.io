@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="基础的流demo12345678910111213141516171819202122import kotlinx.coroutines.*import kotlinx.coroutines.flow.*              fun simple(): Flow&amp;lt;Int&amp;gt; = flow &amp;#123; // 流构建器    for (i in 1..3) &amp;#123;">
+<meta name="keywords" content="Kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kotlin-flow">
+<meta property="og:url" content="http://yoursite.com/2021/10/04/Kotlin/kotlin-flow/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="基础的流demo12345678910111213141516171819202122import kotlinx.coroutines.*import kotlinx.coroutines.flow.*              fun simple(): Flow&amp;lt;Int&amp;gt; = flow &amp;#123; // 流构建器    for (i in 1..3) &amp;#123;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-10-05T11:10:36.846Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kotlin-flow">
+<meta name="twitter:description" content="基础的流demo12345678910111213141516171819202122import kotlinx.coroutines.*import kotlinx.coroutines.flow.*              fun simple(): Flow&amp;lt;Int&amp;gt; = flow &amp;#123; // 流构建器    for (i in 1..3) &amp;#123;">
+
+<link rel="canonical" href="http://yoursite.com/2021/10/04/Kotlin/kotlin-flow/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>kotlin-flow | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/10/04/Kotlin/kotlin-flow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kotlin-flow
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-04 14:58:00" itemprop="dateCreated datePublished" datetime="2021-10-04T14:58:00+08:00">2021-10-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-05 19:10:36" itemprop="dateModified" datetime="2021-10-05T19:10:36+08:00">2021-10-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="基础的流"><a href="#基础的流" class="headerlink" title="基础的流"></a>基础的流</h1><h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.coroutines.flow.*</span><br><span class="line"></span><br><span class="line">              </span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123; <span class="comment">// 流构建器</span></span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        delay(<span class="number">100</span>) <span class="comment">// 假装我们在这里做了一些有用的事情</span></span><br><span class="line">        emit(i) <span class="comment">// 发送下一个值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 启动并发的协程以验证主线程并未阻塞</span></span><br><span class="line">    launch &#123;</span><br><span class="line">        <span class="keyword">for</span> (k <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">            println(<span class="string">"I'm not blocked <span class="variable">$k</span>"</span>)</span><br><span class="line">            delay(<span class="number">100</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 收集这个流</span></span><br><span class="line">    simple().collect &#123; value -&gt; println(value) &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><a id="more"></a>
+<h2 id="flow-是-”冷流“"><a href="#flow-是-”冷流“" class="headerlink" title="flow 是 ”冷流“"></a>flow 是 ”冷流“</h2><ul>
+<li>冷流的定义：  flow 构建器中的代码直到流被调用 collect 的时候才运行。</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">flow</span><span class="params">(<span class="meta">@BuilderInference</span> block: <span class="type">suspend</span> <span class="type">FlowCollector</span>&lt;<span class="type">T</span>&gt;.()</span></span> -&gt; <span class="built_in">Unit</span>): Flow&lt;T&gt; = SafeFlow(block)</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeFlow</span>&lt;<span class="type">T</span>&gt;</span>(<span class="keyword">private</span> <span class="keyword">val</span> block: <span class="keyword">suspend</span> FlowCollector&lt;T&gt;.() -&gt; <span class="built_in">Unit</span>) : AbstractFlow&lt;T&gt;() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">collectSafely</span><span class="params">(collector: <span class="type">FlowCollector</span>&lt;<span class="type">T</span>&gt;)</span></span> &#123;</span><br><span class="line">        collector.block()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FlowCollector</span>&lt;<span class="type">in T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">emit</span><span class="params">(value: <span class="type">T</span>)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>flow 的实现如上，只不过是传入了 代码块作为 FlowCollector 的拓展函数。<br>当 流开始收集 （调用collect），会执行这个 flow 的代码块。<br>在 collect 中传入的代码块， 实际上是一个 FlowCollector 匿名对象，当 flow 的代码块调用 emit 的时候，就直接调用了 collect 后的代码块。</p>
+<p>用一个例子体现这一点：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">1</span>) &#123;</span><br><span class="line">        log(<span class="string">"Emit start <span class="variable">$i</span>"</span>)</span><br><span class="line">        delay(<span class="number">100</span>) <span class="comment">// 假装我们异步等待了 100 毫秒</span></span><br><span class="line">        emit(i) <span class="comment">// 发射下一个值</span></span><br><span class="line">        log(<span class="string">"Emit end <span class="variable">$i</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    simple()</span><br><span class="line">        .collect &#123; value -&gt;</span><br><span class="line">            log(<span class="string">"Collected start <span class="variable">$value</span>"</span>)</span><br><span class="line">            delay(<span class="number">300</span>)</span><br><span class="line">            log(<span class="string">"Collected end <span class="variable">$value</span>"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[main] Emit start 1</span><br><span class="line">[main] Collected start 1</span><br><span class="line">[main] Collected end 1</span><br><span class="line">[main] Emit end 1</span><br></pre></td></tr></table></figure>
+<h2 id="流的上下文保存"><a href="#流的上下文保存" class="headerlink" title="流的上下文保存"></a>流的上下文保存</h2><ul>
+<li>上下文保存： <strong>flow { … } 构建器中的代码运行在相应流的收集器提供的上下文中</strong></li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.coroutines.flow.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">log</span><span class="params">(msg: <span class="type">String</span>)</span></span> = println(<span class="string">"[<span class="subst">$&#123;Thread.currentThread().name&#125;</span>] <span class="variable">$msg</span>"</span>)</span><br><span class="line">           </span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123;</span><br><span class="line">    log(<span class="string">"Started simple flow"</span>)</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        emit(i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    simple().collect &#123; value -&gt; log(<span class="string">"Collected <span class="variable">$value</span>"</span>) &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[main @coroutine#1] Started simple flow</span><br><span class="line">[main @coroutine#1] Collected 1</span><br><span class="line">[main @coroutine#1] Collected 2</span><br><span class="line">[main @coroutine#1] Collected 3</span><br></pre></td></tr></table></figure>
+<p>由于 simple().collect 是在主线程调用的，那么 simple 的流主体也是在主线程调用的。<br><strong>如果在 调用<code>emit</code>时切换协程上下文，会直接抛出异常</strong></p>
+<ul>
+<li>flowOn: 正确的切换 flow 的上下文</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.coroutines.flow.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">log</span><span class="params">(msg: <span class="type">String</span>)</span></span> = println(<span class="string">"[<span class="subst">$&#123;Thread.currentThread().name&#125;</span>] <span class="variable">$msg</span>"</span>)</span><br><span class="line">           </span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        Thread.sleep(<span class="number">100</span>) <span class="comment">// 假装我们以消耗 CPU 的方式进行计算</span></span><br><span class="line">        log(<span class="string">"Emitting <span class="variable">$i</span>"</span>)</span><br><span class="line">        emit(i) <span class="comment">// 发射下一个值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;.flowOn(Dispatchers.Default) <span class="comment">// 在流构建器中改变协程上下文的正确方式</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    simple().collect &#123; value -&gt;</span><br><span class="line">        log(<span class="string">"Collected <span class="variable">$value</span>"</span>) </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="解决-背压问题"><a href="#解决-背压问题" class="headerlink" title="解决 背压问题"></a>解决 背压问题</h2><p>名词解释：<strong>背压： 假设有一个快的数据生产者和一个慢的数据消费者，背压就是一种 “倒逼 “生产者而使自己不被数据淹没的机制</strong></p>
+<h3 id="buffer"><a href="#buffer" class="headerlink" title="buffer"></a>buffer</h3><p>并发运行这个 流中发射元素的代码以及收集的代码， 而不是顺序运行它们； buffer() 会给切换 flow 的协程，保证 发送端 是不阻塞的 。 可以设置 buffer 容量和策略</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        delay(<span class="number">100</span>) <span class="comment">// 假装我们异步等待了 100 毫秒</span></span><br><span class="line">        emit(i) <span class="comment">// 发射下一个值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123; </span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        simple()</span><br><span class="line">            .buffer() <span class="comment">// 缓冲发射项，无需等待</span></span><br><span class="line">            .collect &#123; value -&gt; </span><br><span class="line">                delay(<span class="number">300</span>) <span class="comment">// 假装我们花费 300 毫秒来处理它</span></span><br><span class="line">                println(value) </span><br><span class="line">            &#125; </span><br><span class="line">    &#125;   </span><br><span class="line">    println(<span class="string">"Collected in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="conflate"><a href="#conflate" class="headerlink" title="conflate"></a>conflate</h3><p>一种特殊 buffer 策略 新数据会覆盖老数据</p>
+<h3 id="collectLatest"><a href="#collectLatest" class="headerlink" title="collectLatest"></a>collectLatest</h3><p>它并不会直接用新数据覆盖老数据，而是每一个都会被处理，只不过如果前一个还没被处理完后一个就来了的话，处理前一个数据的逻辑就会被取消。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.coroutines.flow.*</span><br><span class="line"><span class="keyword">import</span> kotlin.system.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        delay(<span class="number">100</span>) <span class="comment">// 假装我们异步等待了 100 毫秒</span></span><br><span class="line">        emit(i) <span class="comment">// 发射下一个值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123; </span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        simple()</span><br><span class="line">            .collectLatest &#123; value -&gt; <span class="comment">// 取消并重新发射最后一个值</span></span><br><span class="line">                println(<span class="string">"Collecting <span class="variable">$value</span>"</span>) </span><br><span class="line">                delay(<span class="number">300</span>) <span class="comment">// 假装我们花费 300 毫秒来处理它</span></span><br><span class="line">                println(<span class="string">"Done <span class="variable">$value</span>"</span>) </span><br><span class="line">            &#125; </span><br><span class="line">    &#125;   </span><br><span class="line">    println(<span class="string">"Collected in <span class="variable">$time</span> ms"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Collecting 1</span><br><span class="line">Collecting 2</span><br><span class="line">Collecting 3</span><br><span class="line">Done 3</span><br><span class="line">Collected in 741 ms</span><br></pre></td></tr></table></figure>
+<h1 id="StateFlow"><a href="#StateFlow" class="headerlink" title="StateFlow"></a>StateFlow</h1><h2 id="demo-1"><a href="#demo-1" class="headerlink" title="demo"></a>demo</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">val</span> flow = MutableStateFlow(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">produce</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span>..<span class="number">5</span>) &#123;</span><br><span class="line">            <span class="keyword">val</span> success = flow.tryEmit(i)</span><br><span class="line">            println(<span class="string">"tryEmit <span class="variable">$i</span> <span class="variable">$success</span>"</span>)</span><br><span class="line"><span class="comment">//            delay(200)</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JvmStatic</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span>: <span class="built_in">Unit</span> = runBlocking &#123;</span><br><span class="line">        launch(Dispatchers.IO) &#123;</span><br><span class="line">            delay(<span class="number">1000</span>)</span><br><span class="line">            produce()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        launch(Dispatchers.IO)&#123;</span><br><span class="line"></span><br><span class="line">            flow.onEach &#123;</span><br><span class="line">                println(<span class="string">"receive-1 <span class="variable">$it</span>"</span>)</span><br><span class="line">                delay(<span class="number">500</span>)</span><br><span class="line">            &#125;.launchIn(<span class="keyword">this</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="StateFlow-是一个-“流”"><a href="#StateFlow-是一个-“流”" class="headerlink" title="StateFlow 是一个 “流”"></a>StateFlow 是一个 “流”</h2><p>不同于普通的 flow ， StateFlow 是一个热数据流。 不需要主动调动 collect{…} , 就能 emit 数据</p>
+<h2 id="StateFlow-的-collect-是阻塞的，需要在单独的协程中运行"><a href="#StateFlow-的-collect-是阻塞的，需要在单独的协程中运行" class="headerlink" title="StateFlow 的 collect 是阻塞的，需要在单独的协程中运行"></a>StateFlow 的 collect 是阻塞的，需要在单独的协程中运行</h2><p>在demo中调用了 launchIn ，而不是直接 collect 。 看一下源码</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// StateFlow </span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> _state = atomic(initialState)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">collect</span><span class="params">(collector: <span class="type">FlowCollector</span>&lt;<span class="type">T</span>&gt;)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> slot = allocateSlot()</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (collector <span class="keyword">is</span> SubscribedFlowCollector) collector.onSubscription()</span><br><span class="line">            <span class="keyword">val</span> collectorJob = currentCoroutineContext()[Job]</span><br><span class="line">            <span class="keyword">var</span> oldState: Any? = <span class="literal">null</span> </span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">val</span> newState = _state.value</span><br><span class="line">                collectorJob?.ensureActive()</span><br><span class="line">                <span class="keyword">if</span> (oldState == <span class="literal">null</span> || oldState != newState) &#123;</span><br><span class="line">                    collector.emit(NULL.unbox(newState))</span><br><span class="line">                    oldState = newState</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (!slot.takePending()) &#123; <span class="comment">// try fast-path without suspending first</span></span><br><span class="line">                    slot.awaitPending() <span class="comment">// only suspend for new values when needed</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            freeSlot(slot)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，在 collec 中，一个 while 死循环，开始不断读取 _state.value 的值<br>solt 可以看做是 collector 的一个封装。 这里调用了 slot.awaitPending() 来挂起当前协程，让出cpu时间. 看一下 StateFlowSlot 是如何挂起的 </p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">awaitPending</span><span class="params">()</span></span>: <span class="built_in">Unit</span> = suspendCancellableCoroutine <span class="symbol">sc@</span> &#123; cont -&gt;</span><br><span class="line">    <span class="comment">// 如果 _state 是 None ，就设置为 cont </span></span><br><span class="line">    <span class="comment">// cont 的类型 CancellableContinuation ，只用调用 resume 或 fail 等，才会结束，否则挂起当前协程</span></span><br><span class="line">    <span class="keyword">if</span> (_state.compareAndSet(NONE, cont)) <span class="keyword">return</span><span class="symbol">@sc</span></span><br><span class="line">    cont.resume(<span class="built_in">Unit</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 StateFlow 的 emit 被调用的时候， 会获取到 solt 中的 CancellableContinuation 对象，调用其 resume ，将协程进行唤醒</p>
+<h1 id="ShareFlow"><a href="#ShareFlow" class="headerlink" title="ShareFlow"></a>ShareFlow</h1><h2 id="demo-2"><a href="#demo-2" class="headerlink" title="demo"></a>demo</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> flow = MutableSharedFlow&lt;<span class="built_in">Int</span>&gt;(</span><br><span class="line">    replay = <span class="number">0</span>, </span><br><span class="line">    extraBufferCapacity = <span class="number">100</span>, </span><br><span class="line">    onBufferOverflow = BufferOverflow.DROP_OLDEST</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">produce</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span>..<span class="number">5</span>) &#123;</span><br><span class="line">        <span class="keyword">val</span> success = flow.tryEmit(i)</span><br><span class="line">        println(<span class="string">"tryEmit <span class="variable">$i</span> <span class="variable">$success</span>"</span>)</span><br><span class="line"><span class="comment">//            delay(200)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@JvmStatic</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span>: <span class="built_in">Unit</span> = runBlocking &#123;</span><br><span class="line">    launch(Dispatchers.IO) &#123;</span><br><span class="line">        delay(<span class="number">1000</span>)</span><br><span class="line">        produce()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    launch(Dispatchers.IO)&#123;</span><br><span class="line"></span><br><span class="line">        flow.onEach &#123;</span><br><span class="line">            println(<span class="string">"receive-1 <span class="variable">$it</span>"</span>)</span><br><span class="line">            delay(<span class="number">500</span>)</span><br><span class="line">        &#125;.launchIn(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MutableShareFlow 的三个参数：</p>
+<ul>
+<li>通过 replay ，您可以针对新订阅者重新发送多个之前已发出的值</li>
+<li>extraBufferCapacity: 除了 replay 值以外的缓冲区容量。 extraBufferCapacity + replay 是缓冲区buffer的容量</li>
+<li>通过 onBufferOverflow，您可以指定相关政策来处理缓冲区中已存满要发送的数据项的情况。默认值为 BufferOverflow.SUSPEND，这会使调用方挂起。其他选项包括 DROP_LATEST 或 DROP_OLDEST</li>
+</ul>
+<p>ShareFlow 在收集侧 和 StateFlow 基本一致。 都是 while 死循环，然后将 solt 挂起。 这里不再赘述</p>
+<!-- ## BufferOverflow.SUSPEND, tryEmit 和 Emit
+
+当  -->
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kotlin/" rel="tag"># Kotlin</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2021/07/24/Android/nested2嵌套滚动机制/" rel="next" title="nested2嵌套滚动机制">
+                  <i class="fa fa-chevron-left"></i> nested2嵌套滚动机制
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础的流"><span class="nav-text">基础的流</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#demo"><span class="nav-text">demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flow-是-”冷流“"><span class="nav-text">flow 是 ”冷流“</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流的上下文保存"><span class="nav-text">流的上下文保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决-背压问题"><span class="nav-text">解决 背压问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#buffer"><span class="nav-text">buffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#conflate"><span class="nav-text">conflate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#collectLatest"><span class="nav-text">collectLatest</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#StateFlow"><span class="nav-text">StateFlow</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-1"><span class="nav-text">demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StateFlow-是一个-“流”"><span class="nav-text">StateFlow 是一个 “流”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StateFlow-的-collect-是阻塞的，需要在单独的协程中运行"><span class="nav-text">StateFlow 的 collect 是阻塞的，需要在单独的协程中运行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ShareFlow"><span class="nav-text">ShareFlow</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-2"><span class="nav-text">demo</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
