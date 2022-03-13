@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="apk中的一个dex文件的方法索引是一个ushort类型，最大值为655535. 所以一个dex文件的最大方法数是65535.为了规避安卓项目编译65536最大方法数的限制，需要做分dex">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MultiDex原理">
+<meta property="og:url" content="http://yoursite.com/2021/12/25/Android/Framework/MultiDex原理/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="apk中的一个dex文件的方法索引是一个ushort类型，最大值为655535. 所以一个dex文件的最大方法数是65535.为了规避安卓项目编译65536最大方法数的限制，需要做分dex">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-12-25T11:04:06.178Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MultiDex原理">
+<meta name="twitter:description" content="apk中的一个dex文件的方法索引是一个ushort类型，最大值为655535. 所以一个dex文件的最大方法数是65535.为了规避安卓项目编译65536最大方法数的限制，需要做分dex">
+
+<link rel="canonical" href="http://yoursite.com/2021/12/25/Android/Framework/MultiDex原理/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>MultiDex原理 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/25/Android/Framework/MultiDex原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MultiDex原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-12-25 18:20:52 / 修改时间：19:04:06" itemprop="dateCreated datePublished" datetime="2021-12-25T18:20:52+08:00">2021-12-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>apk中的一个dex文件的方法索引是一个ushort类型，最大值为655535. 所以一个dex文件的最大方法数是65535.<br>为了规避安卓项目编译65536最大方法数的限制，需要做分dex</p><a id="more"></a>
+<h2 id="1-Dalvik-和-ART-虚拟机的区别"><a href="#1-Dalvik-和-ART-虚拟机的区别" class="headerlink" title="1. Dalvik 和 ART 虚拟机的区别"></a>1. Dalvik 和 ART 虚拟机的区别</h2><p>Android5.0以上系统使用 ART 虚拟机，5.0以下使用 Dalvik 虚拟机</p>
+<p>Dalvik 编译策略是 JIT 技术。JIT意思是Just In Time Compiler，就是即时编译技术。<br>JIT是运行时编译，是动态编译，可以对执行次数频繁的dex代码进行编译和优化，减少以后使用时的翻译时间可以加快Dalvik运行速度。每次运行都需要重新编译。</p>
+<p>AOT是指”Ahead Of Time”，与”Just In Time”不同，从字面来看是说提前编译。<br>AOT 是静态编译，应用在安装的时候会启动 dex2oat 过程把 dex预编译，一次性将所有dex代码转换为机器码，每次运行程序的时候不用重新编译。 </p>
+<p>Android 7.0上，JIT 编译器被再次使用，采用AOT/JIT 混合编译的策略，特点是：</p>
+<p>应用在安装的时候dex不会再被编译<br>App运行时,dex文件先通过解析器被直接执行，热点函数会被识别并被JIT编译后存储在 jit code cache 中并生成profile文件以记录热点函数的信息。<br>手机进入 IDLE（空闲） 或者 Charging（充电） 状态的时候，系统会扫描 App 目录下的 profile 文件并执行 AOT 过程进行编译</p>
+<h2 id="2-不同虚拟机在-MultiDex-的区别。"><a href="#2-不同虚拟机在-MultiDex-的区别。" class="headerlink" title="2. 不同虚拟机在 MultiDex 的区别。"></a>2. 不同虚拟机在 MultiDex 的区别。</h2><ul>
+<li>Andorid 5.0 之后，ART天然支持从apk文件中加载多个.dex文件，在应用安装期间，它会执行一个预编译操作。将所有的dex编译成一个单一的.oat文件，在应用运行是去加载这个.oat文件，而不是一个一个的加载.dex文件。<br>所以我们只需要 在 gradle 开启 multiDexEnabled true 即可</li>
+<li>Dalvik 使用的 JIT ，JIT每次运行都需要重新编译。 所以我们需要在应用启动时手动去一个一个加载 dex 文件</li>
+</ul>
+<h2 id="3-在-Dalvik-加载多dex"><a href="#3-在-Dalvik-加载多dex" class="headerlink" title="3. 在 Dalvik 加载多dex"></a>3. 在 Dalvik 加载多dex</h2><p>简单来说 hook PathClassLoader 。</p>
+<ol>
+<li>获取到所有的dex文件</li>
+<li>通过反射拿到DexPathList的Element数组，把dex添加到 Element数组中</li>
+</ol>
+<p>通过这样的方式也可以实现热热修复，将修改后的新class打包成一个dex， 然后通过反射将 新dex插入到 PathClassLoader 中的 element数组最前面。从而实现对旧类的覆盖</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2021/11/27/技术Owner的职责/" rel="next" title="技术Owner的职责">
+                  <i class="fa fa-chevron-left"></i> 技术Owner的职责
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/" rel="prev" title="自定义注解处理器并发布为gradle组件">
+                  自定义注解处理器并发布为gradle组件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Dalvik-和-ART-虚拟机的区别"><span class="nav-text">1. Dalvik 和 ART 虚拟机的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-不同虚拟机在-MultiDex-的区别。"><span class="nav-text">2. 不同虚拟机在 MultiDex 的区别。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-在-Dalvik-加载多dex"><span class="nav-text">3. 在 Dalvik 加载多dex</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

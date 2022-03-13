@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Gradle中的对象Gradle主要有三种对象这三种对象和三种不同的脚本文件对应，在gradle执行的时候，会将脚本转换成对应的对象：">
+<meta name="keywords" content="Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle相关基础">
+<meta property="og:url" content="http://yoursite.com/2020/06/18/Android/gradle/gradle相关基础/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="Gradle中的对象Gradle主要有三种对象这三种对象和三种不同的脚本文件对应，在gradle执行的时候，会将脚本转换成对应的对象：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/gradle的构建过程.jpg">
+<meta property="og:updated_time" content="2022-03-13T07:33:58.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gradle相关基础">
+<meta name="twitter:description" content="Gradle中的对象Gradle主要有三种对象这三种对象和三种不同的脚本文件对应，在gradle执行的时候，会将脚本转换成对应的对象：">
+<meta name="twitter:image" content="http://yoursite.com/images/gradle的构建过程.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2020/06/18/Android/gradle/gradle相关基础/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>gradle相关基础 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/18/Android/gradle/gradle相关基础/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gradle相关基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 19:54:57" itemprop="dateCreated datePublished" datetime="2020-06-18T19:54:57+08:00">2020-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-13 15:33:58" itemprop="dateModified" datetime="2022-03-13T15:33:58+08:00">2022-03-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Gradle中的对象"><a href="#Gradle中的对象" class="headerlink" title="Gradle中的对象"></a>Gradle中的对象</h2><p>Gradle主要有三种对象<br>这三种对象和三种不同的脚本文件对应，在gradle执行的时候，会将脚本转换成对应的对象：</p><a id="more"></a>
+<ul>
+<li>Gradle对象：当我们执行gradle xxx或者什么的时候，gradle会从默认的配置脚本中构造出一个Gradle对象。在整个执行过程中，只有这么一个对象。Gradle对象的数据类型就是Gradle。我们一般很少去定制这个默认的配置脚本。</li>
+<li>Project对象：Gradle对每一个build.gradle会实例化成一个Project类，并且能够通过project变量使其隐式可用。</li>
+<li>Settings对象：显然，每一个settings.gradle都会转换成一个Settings对象。</li>
+</ul>
+<p>构建的生命周期，首先根据settings.gradle文件构建出一个Seetings对象，然后根据Seetings中的配置，创建Project对象，去找各个project下的build.gradle文件，根据文件内容来对project对象进行配置。</p>
+<h2 id="setting-gradle"><a href="#setting-gradle" class="headerlink" title="setting.gradle"></a>setting.gradle</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include <span class="string">':app'</span>, <span class="string">':progect_1'</span>, <span class="string">':progect_2'</span></span><br></pre></td></tr></table></figure>
+<p>用于指示 Gradle 在构建应用时应将哪些模块包括在内</p>
+<h2 id="gradle-properties"><a href="#gradle-properties" class="headerlink" title="gradle.properties"></a>gradle.properties</h2><p>里面可以定义一些常量供build.gradle使用，如版本号等.<br>然后，我们就可以在build文件中进行引用了。引用方式，直接通过变量名就可以。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">COMPILE_SDK_VERSION = <span class="number">23</span></span><br><span class="line">BUILD_TOOLS_VERSION = <span class="number">23.0</span><span class="number">.1</span></span><br><span class="line">VERSION_CODE = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="build-gradle"><a href="#build-gradle" class="headerlink" title="build.gradle"></a>build.gradle</h2><p>build文件有两种，一个是针对当前的Module，一个是针对项目中所有的module<br>在顶层的build文件中，我们可以来添加一些子module所共有的一些配置</p>
+<p>下面是一些常用的build.gradle的配置说明<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 应用插件，module中的build.gradle很多配置都是插件提供的支持</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"><span class="comment">// 仓库， </span></span><br><span class="line">buildscript&#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">''</span> <span class="comment">// 声明插件名称和版本号</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 外部依赖，添加的依赖会在这些配置的仓库中去寻找</span></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// "group:name:version"</span></span><br><span class="line">    implementation <span class="string">'androidx.appcompat:appcompat:1.1.0'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 所有子工程的仓库地址</span></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123; url uri(<span class="string">'/Users/bytedance/code/test/repo'</span>) &#125;</span><br><span class="line">        google()</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>为什么<code>buildscript</code>和<code>allpojectes</code>都有<code>repositories</code></strong></p>
+<ul>
+<li>buildScript块的repositories主要是为了Gradle脚本自身的执行，获取脚本依赖插件。</li>
+<li>allprojects块的repositories用于多项目构建，为所有项目提供共同所需依赖包。比如用到的Glide/OkHttp等</li>
+<li>子项目可以配置自己的repositories以获取自己独需的依赖包。</li>
+</ul>
+<h2 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h2><p>包括任务动作和任务依赖。任务动作定义了一个最小的工作单元。可以定义依赖于其它任务、动作序列和执行条件。</p>
+<ul>
+<li>depandsOn: 依赖于其它任务</li>
+<li>doFirst, doLast(&lt;&lt;): Task是一个动作列表，doFirst表示在动作列表最前面添加一个动作，doLast在动作列表最后面添加一个动作</li>
+</ul>
+<p>apply的插件自带和很多Task，在Gradle页面的 <code>&lt;项目名&gt;/Tasks/build</code> 目录里面可以看到。<br>我们也可以自己编写任务，自己的Task在Gradle页面的 <code>&lt;项目名&gt;/Tasks/other/</code> 目录里可以查找到</p>
+<h2 id="Gradle的工作流程"><a href="#Gradle的工作流程" class="headerlink" title="Gradle的工作流程"></a>Gradle的工作流程</h2><p><img src="/images/gradle的构建过程.jpg" alt="gradle的工作流程"></p>
+<ul>
+<li>Initialization: 初始化，在多模块的项目中，就是执行settings.gradle</li>
+<li>Configuration: Configration阶段的目标是解析每个project中的build.gradle。比如multi-project build例子中，解析每个子目录中的build.gradle。  Configuration阶段完了后，整个build的project以及内部的Task关系就确定了。一个Project包含很多Task，每个Task之间有依赖关系。Configuration会建立一个有向图来描述Task之间的依赖关系。</li>
+<li>Execution: 执行Task。 只有doFirst和doLast中的内容属于执行阶段</li>
+</ul>
+<p>简言之，Gradle有一个初始化流程，这个时候settings.gradle会执行。<br>在配置阶段，每个Project都会被解析，其内部的任务也会被添加到一个有向图里，用于解决执行过程中的依赖关系。然后才是执行阶段。你在gradle xxx中指定什么任务，gradle就会将这个xxx任务链上的所有任务全部按依赖顺序执行一遍！</p>
+<p>在每一步的步骤中间可以添加hook</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">task a &#123;</span><br><span class="line">    println <span class="string">'this is a'</span></span><br><span class="line">    doFirst &#123;</span><br><span class="line">        println <span class="string">'this is a do first'</span></span><br><span class="line">    &#125;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">"this is a do last"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task testBoth &#123;</span><br><span class="line">    <span class="comment">// 配置阶段</span></span><br><span class="line">    <span class="comment">// 依赖 a task 先执行</span></span><br><span class="line">    dependsOn(<span class="string">"a"</span>)</span><br><span class="line">    println <span class="string">'this is b'</span></span><br><span class="line">    doFirst &#123;</span><br><span class="line">        <span class="comment">// 执行阶段</span></span><br><span class="line">        println <span class="string">'this is b first'</span></span><br><span class="line">    &#125;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        <span class="comment">// 执行阶段</span></span><br><span class="line">        println <span class="string">'this is b last'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">输出：</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&gt; Configure project :</span></span><br><span class="line"><span class="comment">this is a</span></span><br><span class="line"><span class="comment">this is b</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&gt; Task :a</span></span><br><span class="line"><span class="comment">this is a do first</span></span><br><span class="line"><span class="comment">this is a do last</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">&gt; Task :testBoth</span></span><br><span class="line"><span class="comment">this is b first</span></span><br><span class="line"><span class="comment">this is b last</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决依赖版本冲突"><a href="#解决依赖版本冲突" class="headerlink" title="解决依赖版本冲突"></a>解决依赖版本冲突</h2><p>大部分情况下，不需要我们去解决版本冲突。当出现版本冲突时，Gradle会帮我们自动依赖最高版本的包。</p>
+<p>以下是我们自己解决版本冲突的一般步骤</p>
+<h3 id="查看依赖报告"><a href="#查看依赖报告" class="headerlink" title="查看依赖报告"></a>查看依赖报告</h3><p>运行Gradle， <code>&lt;项目名称&gt;/app/Tasks/dependencies/</code> 查看依赖报告，输出如下</p>
+<p><code>xxxx -&gt; xxxx</code> 表示依赖包自动提升到了最高版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">+--- androidx.lifecycle:lifecycle-extensions:2.1.0</span><br><span class="line">|    +--- androidx.lifecycle:lifecycle-runtime:2.1.0</span><br><span class="line">|    |    +--- androidx.lifecycle:lifecycle-common:2.1.0 -&gt; 2.3.0-alpha01</span><br><span class="line">|    |    |    \--- androidx.annotation:annotation:1.1.0</span><br><span class="line">|    |    +--- androidx.arch.core:core-common:2.1.0</span><br><span class="line">|    |    |    \--- androidx.annotation:annotation:1.1.0</span><br><span class="line">|    |    \--- androidx.annotation:annotation:1.1.0</span><br><span class="line">|    +--- androidx.arch.core:core-common:2.1.0 (*)</span><br><span class="line">|    +--- androidx.arch.core:core-runtime:2.1.0</span><br></pre></td></tr></table></figure>
+<h3 id="排除传递性冲突"><a href="#排除传递性冲突" class="headerlink" title="排除传递性冲突"></a>排除传递性冲突</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">compile (<span class="string">'cn.qqtheme.framework:WheelPicker:1.5.1'</span>)&#123;</span><br><span class="line">    exclude <span class="string">group:</span><span class="string">'com.android.support'</span>, <span class="string">module:</span><span class="string">"appcompat"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="强制一个版本"><a href="#强制一个版本" class="headerlink" title="强制一个版本"></a>强制一个版本</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">configurations.all&#123;</span><br><span class="line">    resolutionStrategy&#123;</span><br><span class="line">        force <span class="string">'androidx.appcompat:appcompat:1.1.0'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Gradle/" rel="tag"># Gradle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/03/20/Android/源码解析/Fresco源码解析/" rel="next" title="Fresco源码解析">
+                  <i class="fa fa-chevron-left"></i> Fresco源码解析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/06/27/Android/Android自定义注解/" rel="prev" title="Android自定义注解">
+                  Android自定义注解 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradle中的对象"><span class="nav-text">Gradle中的对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#setting-gradle"><span class="nav-text">setting.gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gradle-properties"><span class="nav-text">gradle.properties</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#build-gradle"><span class="nav-text">build.gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Task"><span class="nav-text">Task</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradle的工作流程"><span class="nav-text">Gradle的工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决依赖版本冲突"><span class="nav-text">解决依赖版本冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看依赖报告"><span class="nav-text">查看依赖报告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排除传递性冲突"><span class="nav-text">排除传递性冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强制一个版本"><span class="nav-text">强制一个版本</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
