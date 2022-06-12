@@ -58,7 +58,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="自定义一个基于注解的路由框架定义注解类 新建一个模块 router_annotations  在 router_annotations 目录中创建 build.gradle">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-03-13T08:43:08.226Z">
+<meta property="og:updated_time" content="2022-03-13T09:10:55.158Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义注解处理器并发布为gradle组件">
 <meta name="twitter:description" content="自定义一个基于注解的路由框架定义注解类 新建一个模块 router_annotations  在 router_annotations 目录中创建 build.gradle">
@@ -235,7 +235,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-03-13 15:27:24 / 修改时间：16:43:08" itemprop="dateCreated datePublished" datetime="2022-03-13T15:27:24+08:00">2022-03-13</time>
+              <time title="创建时间：2022-03-13 15:27:24 / 修改时间：17:10:55" itemprop="dateCreated datePublished" datetime="2022-03-13T15:27:24+08:00">2022-03-13</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -303,9 +303,13 @@
 </ol>
 <p>buildscript.repositories 和 allprojects.repositories 都要加，这样才会应用到所有子工程</p>
 <ol start="2">
-<li>在app模块里引用组件<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">"com.example.test:router-test-annotation:1.0.0"</span></span><br><span class="line">kapt <span class="string">"com.example.test:router-test-processor:1.0.0"</span></span><br></pre></td></tr></table></figure>
+<li><p>在app模块里引用组件</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">"com.example.test:router-test-annotation:1.0.0"</span></span><br><span class="line">kapt <span class="string">"com.example.test:router-test-processor:1.0.0"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>gradle版本的区别</p>
 </li>
 </ol>
+<p>在 gradle 7.+ 版本有很多东西不兼容，上述实现只有在 gradle 6.+ 的版本有效。 gradle 的版本升级和项目创建还是要谨慎一些。 </p>
 
     </div>
 
@@ -330,6 +334,9 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+                <a href="/2022/03/19/Android/gradle/自定义gradle插件/" rel="prev" title="自定义gradle插件">
+                  自定义gradle插件 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
       </footer>
@@ -384,7 +391,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

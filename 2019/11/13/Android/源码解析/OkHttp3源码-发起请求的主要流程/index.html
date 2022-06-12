@@ -58,7 +58,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="OkHttp3源码解析-发起请求的主要流程">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-10-03T01:57:41.029Z">
+<meta property="og:updated_time" content="2022-06-12T06:54:54.364Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OkHttp3源码-发起请求的主要流程">
 <meta name="twitter:description" content="OkHttp3源码解析-发起请求的主要流程">
@@ -241,7 +241,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+                <time title="修改时间：2022-06-12 14:54:54" itemprop="dateModified" datetime="2022-06-12T14:54:54+08:00">2022-06-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -290,7 +290,7 @@
 <p>这个线程池其实是一个CacheThreadPool. 他的特点是: </p>
 <ul>
 <li>底层：返回ThreadPoolExecutor实例，corePoolSize为0；maximumPoolSize为Integer.MAX_VALUE；keepAliveTime为60L；unit为TimeUnit.SECONDS；workQueue为SynchronousQueue(同步队列)</li>
-<li>通俗：当有新任务到来，则插入到SynchronousQueue中，由于SynchronousQueue是同步队列，因此会在池中寻找可用线程来执行，若有可以线程则执行，若没有可用线程则创建一个线程来执行该任务；若池中线程空闲时间超过指定大小，则该线程会被销毁。</li>
+<li>通俗：当有新任务到来，则插入到SynchronousQueue中，由于SynchronousQueue是同步队列，因此会在池中寻找可用线程来执行，若有可以线程则执行，若没有可用线程则创建一个线程来执行该任务；若池中线程空闲时间超过指定时间，则该线程会被销毁。</li>
 <li>适用：执行很多短期异步的小程序或者负载较轻的服务器</li>
 </ul>
 <p>检查调用executorService()方法的地方, 是一个promoteAndExecute()方法</p>
@@ -300,7 +300,9 @@
 <p>promoteAndExecute()方法的解析直接看上面源码的注释. </p>
 <p>结合之前说的, 在enqueue(call), 还有 exectorService() (线程池初始化)时候回调用这个方法, 将准备队列中合适的call扔到线程池中执行.<br>想一个问题, 就是当running队列的call都执行完了, 要怎么自动从ready队列中取call来执行呢?<br>想到这个问题, 然后再检查promoteAndExecute()方法调用的时机, 发现还有一个finished方法</p>
 <h3 id="finished-Deque-calls-T-call"><a href="#finished-Deque-calls-T-call" class="headerlink" title="finished(Deque calls, T call)"></a>finished(Deque<t> calls, T call)</t></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">finished</span><span class="params">(Deque&lt;T&gt; calls, T call)</span> </span>&#123;</span><br><span class="line">    Runnable idleCallback;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!calls.remove(call)) <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"Call wasn't in-flight!"</span>);</span><br><span class="line">        idleCallback = <span class="keyword">this</span>.idleCallback;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> isRunning = promoteAndExecute();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isRunning &amp;&amp; idleCallback != <span class="keyword">null</span>) &#123;</span><br><span class="line">        idleCallback.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在RealCall和AsyncCall代码中, 能看到同样调用了despatcher.finished方法</p>
+<p>在RealCall和AsyncCall代码中, 能看到在调用了责任链完成一次请求之后，调用了<code>despatcher.finished</code>方法从readyAsyncCalls集合里获取下一个call来执行</p>
+<h3 id="executed-RealCall-call"><a href="#executed-RealCall-call" class="headerlink" title="executed(RealCall call)"></a>executed(RealCall call)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">executed</span><span class="params">(RealCall call)</span> </span>&#123;</span><br><span class="line">    runningSyncCalls.add(call);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到只是做了一个把 call 加入到 runningSyncCalls 里</p>
 <h3 id="同步的call"><a href="#同步的call" class="headerlink" title="同步的call"></a>同步的call</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Used by &#123;<span class="doctag">@code</span> Call#execute&#125; to signal it is in-flight. */</span></span><br><span class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">executed</span><span class="params">(RealCall call)</span> </span>&#123;</span><br><span class="line">    runningSyncCalls.add(call);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>同步的call在加入到了runningSyncCalls队列之后, 几乎说明也没干; 在finished方法中有被remove掉. 把同步的call放到Dispatcher中走一遭应该只是单纯的为了把同步call统一管理而已. </p>
 
@@ -369,7 +371,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OkHttp3源码解析-发起请求的主要流程"><span class="nav-text">OkHttp3源码解析-发起请求的主要流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主要的类"><span class="nav-text">主要的类:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OkHttpClient"><span class="nav-text">OkHttpClient:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Call"><span class="nav-text">Call:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造方法"><span class="nav-text">构造方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步执行一个call"><span class="nav-text">同步执行一个call</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步执行一个call"><span class="nav-text">异步执行一个call</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dispatcher"><span class="nav-text">Dispatcher</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#重要的成员变量"><span class="nav-text">重要的成员变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ExcutorService"><span class="nav-text">ExcutorService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enqueue-AsyncCall-call"><span class="nav-text">enqueue(AsyncCall call)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#promoteAndExecute"><span class="nav-text">promoteAndExecute()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#finished-Deque-calls-T-call"><span class="nav-text">finished(Deque calls, T call)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步的call"><span class="nav-text">同步的call</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OkHttp3源码解析-发起请求的主要流程"><span class="nav-text">OkHttp3源码解析-发起请求的主要流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主要的类"><span class="nav-text">主要的类:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OkHttpClient"><span class="nav-text">OkHttpClient:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Call"><span class="nav-text">Call:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#构造方法"><span class="nav-text">构造方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步执行一个call"><span class="nav-text">同步执行一个call</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步执行一个call"><span class="nav-text">异步执行一个call</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dispatcher"><span class="nav-text">Dispatcher</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#重要的成员变量"><span class="nav-text">重要的成员变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ExcutorService"><span class="nav-text">ExcutorService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enqueue-AsyncCall-call"><span class="nav-text">enqueue(AsyncCall call)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#promoteAndExecute"><span class="nav-text">promoteAndExecute()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#finished-Deque-calls-T-call"><span class="nav-text">finished(Deque calls, T call)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#executed-RealCall-call"><span class="nav-text">executed(RealCall call)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步的call"><span class="nav-text">同步的call</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -385,7 +387,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
