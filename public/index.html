@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/24/Android/nested2嵌套滚动机制/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/06/12/Android/源码解析/Retrofit源码解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2021/07/24/Android/nested2嵌套滚动机制/" class="post-title-link" itemprop="url">nested2嵌套滚动机制</a>
+            <a href="/2022/06/12/Android/源码解析/Retrofit源码解析/" class="post-title-link" itemprop="url">Retrofit源码解析</a>
         </h1>
 
         <div class="post-meta">
@@ -230,14 +230,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-07-24 16:36:31" itemprop="dateCreated datePublished" datetime="2021-07-24T16:36:31+08:00">2021-07-24</time>
+              <time title="创建时间：2022-06-12 18:21:16" itemprop="dateCreated datePublished" datetime="2022-06-12T18:21:16+08:00">2022-06-12</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+                <time title="修改时间：2022-06-15 00:27:13" itemprop="dateModified" datetime="2022-06-15T00:27:13+08:00">2022-06-15</time>
               </span>
 
           
@@ -251,10 +251,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="开头"><a href="#开头" class="headerlink" title="开头"></a>开头</h2><p>nested2是安卓用于处理嵌套滚动的方案。 主要有两个重要的接口， NestedScrollingParent2 和 NestedScrollingChild2 ，分别代表桥套滚动的外层和内层。</p>
+          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RetrofitService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GET</span>(<span class="string">"query"</span>)</span><br><span class="line">    <span class="function">Observable&lt;PostInfo&gt; <span class="title">getPostInfoRx</span><span class="params">(@Query(<span class="string">"type"</span>)</span> String type, @<span class="title">Query</span><span class="params">(<span class="string">"postid"</span>)</span> String postid)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</span><br><span class="line">        .baseUrl(<span class="string">"http://www.kuaidi100.com/"</span>)</span><br><span class="line">        .addConverterFactory(GsonConverterFactory.create())</span><br><span class="line">        .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) <span class="comment">// 支持RxJava</span></span><br><span class="line">        .build();</span><br><span class="line">        </span><br><span class="line">RetrofitService service = retrofit.create(XxxInterface.class);</span><br><span class="line">Call&lt;PostInfo&gt; call = service.getPostInfo(<span class="string">"yuantong"</span>, <span class="string">"11111111111"</span>);</span><br><span class="line">call.enqueue(<span class="keyword">new</span> Callback&lt;PostInfo&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Call&lt;PostInfo&gt; call, Response&lt;PostInfo&gt; response)</span> </span>&#123;</span><br><span class="line">        Log.i(<span class="string">"http返回："</span>, response.body().toString() + <span class="string">""</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Call&lt;PostInfo&gt; call, Throwable t)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/07/24/Android/nested2嵌套滚动机制/#more" rel="contents">
+              <a class="btn" href="/2022/06/12/Android/源码解析/Retrofit源码解析/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -278,7 +278,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/22/编译aosp/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/02/Android/Framework/RequestLayout和Invalidate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -292,7 +292,73 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/22/编译aosp/" class="post-title-link" itemprop="url">编译aosp</a>
+            <a href="/2022/05/02/Android/Framework/RequestLayout和Invalidate/" class="post-title-link" itemprop="url">RequestLayout和Invalidate</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-02 16:48:49 / 修改时间：18:53:02" itemprop="dateCreated datePublished" datetime="2022-05-02T16:48:49+08:00">2022-05-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="RequestLayout"><a href="#RequestLayout" class="headerlink" title="RequestLayout"></a>RequestLayout</h1><h2 id="标记自身"><a href="#标记自身" class="headerlink" title="标记自身"></a>标记自身</h2><p>给当前View添加上 PFLAG_FORCE_LAYOUT 和 PFLAG_INVALIDATED 标记。<br>并将RequestLayout向上传递。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/05/02/Android/Framework/RequestLayout和Invalidate/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/11/Kotlin/协程上下文和异常传播/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/11/Kotlin/协程上下文和异常传播/" class="post-title-link" itemprop="url">协程上下文和异常传播</a>
         </h1>
 
         <div class="post-meta">
@@ -302,14 +368,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-22 17:12:59" itemprop="dateCreated datePublished" datetime="2021-05-22T17:12:59+08:00">2021-05-22</time>
+              <time title="创建时间：2022-04-11 23:50:53" itemprop="dateCreated datePublished" datetime="2022-04-11T23:50:53+08:00">2022-04-11</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+                <time title="修改时间：2022-04-12 00:56:12" itemprop="dateModified" datetime="2022-04-12T00:56:12+08:00">2022-04-12</time>
               </span>
 
           
@@ -323,12 +389,458 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><ol>
-<li>在macOS上，默认文件系统是不区分大小写的，需要先建立一个区分大小写的磁盘</li>
+          <p><a href="https://juejin.cn/post/7068901166456766472#heading-6" target="_blank" rel="noopener">https://juejin.cn/post/7068901166456766472#heading-6</a></p>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/07/Java/jvm虚拟机/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/07/Java/jvm虚拟机/" class="post-title-link" itemprop="url">jvm虚拟机</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-07 23:10:00" itemprop="dateCreated datePublished" datetime="2022-04-07T23:10:00+08:00">2022-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-08 00:57:54" itemprop="dateModified" datetime="2022-04-08T00:57:54+08:00">2022-04-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="JVM架构"><a href="#JVM架构" class="headerlink" title="JVM架构"></a>JVM架构</h2><p>jvm有几个区域：方法区、堆、Java栈、程序计数器、本地方法栈</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/07/Java/jvm虚拟机/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/04/Java/ConcurrentHashMap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/04/Java/ConcurrentHashMap/" class="post-title-link" itemprop="url">ConcurrentHashMap</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-04 16:36:53" itemprop="dateCreated datePublished" datetime="2022-04-04T16:36:53+08:00">2022-04-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-05 17:43:51" itemprop="dateModified" datetime="2022-04-05T17:43:51+08:00">2022-04-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>ConcurrentHashMap 可以实现线程安全。在1.8之前和之后实现线程安全的方法不同。 </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/04/Java/ConcurrentHashMap/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/04/Java/HashMap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/04/Java/HashMap/" class="post-title-link" itemprop="url">HashMap</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-04 14:23:14 / 修改时间：16:39:37" itemprop="dateCreated datePublished" datetime="2022-04-04T14:23:14+08:00">2022-04-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-基本数据结构"><a href="#1-基本数据结构" class="headerlink" title="1. 基本数据结构"></a>1. 基本数据结构</h2><p>Node&lt;K, V&gt; 的一个table数组，容量始终为2的幂，Node代表一个entry。在put一个元素时，懒加载分配数组空间。<br>如果实例化HashMap的时候传入一个 initialCapacity ，table的大小会给一个最接近的2的幂的大小<br>如果遇到hash冲突，会变为一个链表或红黑树，数组中的node作为链表or红黑树的头节点，新加入的节点插入到链表中。 在java1.8，如果新加入的链表长度超过8，会转化为红黑树</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/04/Java/HashMap/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/03/21/Android/gradle/transform和asm初探/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/21/Android/gradle/transform和asm初探/" class="post-title-link" itemprop="url">transform和asm初探</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-21 21:54:26" itemprop="dateCreated datePublished" datetime="2022-03-21T21:54:26+08:00">2022-03-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-04 16:50:41" itemprop="dateModified" datetime="2022-05-04T16:50:41+08:00">2022-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="自定义RouterTransform"><a href="#自定义RouterTransform" class="headerlink" title="自定义RouterTransform"></a>自定义RouterTransform</h2><p>Transform 是AGP官方提供的接口，在 class-&gt;dex 的阶段提供一个时机，可以让我们对字节码文件做修改，或者动态添加一个新的类</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/21/Android/gradle/transform和asm初探/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/03/19/Android/gradle/自定义gradle插件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/19/Android/gradle/自定义gradle插件/" class="post-title-link" itemprop="url">自定义gradle插件</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-19 17:52:18" itemprop="dateCreated datePublished" datetime="2022-03-19T17:52:18+08:00">2022-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-04 16:53:22" itemprop="dateModified" datetime="2022-05-04T16:53:22+08:00">2022-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这里只记录本地插件的写法</p><h2 id="创建-buildSrc-目录"><a href="#创建-buildSrc-目录" class="headerlink" title="创建 buildSrc 目录"></a>创建 buildSrc 目录</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/19/Android/gradle/自定义gradle插件/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/" class="post-title-link" itemprop="url">自定义注解处理器并发布为gradle组件</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-13 15:27:24 / 修改时间：17:10:55" itemprop="dateCreated datePublished" datetime="2022-03-13T15:27:24+08:00">2022-03-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自定义一个基于注解的路由框架</p><h2 id="定义注解类"><a href="#定义注解类" class="headerlink" title="定义注解类"></a>定义注解类</h2><ol>
+<li>新建一个模块 router_annotations </li>
+<li>在 router_annotations 目录中创建 build.gradle </li>
 </ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/05/22/编译aosp/#more" rel="contents">
+              <a class="btn" href="/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -352,7 +864,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/18/Android/Framework/屏幕刷新机制/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/25/Android/Framework/MultiDex原理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -366,7 +878,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/18/Android/Framework/屏幕刷新机制/" class="post-title-link" itemprop="url">屏幕刷新机制</a>
+            <a href="/2021/12/25/Android/Framework/MultiDex原理/" class="post-title-link" itemprop="url">MultiDex原理</a>
         </h1>
 
         <div class="post-meta">
@@ -375,16 +887,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-03-18 00:05:08" itemprop="dateCreated datePublished" datetime="2021-03-18T00:05:08+08:00">2021-03-18</time>
+              <time title="创建时间：2021-12-25 18:20:52 / 修改时间：19:04:06" itemprop="dateCreated datePublished" datetime="2021-12-25T18:20:52+08:00">2021-12-25</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
 
           
 
@@ -397,514 +903,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="requestLayout"><a href="#requestLayout" class="headerlink" title="requestLayout"></a>requestLayout</h1><p>view.requestLayout 最终会调用 ViewRootImpl.requestLayout</p>
+          <p>apk中的一个dex文件的方法索引是一个ushort类型，最大值为655535. 所以一个dex文件的最大方法数是65535.<br>为了规避安卓项目编译65536最大方法数的限制，需要做分dex</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/03/18/Android/Framework/屏幕刷新机制/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/07/Android/Framework/应用进程是如何启动的/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/07/Android/Framework/应用进程是如何启动的/" class="post-title-link" itemprop="url">应用进程是如何启动的</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-07 00:23:23" itemprop="dateCreated datePublished" datetime="2021-03-07T00:23:23+08:00">2021-03-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="zygote的启动"><a href="#zygote的启动" class="headerlink" title="zygote的启动"></a>zygote的启动</h1><h2 id="zygote-的功能"><a href="#zygote-的功能" class="headerlink" title="zygote 的功能"></a>zygote 的功能</h2><p>zygote 进程的主要功能有两个：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/07/Android/Framework/应用进程是如何启动的/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/26/Android/自定义LayoutManager/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/26/Android/自定义LayoutManager/" class="post-title-link" itemprop="url">自定义LayoutManager</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-26 17:06:00" itemprop="dateCreated datePublished" datetime="2021-02-26T17:06:00+08:00">2021-02-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="LayoutManager-的常用方法"><a href="#LayoutManager-的常用方法" class="headerlink" title="LayoutManager 的常用方法"></a>LayoutManager 的常用方法</h1><h3 id="generateDefaultLayoutParams"><a href="#generateDefaultLayoutParams" class="headerlink" title="generateDefaultLayoutParams"></a>generateDefaultLayoutParams</h3>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/26/Android/自定义LayoutManager/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/24/Flutter/redux源码/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/24/Flutter/redux源码/" class="post-title-link" itemprop="url">redux源码</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-24 21:40:51" itemprop="dateCreated datePublished" datetime="2021-01-24T21:40:51+08:00">2021-01-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Redux是一个Flutter状态管理工具。实现并不复杂，其核心是一个简单的观察者模式。我们从 观察者 和 被观察者 两个角度来分析 Redux</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/24/Flutter/redux源码/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/02/Android/Framework/源码探究Activity的生命周期/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/02/Android/Framework/源码探究Activity的生命周期/" class="post-title-link" itemprop="url">源码探究Activity的生命周期</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-02 15:00:33" itemprop="dateCreated datePublished" datetime="2021-01-02T15:00:33+08:00">2021-01-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="startActivity"><a href="#startActivity" class="headerlink" title="startActivity"></a>startActivity</h2><p>startActivity有很多重载方法，最终都会调用<code>startActivityForResult</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/02/Android/Framework/源码探究Activity的生命周期/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/04/Android/Fragment可见性总结/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/04/Android/Fragment可见性总结/" class="post-title-link" itemprop="url">Fragment可见性总结</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-04 18:28:37" itemprop="dateCreated datePublished" datetime="2020-10-04T18:28:37+08:00">2020-10-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="onResume-onPause"><a href="#onResume-onPause" class="headerlink" title="onResume()/onPause()"></a>onResume()/onPause()</h2><p><strong>不要用这两个方法为可见性依据做操作。</strong> 触发onResume()/onPause()的场景有很多</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/10/04/Android/Fragment可见性总结/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/22/Flutter/RenderObject-原理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/22/Flutter/RenderObject-原理/" class="post-title-link" itemprop="url">RenderObject 原理</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-22 16:28:21" itemprop="dateCreated datePublished" datetime="2020-09-22T16:28:21+08:00">2020-09-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="ParentData-和各种-Mixin"><a href="#ParentData-和各种-Mixin" class="headerlink" title="ParentData 和各种 Mixin"></a>ParentData 和各种 Mixin</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">BoxParentData --|&gt; ParentData</span><br><span class="line">ContainerParentDataMixin --|&gt; ParentData</span><br><span class="line">ContainerBoxParentData --|&gt; BoxParentData</span><br><span class="line">ContainerBoxParentData --|&gt; ContainerParentDataMixin</span><br><span class="line"></span><br><span class="line">RenderObject *-- ParentData</span><br><span class="line">RenderObjectWithChildMixin --|&gt; RenderObject</span><br><span class="line">ContainerRenderObjectMixin --|&gt; RenderObject</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class ContainerParentDataMixin&#123;</span><br><span class="line">+ previousSlibling</span><br><span class="line">+ nextSibling</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class ContainerRenderObjectMixin &#123;</span><br><span class="line">+ firstChild *-- ContainerParentDataMixin</span><br><span class="line">+ lastChild</span><br><span class="line">+ childCount</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class BoxParentData&#123;</span><br><span class="line">+ offset</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class RenderObject&#123;</span><br><span class="line">+ parentData</span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/22/Flutter/RenderObject-原理/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/14/Flutter/flutter-ui源码-初步/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/14/Flutter/flutter-ui源码-初步/" class="post-title-link" itemprop="url">flutter ui源码 初步</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-14 20:30:42" itemprop="dateCreated datePublished" datetime="2020-08-14T20:30:42+08:00">2020-08-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Widget-Element-RanderObject-三者之间的关系"><a href="#Widget-Element-RanderObject-三者之间的关系" class="headerlink" title="Widget, Element, RanderObject 三者之间的关系"></a>Widget, Element, RanderObject 三者之间的关系</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/14/Flutter/flutter-ui源码-初步/#more" rel="contents">
+              <a class="btn" href="/2021/12/25/Android/Framework/MultiDex原理/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -928,7 +930,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -974,7 +976,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1012,7 +1014,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

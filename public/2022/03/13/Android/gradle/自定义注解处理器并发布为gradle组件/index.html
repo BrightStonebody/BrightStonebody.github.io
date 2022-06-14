@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="自定义一个基于注解的路由框架定义注解类 新建一个模块 router_annotations  在 router_annotations 目录中创建 build.gradle">
+<meta name="keywords" content="Gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义注解处理器并发布为gradle组件">
+<meta property="og:url" content="http://yoursite.com/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="自定义一个基于注解的路由框架定义注解类 新建一个模块 router_annotations  在 router_annotations 目录中创建 build.gradle">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-03-13T09:10:55.158Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义注解处理器并发布为gradle组件">
+<meta name="twitter:description" content="自定义一个基于注解的路由框架定义注解类 新建一个模块 router_annotations  在 router_annotations 目录中创建 build.gradle">
+
+<link rel="canonical" href="http://yoursite.com/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>自定义注解处理器并发布为gradle组件 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/03/13/Android/gradle/自定义注解处理器并发布为gradle组件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          自定义注解处理器并发布为gradle组件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-13 15:27:24 / 修改时间：17:10:55" itemprop="dateCreated datePublished" datetime="2022-03-13T15:27:24+08:00">2022-03-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>自定义一个基于注解的路由框架</p><h2 id="定义注解类"><a href="#定义注解类" class="headerlink" title="定义注解类"></a>定义注解类</h2><ol>
+<li>新建一个模块 router_annotations </li>
+<li>在 router_annotations 目录中创建 build.gradle </li>
+</ol><a id="more"></a>
+
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">"kotlin"</span> <span class="comment">// 使用 kotlin</span></span><br><span class="line"></span><br><span class="line">targetCompatibility = JavaVersion.VERSION_1_8</span><br><span class="line">sourceCompatibility = JavaVersion.VERSION_1_8</span><br><span class="line"></span><br><span class="line"><span class="comment">// 应用 发布脚本，后面会写</span></span><br><span class="line">apply <span class="string">from :</span> rootProject.file(<span class="string">"maven-publish.gradle"</span>)</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>定义注解类</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.test</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置使用注解的对象是 类</span></span><br><span class="line"><span class="meta">@Target(AnnotationTarget.CLASS)</span></span><br><span class="line"><span class="comment">// 设置注解只在编译期存在</span></span><br><span class="line"><span class="meta">@Retention(AnnotationRetention.BINARY)</span></span><br><span class="line"><span class="keyword">annotation</span> <span class="class"><span class="keyword">class</span> <span class="title">Destination</span></span>(</span><br><span class="line">    <span class="keyword">val</span> url: String</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="定义注解处理器模块"><a href="#定义注解处理器模块" class="headerlink" title="定义注解处理器模块"></a>定义注解处理器模块</h2><ol>
+<li>新建一个模块 router_compile</li>
+<li>在 router_compile 目录中创建 build.gradle</li>
+</ol>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">"kotlin"</span> <span class="comment">// 使用kotlin插件</span></span><br><span class="line">apply <span class="string">plugin:</span> <span class="string">"kotlin-kapt"</span> <span class="comment">// 使用kotlin注解</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置源码兼容性</span></span><br><span class="line">targetCompatibility = JavaVersion.VERSION_1_8</span><br><span class="line">sourceCompatibility = JavaVersion.VERSION_1_8</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation project(<span class="string">":router_annotations"</span>)</span><br><span class="line">    implementation <span class="string">"com.google.auto.service:auto-service:1.0-rc6"</span></span><br><span class="line">    kapt <span class="string">"com.google.auto.service:auto-service:1.0-rc6"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 应用 发布脚本。后面会写</span></span><br><span class="line">apply <span class="string">from :</span> rootProject.file(<span class="string">"maven-publish.gradle"</span>)</span><br></pre></td></tr></table></figure>
+<p>在注解处理器模块，如果使用kotlin写注解处理器代码，需要引用 <code>kotlin-kapt</code> 这个插件<br><code>implementation &quot;com.google.auto.service:auto-service:1.0-rc6&quot;</code> 使用google的一个注解框架。<br>同时还要加上 <code>kapt &quot;com.google.auto.service:auto-service:1.0-rc6&quot;</code> 。 这是kotlin的写法，如果是java，需要换成<br><code>annotationProcessor &#39;com.google.auto.service:auto-service:1.0-rc6&#39;</code></p>
+<ol start="3">
+<li>编写注解处理器<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AutoService(Processor::class)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DestinationProcessor</span> : <span class="type">AbstractProcessor</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> TAG = <span class="string">"DestinationProcessor"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">process</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">set</span>: <span class="type">MutableSet</span>&lt;<span class="type">out</span> <span class="type">TypeElement</span>&gt;,</span></span></span><br><span class="line"><span class="function"><span class="params">        roundEnvironment: <span class="type">RoundEnvironment</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (roundEnvironment.processingOver()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        println(<span class="string">"<span class="variable">$TAG</span> &gt;&gt;&gt;&gt; process start"</span>)</span><br><span class="line"></span><br><span class="line">        println(<span class="keyword">set</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> destinationClasses = roundEnvironment.getElementsAnnotatedWith(Destination::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line"></span><br><span class="line">        println(TAG + <span class="string">" "</span> + destinationClasses.size)</span><br><span class="line">        <span class="keyword">if</span> (destinationClasses.size &lt; <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (element <span class="keyword">in</span> destinationClasses) &#123;</span><br><span class="line">            <span class="keyword">val</span> typeElement = element <span class="keyword">as</span> TypeElement</span><br><span class="line">            <span class="keyword">val</span> destination = typeElement.getAnnotation(Destination::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br><span class="line">                ?: <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">val</span> url = destination.url</span><br><span class="line">            <span class="keyword">val</span> className = typeElement.qualifiedName</span><br><span class="line">            println(<span class="string">"<span class="variable">$TAG</span> <span class="variable">$url</span> <span class="variable">$className</span>"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        println(<span class="string">"<span class="variable">$TAG</span> &gt;&gt;&gt;&gt; process finish"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getSupportedAnnotationTypes</span><span class="params">()</span></span>: MutableSet&lt;String&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> mutableSetOf(</span><br><span class="line">            Destination::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>.<span class="title">canonicalName</span></span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><code>@AutoService(Processor::class)</code> 是固定写法</p>
+<p><code>AbstractProcessor</code> 继承这个抽象类。<br>重写<code>getSupportedAnnotationTypes</code>方法，返回需要处理的注解。<br>重写<code>process</code>方法，处理注解信息。 返回值为true表示已处理这个注解，相同的注解不会再被其他注解处理器处理。<br><code>roundEnvironment.processingOver()</code>表示之前已经有处理过一轮，此时<code>roundEnvironment.elements.size==0</code> 不是很明白gradle为什么会执行多轮。。。</p>
+<h2 id="在本地使用注解"><a href="#在本地使用注解" class="headerlink" title="在本地使用注解"></a>在本地使用注解</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation project(<span class="string">":router_annotations"</span>)</span><br><span class="line">kapt project(<span class="string">":router_compile"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="将注解处理器打包成组件并发布"><a href="#将注解处理器打包成组件并发布" class="headerlink" title="将注解处理器打包成组件并发布"></a>将注解处理器打包成组件并发布</h2><ol>
+<li><p>在最外层的 build.properties 中写通用参数</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POM_URL=..<span class="regexp">/repo  /</span>/ 发布的仓库地址，这里是本地</span><br><span class="line">GROUP_ID=com.example.test <span class="comment">// group</span></span><br><span class="line">VERSION_NAME=<span class="number">1.0</span><span class="number">.0</span> <span class="comment">// 版本</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 router_annotation 和 router_compile 中写 group_id</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在 router_annotation build.properties</span></span><br><span class="line">POM_ARTIFACT_ID=router-test-annotation</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 router_compile build.properties</span></span><br><span class="line">POM_ARTIFACT_ID=router-test-processor</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编写发布脚本 maven-publish.gradle</p>
+</li>
+</ol>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'maven'</span> <span class="comment">// 引入maven插件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 从根目录的 gradle.properties 中获取通用参数 start</span></span><br><span class="line"><span class="keyword">def</span> rootProperties = <span class="keyword">new</span> Properties()</span><br><span class="line">rootProperties.load(<span class="keyword">new</span> FileInputStream(project.rootProject.file(<span class="string">"gradle.properties"</span>)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> versionName = rootProperties.getProperty(<span class="string">"VERSION_NAME"</span>)</span><br><span class="line"><span class="keyword">def</span> pomUrl = rootProperties.getProperty(<span class="string">"POM_URL"</span>) <span class="comment">// ../repo</span></span><br><span class="line"><span class="keyword">def</span> groupId = rootProperties.getProperty(<span class="string">"GROUP_ID"</span>)</span><br><span class="line"><span class="comment">// 获取通用参数 end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 从当前项目的 gradle.properties 中获取参数</span></span><br><span class="line"><span class="keyword">def</span> projectProperties = <span class="keyword">new</span> Properties()</span><br><span class="line">projectProperties.load(<span class="keyword">new</span> FileInputStream(project.file(<span class="string">"gradle.properties"</span>)))</span><br><span class="line"><span class="keyword">def</span> pomArtifactId = projectProperties.getProperty(<span class="string">"POM_ARTIFACT_ID"</span>)</span><br><span class="line"></span><br><span class="line">println(<span class="string">"maven-publish $versionName $pomUrl $groupId $pomArtifactId"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 编写maven的发布任务</span></span><br><span class="line">uploadArchives &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenDeployer &#123;</span><br><span class="line">            repository(<span class="string">url:</span> uri(pomUrl)) &#123;</span><br><span class="line">                pom.groupId = groupId</span><br><span class="line">                pom.artifactId = pomArtifactId</span><br><span class="line">                pom.version = versionName</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            pom.whenConfigured &#123; pom -&gt;</span><br><span class="line">                pom.dependencies.forEach &#123; dep -&gt;</span><br><span class="line">                    <span class="keyword">if</span> (dep.getVersion() == <span class="string">"unspecified"</span>) &#123;</span><br><span class="line">                        dep.setGroupId(groupId)</span><br><span class="line">                        dep.setVersion(versionName)</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意有一个 <code>pom.whenConfigured { pom -&gt; ...</code> 的代码，这是因为 router_compile 应用到了 router_annotations 模块。如果不做处理，发布之后， router_comiple 模块是找不到 router_annotations 的正确位置和版本的。所以要强制制定</p>
+<h2 id="执行发布任务"><a href="#执行发布任务" class="headerlink" title="执行发布任务"></a>执行发布任务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./gradlew :router_compile:uploadArchives</span><br><span class="line">./gradlew :router_annotations:uploadArchives</span><br></pre></td></tr></table></figure>
+<p>我们设置的 <code>POM_URL=../repo</code> 所以最终会在项目的repo目录里生成aar包。 </p>
+<h2 id="使用发布后的组件"><a href="#使用发布后的组件" class="headerlink" title="使用发布后的组件"></a>使用发布后的组件</h2><ol>
+<li>首先，moven本地仓库地址加入到工程里<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123; url uri(<span class="string">'/Users/bytedance/code/test/repo'</span>) &#125;</span><br><span class="line">        google()</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven &#123; url uri(<span class="string">'/Users/bytedance/code/test/repo'</span>) &#125;</span><br><span class="line">        google()</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>buildscript.repositories 和 allprojects.repositories 都要加，这样才会应用到所有子工程</p>
+<ol start="2">
+<li><p>在app模块里引用组件</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">"com.example.test:router-test-annotation:1.0.0"</span></span><br><span class="line">kapt <span class="string">"com.example.test:router-test-processor:1.0.0"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>gradle版本的区别</p>
+</li>
+</ol>
+<p>在 gradle 7.+ 版本有很多东西不兼容，上述实现只有在 gradle 6.+ 的版本有效。 gradle 的版本升级和项目创建还是要谨慎一些。 </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Gradle/" rel="tag"># Gradle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2021/12/25/Android/Framework/MultiDex原理/" rel="next" title="MultiDex原理">
+                  <i class="fa fa-chevron-left"></i> MultiDex原理
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2022/03/19/Android/gradle/自定义gradle插件/" rel="prev" title="自定义gradle插件">
+                  自定义gradle插件 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义注解类"><span class="nav-text">定义注解类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义注解处理器模块"><span class="nav-text">定义注解处理器模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在本地使用注解"><span class="nav-text">在本地使用注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将注解处理器打包成组件并发布"><span class="nav-text">将注解处理器打包成组件并发布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行发布任务"><span class="nav-text">执行发布任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用发布后的组件"><span class="nav-text">使用发布后的组件</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

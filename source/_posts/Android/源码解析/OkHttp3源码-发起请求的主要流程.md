@@ -198,7 +198,7 @@ public synchronized ExecutorService executorService() {
 
 这个线程池其实是一个CacheThreadPool. 他的特点是: 
 * 底层：返回ThreadPoolExecutor实例，corePoolSize为0；maximumPoolSize为Integer.MAX_VALUE；keepAliveTime为60L；unit为TimeUnit.SECONDS；workQueue为SynchronousQueue(同步队列)
-* 通俗：当有新任务到来，则插入到SynchronousQueue中，由于SynchronousQueue是同步队列，因此会在池中寻找可用线程来执行，若有可以线程则执行，若没有可用线程则创建一个线程来执行该任务；若池中线程空闲时间超过指定大小，则该线程会被销毁。
+* 通俗：当有新任务到来，则插入到SynchronousQueue中，由于SynchronousQueue是同步队列，因此会在池中寻找可用线程来执行，若有可以线程则执行，若没有可用线程则创建一个线程来执行该任务；若池中线程空闲时间超过指定时间，则该线程会被销毁。
 * 适用：执行很多短期异步的小程序或者负载较轻的服务器
 
 检查调用executorService()方法的地方, 是一个promoteAndExecute()方法
@@ -283,7 +283,17 @@ private <T> void finished(Deque<T> calls, T call) {
     }
 }
 ```
-在RealCall和AsyncCall代码中, 能看到同样调用了despatcher.finished方法
+在RealCall和AsyncCall代码中, 能看到在调用了责任链完成一次请求之后，调用了`despatcher.finished`方法从readyAsyncCalls集合里获取下一个call来执行
+
+### executed(RealCall call)
+```java
+synchronized void executed(RealCall call) {
+    runningSyncCalls.add(call);
+}
+```
+可以看到只是做了一个把 call 加入到 runningSyncCalls 里
+
+
 
 ### 同步的call
 

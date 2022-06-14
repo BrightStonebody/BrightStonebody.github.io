@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="RequestLayout标记自身给当前View添加上 PFLAG_FORCE_LAYOUT 和 PFLAG_INVALIDATED 标记。并将RequestLayout向上传递。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RequestLayout和Invalidate">
+<meta property="og:url" content="http://yoursite.com/2022/05/02/Android/Framework/RequestLayout和Invalidate/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="RequestLayout标记自身给当前View添加上 PFLAG_FORCE_LAYOUT 和 PFLAG_INVALIDATED 标记。并将RequestLayout向上传递。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-05-02T10:53:02.324Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RequestLayout和Invalidate">
+<meta name="twitter:description" content="RequestLayout标记自身给当前View添加上 PFLAG_FORCE_LAYOUT 和 PFLAG_INVALIDATED 标记。并将RequestLayout向上传递。">
+
+<link rel="canonical" href="http://yoursite.com/2022/05/02/Android/Framework/RequestLayout和Invalidate/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>RequestLayout和Invalidate | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/02/Android/Framework/RequestLayout和Invalidate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RequestLayout和Invalidate
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-02 16:48:49 / 修改时间：18:53:02" itemprop="dateCreated datePublished" datetime="2022-05-02T16:48:49+08:00">2022-05-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="RequestLayout"><a href="#RequestLayout" class="headerlink" title="RequestLayout"></a>RequestLayout</h1><h2 id="标记自身"><a href="#标记自身" class="headerlink" title="标记自身"></a>标记自身</h2><p>给当前View添加上 PFLAG_FORCE_LAYOUT 和 PFLAG_INVALIDATED 标记。<br>并将RequestLayout向上传递。</p><a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//从源码注释可以看出，如果当前View在请求布局的时候，View树正在进行布局流程的话，</span></span><br><span class="line"><span class="comment">//该请求会延迟到布局流程完成后或者绘制流程完成且下一次布局发现的时候再执行。</span></span><br><span class="line"><span class="meta">@CallSuper</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mMeasureCache != <span class="keyword">null</span>) mMeasureCache.clear();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mAttachInfo != <span class="keyword">null</span> &amp;&amp; mAttachInfo.mViewRequestingLayout == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// Only trigger request-during-layout logic if this is the view requesting it,</span></span><br><span class="line">        <span class="comment">// not the views in its parent hierarchy</span></span><br><span class="line">        ViewRootImpl viewRoot = getViewRootImpl();</span><br><span class="line">        <span class="keyword">if</span> (viewRoot != <span class="keyword">null</span> &amp;&amp; viewRoot.isInLayout()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!viewRoot.requestLayoutDuringLayout(<span class="keyword">this</span>)) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        mAttachInfo.mViewRequestingLayout = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//为当前view设置标记位 PFLAG_FORCE_LAYOUT</span></span><br><span class="line">    mPrivateFlags |= PFLAG_FORCE_LAYOUT;</span><br><span class="line">    mPrivateFlags |= PFLAG_INVALIDATED;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mParent != <span class="keyword">null</span> &amp;&amp; !mParent.isLayoutRequested()) &#123;</span><br><span class="line">        <span class="comment">//向父容器请求布局</span></span><br><span class="line">        mParent.requestLayout();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mAttachInfo != <span class="keyword">null</span> &amp;&amp; mAttachInfo.mViewRequestingLayout == <span class="keyword">this</span>) &#123;</span><br><span class="line">        mAttachInfo.mViewRequestingLayout = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ViewRootImpl"><a href="#ViewRootImpl" class="headerlink" title="ViewRootImpl"></a>ViewRootImpl</h2><p>会顺着view树，一路向上标记，最终到达 ViewRootImpl<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!mHandlingLayoutInLayoutRequest) &#123;</span><br><span class="line">        checkThread();</span><br><span class="line">        mLayoutRequested = <span class="keyword">true</span>;</span><br><span class="line">        scheduleTraversals(); <span class="comment">// 开启measure、layout、draw三步走</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> scheduleTraversals() 开启绘制三步走流程。 在measure、layout、draw过程中都会判断标志位，只有需要的时候才执行</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">measure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">     ...</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((mPrivateFlags &amp; PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT ||</span><br><span class="line">            widthMeasureSpec != mOldWidthMeasureSpec ||</span><br><span class="line">            heightMeasureSpec != mOldHeightMeasureSpec) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (cacheIndex &lt; <span class="number">0</span> || sIgnoreMeasureCache) &#123;</span><br><span class="line">            <span class="comment">// measure ourselves, this should set the measured dimension flag back</span></span><br><span class="line">            onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">            mPrivateFlags3 &amp;= ~PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;</span><br><span class="line">        &#125; </span><br><span class="line">        ...</span><br><span class="line">        mPrivateFlags |= PFLAG_LAYOUT_REQUIRED;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> measure时判断了PFLAG_FORCE_LAYOUT标记，需要时才做。<br>  在 <code>mPrivateFlags |= PFLAG_LAYOUT_REQUIRED;</code> 中给layout过程做了标记</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">layout</span><span class="params">(<span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//判断标记位是否为PFLAG_LAYOUT_REQUIRED，如果有，则对该View进行布局</span></span><br><span class="line">    <span class="keyword">if</span> (changed || (mPrivateFlags &amp; PFLAG_LAYOUT_REQUIRED) == PFLAG_LAYOUT_REQUIRED) &#123;</span><br><span class="line">        onLayout(changed, l, t, r, b);</span><br><span class="line">        <span class="comment">//onLayout方法完成后，清除PFLAG_LAYOUT_REQUIRED标记位</span></span><br><span class="line">        mPrivateFlags &amp;= ~PFLAG_LAYOUT_REQUIRED;</span><br><span class="line">        ListenerInfo li = mListenerInfo;</span><br><span class="line">        <span class="keyword">if</span> (li != <span class="keyword">null</span> &amp;&amp; li.mOnLayoutChangeListeners != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ArrayList&lt;OnLayoutChangeListener&gt; listenersCopy =</span><br><span class="line">                    (ArrayList&lt;OnLayoutChangeListener&gt;)li.mOnLayoutChangeListeners.clone();</span><br><span class="line">            <span class="keyword">int</span> numListeners = listenersCopy.size();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numListeners; ++i) &#123;</span><br><span class="line">                listenersCopy.get(i).onLayoutChange(<span class="keyword">this</span>, l, t, r, b, oldL, oldT, oldR, oldB);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//最后清除PFLAG_FORCE_LAYOUT标记位</span></span><br><span class="line">    mPrivateFlags &amp;= ~PFLAG_FORCE_LAYOUT;</span><br><span class="line">    mPrivateFlags3 |= PFLAG3_IS_LAID_OUT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> layout时判断了PFLAG_LAYOUT_REQUIRED标记，需要时才做。</p>
+<h1 id="Invalidate"><a href="#Invalidate" class="headerlink" title="Invalidate"></a>Invalidate</h1><h2 id="标记自身-1"><a href="#标记自身-1" class="headerlink" title="标记自身"></a>标记自身</h2> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">invalidateInternal</span><span class="params">(<span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b, <span class="keyword">boolean</span> invalidateCache,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> fullInvalidate)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据View的标记位来判断该子View是否需要重绘，假如View没有任何变化，那么就不需要重绘</span></span><br><span class="line">    <span class="keyword">if</span> ((mPrivateFlags &amp; (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)</span><br><span class="line">            || (invalidateCache &amp;&amp; (mPrivateFlags &amp; PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID)</span><br><span class="line">            || (mPrivateFlags &amp; PFLAG_INVALIDATED) != PFLAG_INVALIDATED</span><br><span class="line">            || (fullInvalidate &amp;&amp; isOpaque() != mLastIsOpaque)) &#123;</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">//设置PFLAG_DIRTY标记位</span></span><br><span class="line">        mPrivateFlags |= PFLAG_DIRTY;</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Propagate the damage rectangle to the parent view.</span></span><br><span class="line">        <span class="comment">//把需要重绘的区域传递给父容器</span></span><br><span class="line">        <span class="keyword">final</span> AttachInfo ai = mAttachInfo;</span><br><span class="line">        <span class="keyword">final</span> ViewParent p = mParent;</span><br><span class="line">        <span class="keyword">if</span> (p != <span class="keyword">null</span> &amp;&amp; ai != <span class="keyword">null</span> &amp;&amp; l &lt; r &amp;&amp; t &lt; b) &#123;</span><br><span class="line">            <span class="keyword">final</span> Rect damage = ai.mTmpInvalRect;</span><br><span class="line">            damage.set(l, t, r, b);</span><br><span class="line">            <span class="comment">//调用父容器的方法，向上传递事件</span></span><br><span class="line">            p.invalidateChild(<span class="keyword">this</span>, damage);</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ViewGroup处理并向上传递"><a href="#ViewGroup处理并向上传递" class="headerlink" title="ViewGroup处理并向上传递"></a>ViewGroup处理并向上传递</h2> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Don't call or override this method. It is used for the implementation of</span></span><br><span class="line"><span class="comment"> * the view hierarchy.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">invalidateChild</span><span class="params">(View child, <span class="keyword">final</span> Rect dirty)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置 parent 等于自身</span></span><br><span class="line">    ViewParent parent = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> AttachInfo attachInfo = mAttachInfo;</span><br><span class="line">    <span class="keyword">if</span> (attachInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">int</span> opaqueFlag = isOpaque ? PFLAG_DIRTY_OPAQUE : PFLAG_DIRTY;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (child.mLayerType != LAYER_TYPE_NONE) &#123;</span><br><span class="line">            mPrivateFlags |= PFLAG_INVALIDATED;</span><br><span class="line">            mPrivateFlags &amp;= ~PFLAG_DRAWING_CACHE_VALID;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            View view = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (parent <span class="keyword">instanceof</span> View) &#123;</span><br><span class="line">                view = (View) parent;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((view.mViewFlags &amp; FADING_EDGE_MASK) != <span class="number">0</span> &amp;&amp;</span><br><span class="line">                        view.getSolidColor() == <span class="number">0</span>) &#123;</span><br><span class="line">                    opaqueFlag = PFLAG_DIRTY;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> ((view.mPrivateFlags &amp; PFLAG_DIRTY_MASK) != PFLAG_DIRTY) &#123;</span><br><span class="line">                    <span class="comment">//对当前View的标记位进行设置</span></span><br><span class="line">                    view.mPrivateFlags = (view.mPrivateFlags &amp; ~PFLAG_DIRTY_MASK) | opaqueFlag;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//调用ViewGrup的invalidateChildInParent，如果已经达到最顶层view,则调用ViewRootImpl的invalidateChildInParent。</span></span><br><span class="line">            parent = parent.invalidateChildInParent(location, dirty);</span><br><span class="line">            ...</span><br><span class="line">        &#125; <span class="keyword">while</span> (parent != <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ViewParent <span class="title">invalidateChildInParent</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span>[] location, <span class="keyword">final</span> Rect dirty)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ((mPrivateFlags &amp; PFLAG_DRAWN) == PFLAG_DRAWN ||</span><br><span class="line">            (mPrivateFlags &amp; PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((mGroupFlags &amp; (FLAG_OPTIMIZE_INVALIDATE | FLAG_ANIMATION_DONE)) !=</span><br><span class="line">                    FLAG_OPTIMIZE_INVALIDATE) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//将dirty中的坐标转化为父容器中的坐标，考虑mScrollX和mScrollY的影响</span></span><br><span class="line">            dirty.offset(location[CHILD_LEFT_INDEX] - mScrollX,</span><br><span class="line">                    location[CHILD_TOP_INDEX] - mScrollY);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((mGroupFlags &amp; FLAG_CLIP_CHILDREN) == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">//求并集，结果是把子视图的dirty区域转化为父容器的dirty区域</span></span><br><span class="line">                dirty.union(<span class="number">0</span>, <span class="number">0</span>, mRight - mLeft, mBottom - mTop);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> left = mLeft;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> top = mTop;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((mGroupFlags &amp; FLAG_CLIP_CHILDREN) == FLAG_CLIP_CHILDREN) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!dirty.intersect(<span class="number">0</span>, <span class="number">0</span>, mRight - left, mBottom - top)) &#123;</span><br><span class="line">                    dirty.setEmpty();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mPrivateFlags &amp;= ~PFLAG_DRAWING_CACHE_VALID;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//记录当前视图的mLeft和mTop值，在下一次循环中会把当前值再向父容器的坐标转化</span></span><br><span class="line">            location[CHILD_LEFT_INDEX] = left;</span><br><span class="line">            location[CHILD_TOP_INDEX] = top;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (mLayerType != LAYER_TYPE_NONE) &#123;</span><br><span class="line">                mPrivateFlags |= PFLAG_INVALIDATED;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//返回当前视图的父容器</span></span><br><span class="line">            <span class="keyword">return</span> mParent;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ViewRootImpl-1"><a href="#ViewRootImpl-1" class="headerlink" title="ViewRootImpl"></a>ViewRootImpl</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ViewParent <span class="title">invalidateChildInParent</span><span class="params">(<span class="keyword">int</span>[] location, Rect dirty)</span> </span>&#123;</span><br><span class="line">    checkThread();</span><br><span class="line">    ...</span><br><span class="line">    invalidateRectOnScreen(dirty);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">invalidateRectOnScreen</span><span class="params">(Rect dirty)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (!mWillDrawSoon &amp;&amp; (intersected || mIsAnimating)) &#123;</span><br><span class="line">        scheduleTraversals();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">draw</span><span class="params">(<span class="keyword">boolean</span> fullRedrawNeeded)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 1. 使用硬件加速渲染</span></span><br><span class="line">    <span class="comment">// 2. 使用软件加速渲染</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true if drawing was successful, false if an error occurred</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">drawSoftware</span><span class="params">(Surface surface, AttachInfo attachInfo, <span class="keyword">int</span> xoff, <span class="keyword">int</span> yoff,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">boolean</span> scalingRequired, Rect dirty)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Draw with software renderer.</span></span><br><span class="line">        <span class="keyword">final</span> Canvas canvas;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> left = dirty.left;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> top = dirty.top;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> right = dirty.right;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> bottom = dirty.bottom;</span><br><span class="line"></span><br><span class="line">            canvas = mSurface.lockCanvas(dirty);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// The dirty rectangle can be modified by Surface.lockCanvas()</span></span><br><span class="line">            <span class="comment">//noinspection ConstantConditions</span></span><br><span class="line">            <span class="keyword">if</span> (left != dirty.left || top != dirty.top || right != dirty.right</span><br><span class="line">                    || bottom != dirty.bottom) &#123;</span><br><span class="line">                attachInfo.mIgnoreDirtyState = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// <span class="doctag">TODO:</span> Do this in native</span></span><br><span class="line">            canvas.setDensity(mDensity);</span><br><span class="line">        &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 伪代码</span></span><br><span class="line">        mView.mPrivateFlags |= View.PFLAG_DRAWN;</span><br><span class="line">        mView.draw(canvas);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里只有软件绘制的代码。<br>网上有人说invalidate只会重绘脏区域，但是这里只看到用dirty做了一个 <code>canvas = mSurface.lockCanvas(dirty);</code> 。还不是很懂局部重绘是怎么做到的。。。。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2022/04/11/Kotlin/协程上下文和异常传播/" rel="next" title="协程上下文和异常传播">
+                  <i class="fa fa-chevron-left"></i> 协程上下文和异常传播
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2022/06/12/Android/源码解析/Retrofit源码解析/" rel="prev" title="Retrofit源码解析">
+                  Retrofit源码解析 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RequestLayout"><span class="nav-text">RequestLayout</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#标记自身"><span class="nav-text">标记自身</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ViewRootImpl"><span class="nav-text">ViewRootImpl</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Invalidate"><span class="nav-text">Invalidate</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#标记自身-1"><span class="nav-text">标记自身</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ViewGroup处理并向上传递"><span class="nav-text">ViewGroup处理并向上传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ViewRootImpl-1"><span class="nav-text">ViewRootImpl</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/23/Java/Java获取泛型类型/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/27/技术Owner的职责/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/07/23/Java/Java获取泛型类型/" class="post-title-link" itemprop="url">Java获取泛型类型</a>
+            <a href="/2021/11/27/技术Owner的职责/" class="post-title-link" itemprop="url">技术Owner的职责</a>
         </h1>
 
         <div class="post-meta">
@@ -229,26 +229,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-07-23 20:05:38" itemprop="dateCreated datePublished" datetime="2020-07-23T20:05:38+08:00">2020-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
+              <time title="创建时间：2021-11-27 15:58:24 / 修改时间：16:09:40" itemprop="dateCreated datePublished" datetime="2021-11-27T15:58:24+08:00">2021-11-27</time>
             </span>
 
           
@@ -262,10 +245,86 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="获取泛型class的通用方法"><a href="#获取泛型class的通用方法" class="headerlink" title="获取泛型class的通用方法"></a>获取泛型class的通用方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Type type = ((ParameterizedType)obj.getClass().getGenericSuperclass()).getActualTypeArguments()[<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+          <ul>
+<li>参与需求评审，完成可行性调研，完善细节。<ul>
+<li>要督促完成UI/UE评审，埋点评审</li>
+</ul>
+</li>
+<li>技术评审，输出技术方案，拆分需求子任务，给出详细排期</li>
+<li>开始开发，定期站会，同步风险<ul>
+<li>发生变更，更改排期</li>
+<li>需求提测前，推进case评审</li>
+<li>自测</li>
+</ul>
+</li>
+</ul>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/03/Android/Framework/Binder源码笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/11/03/Android/Framework/Binder源码笔记/" class="post-title-link" itemprop="url">Binder源码笔记</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-03 21:42:37" itemprop="dateCreated datePublished" datetime="2021-11-03T21:42:37+08:00">2021-11-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-09 22:29:00" itemprop="dateModified" datetime="2021-11-09T22:29:00+08:00">2021-11-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Service-的启动-独立进程的-Service"><a href="#Service-的启动-独立进程的-Service" class="headerlink" title="Service 的启动 (独立进程的 Service )"></a>Service 的启动 (独立进程的 Service )</h1>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/07/23/Java/Java获取泛型类型/#more" rel="contents">
+              <a class="btn" href="/2021/11/03/Android/Framework/Binder源码笔记/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -289,7 +348,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/Android/kotlin协程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/10/18/Android/Framework/InputManagerService/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -303,7 +362,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/07/15/Android/kotlin协程/" class="post-title-link" itemprop="url">kotlin协程</a>
+            <a href="/2021/10/18/Android/Framework/InputManagerService/" class="post-title-link" itemprop="url">InputManagerService</a>
         </h1>
 
         <div class="post-meta">
@@ -312,26 +371,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-07-15 11:30:02" itemprop="dateCreated datePublished" datetime="2020-07-15T11:30:02+08:00">2020-07-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kotlin/" itemprop="url" rel="index">
-                    <span itemprop="name">Kotlin</span>
-                  </a>
-                </span>
+              <time title="创建时间：2021-10-18 21:31:03 / 修改时间：22:01:44" itemprop="dateCreated datePublished" datetime="2021-10-18T21:31:03+08:00">2021-10-18</time>
             </span>
 
           
@@ -345,10 +387,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Async"><a href="#Async" class="headerlink" title="Async"></a>Async</h2><p>首先看一个例子，先后调用两个挂起函数</p>
+          <h2 id="native层概述"><a href="#native层概述" class="headerlink" title="native层概述"></a>native层概述</h2><h3 id="InputReader"><a href="#InputReader" class="headerlink" title="InputReader"></a>InputReader</h3><p>输入事件的读取者。 运行在单独的 InputReaderThread 线程中，死循环，通过 EventHub.getEvents 来获取输入事件。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/07/15/Android/kotlin协程/#more" rel="contents">
+              <a class="btn" href="/2021/10/18/Android/Framework/InputManagerService/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -372,7 +414,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/27/Android/Android自定义注解/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/10/04/Kotlin/kotlin-flow/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -386,7 +428,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/06/27/Android/Android自定义注解/" class="post-title-link" itemprop="url">Android自定义注解</a>
+            <a href="/2021/10/04/Kotlin/kotlin-flow/" class="post-title-link" itemprop="url">kotlin-flow</a>
         </h1>
 
         <div class="post-meta">
@@ -396,26 +438,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-27 11:06:02" itemprop="dateCreated datePublished" datetime="2020-06-27T11:06:02+08:00">2020-06-27</time>
+              <time title="创建时间：2021-10-04 14:58:00" itemprop="dateCreated datePublished" datetime="2021-10-04T14:58:00+08:00">2021-10-04</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+                <time title="修改时间：2022-04-11 14:46:20" itemprop="dateModified" datetime="2022-04-11T14:46:20+08:00">2022-04-11</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -428,10 +459,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>因为要自定义一个页面导航工具，需要使用自定义注解</p>
+          <h1 id="基础的流"><a href="#基础的流" class="headerlink" title="基础的流"></a>基础的流</h1><h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.coroutines.flow.*</span><br><span class="line"></span><br><span class="line">              </span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">simple</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123; <span class="comment">// 流构建器</span></span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        delay(<span class="number">100</span>) <span class="comment">// 假装我们在这里做了一些有用的事情</span></span><br><span class="line">        emit(i) <span class="comment">// 发送下一个值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 启动并发的协程以验证主线程并未阻塞</span></span><br><span class="line">    launch &#123;</span><br><span class="line">        <span class="keyword">for</span> (k <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">            println(<span class="string">"I'm not blocked <span class="variable">$k</span>"</span>)</span><br><span class="line">            delay(<span class="number">100</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 收集这个流</span></span><br><span class="line">    simple().collect &#123; value -&gt; println(value) &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/06/27/Android/Android自定义注解/#more" rel="contents">
+              <a class="btn" href="/2021/10/04/Kotlin/kotlin-flow/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -455,7 +486,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/18/Android/gradle相关基础/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/24/Android/nested2嵌套滚动机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -469,7 +500,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/06/18/Android/gradle相关基础/" class="post-title-link" itemprop="url">gradle相关基础</a>
+            <a href="/2021/07/24/Android/nested2嵌套滚动机制/" class="post-title-link" itemprop="url">nested2嵌套滚动机制</a>
         </h1>
 
         <div class="post-meta">
@@ -479,7 +510,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-18 19:54:57" itemprop="dateCreated datePublished" datetime="2020-06-18T19:54:57+08:00">2020-06-18</time>
+              <time title="创建时间：2021-07-24 16:36:31" itemprop="dateCreated datePublished" datetime="2021-07-24T16:36:31+08:00">2021-07-24</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -488,17 +519,6 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -511,10 +531,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Gradle中的对象"><a href="#Gradle中的对象" class="headerlink" title="Gradle中的对象"></a>Gradle中的对象</h2><p>Gradle主要有三种对象<br>这三种对象和三种不同的脚本文件对应，在gradle执行的时候，会将脚本转换成对应的对象：</p>
+          <h2 id="开头"><a href="#开头" class="headerlink" title="开头"></a>开头</h2><p>nested2是安卓用于处理嵌套滚动的方案。 主要有两个重要的接口， NestedScrollingParent2 和 NestedScrollingChild2 ，分别代表桥套滚动的外层和内层。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/06/18/Android/gradle相关基础/#more" rel="contents">
+              <a class="btn" href="/2021/07/24/Android/nested2嵌套滚动机制/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -538,7 +558,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/20/Android/源码解析/Fresco源码解析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/22/编译aosp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -552,7 +572,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/03/20/Android/源码解析/Fresco源码解析/" class="post-title-link" itemprop="url">Fresco源码解析</a>
+            <a href="/2021/05/22/编译aosp/" class="post-title-link" itemprop="url">编译aosp</a>
         </h1>
 
         <div class="post-meta">
@@ -562,7 +582,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-03-20 15:24:32" itemprop="dateCreated datePublished" datetime="2020-03-20T15:24:32+08:00">2020-03-20</time>
+              <time title="创建时间：2021-05-22 17:12:59" itemprop="dateCreated datePublished" datetime="2021-05-22T17:12:59+08:00">2021-05-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -571,17 +591,6 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -594,10 +603,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-介绍："><a href="#1-介绍：" class="headerlink" title="1. 介绍："></a>1. 介绍：</h2><p>fresco，facebook开源的针对android应用的图片加载框架，高效和功能齐全。</p>
+          <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><ol>
+<li>在macOS上，默认文件系统是不区分大小写的，需要先建立一个区分大小写的磁盘</li>
+</ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/20/Android/源码解析/Fresco源码解析/#more" rel="contents">
+              <a class="btn" href="/2021/05/22/编译aosp/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -621,7 +632,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/26/Flutter/Flutter中常用布局和Android的对应关系/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/18/Android/Framework/屏幕刷新机制/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -635,7 +646,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/02/26/Flutter/Flutter中常用布局和Android的对应关系/" class="post-title-link" itemprop="url">Flutter中常用布局和Android的对应关系</a>
+            <a href="/2021/03/18/Android/Framework/屏幕刷新机制/" class="post-title-link" itemprop="url">屏幕刷新机制</a>
         </h1>
 
         <div class="post-meta">
@@ -645,7 +656,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-02-26 15:49:51" itemprop="dateCreated datePublished" datetime="2020-02-26T15:49:51+08:00">2020-02-26</time>
+              <time title="创建时间：2021-03-18 00:05:08" itemprop="dateCreated datePublished" datetime="2021-03-18T00:05:08+08:00">2021-03-18</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -654,17 +665,6 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Flutter/" itemprop="url" rel="index">
-                    <span itemprop="name">Flutter</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -677,85 +677,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="/images/flutter相关属性和android的对应关系.webp" alt="图片"></p>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/19/Android/ViewDragHelper的使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/19/Android/ViewDragHelper的使用/" class="post-title-link" itemprop="url">ViewDragHelper的使用</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-19 10:36:30" itemprop="dateCreated datePublished" datetime="2020-02-19T10:36:30+08:00">2020-02-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>ViewDragHelper是一个V4包下的类, 可以帮助实现对子View的滑动拖放需求. 通常定义在自定义ViewGroup的内部</p>
+          <h1 id="requestLayout"><a href="#requestLayout" class="headerlink" title="requestLayout"></a>requestLayout</h1><p>view.requestLayout 最终会调用 ViewRootImpl.requestLayout</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/02/19/Android/ViewDragHelper的使用/#more" rel="contents">
+              <a class="btn" href="/2021/03/18/Android/Framework/屏幕刷新机制/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -779,7 +704,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/09/Android/外部View随着RecyclerView的滚动而显示或隐藏/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/07/Android/Framework/应用进程是如何启动的/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -793,7 +718,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/01/09/Android/外部View随着RecyclerView的滚动而显示或隐藏/" class="post-title-link" itemprop="url">外部View随着RecyclerView的滚动而显示或隐藏</a>
+            <a href="/2021/03/07/Android/Framework/应用进程是如何启动的/" class="post-title-link" itemprop="url">应用进程是如何启动的</a>
         </h1>
 
         <div class="post-meta">
@@ -803,26 +728,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-01-09 23:01:39" itemprop="dateCreated datePublished" datetime="2020-01-09T23:01:39+08:00">2020-01-09</time>
+              <time title="创建时间：2021-03-07 00:23:23" itemprop="dateCreated datePublished" datetime="2021-03-07T00:23:23+08:00">2021-03-07</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+                <time title="修改时间：2022-05-02 15:54:51" itemprop="dateModified" datetime="2022-05-02T15:54:51+08:00">2022-05-02</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -835,10 +749,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>外部的View上滑显示, 下滑隐藏<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">mOutsideOnScrollListener = <span class="keyword">new</span> OnScrollListener() &#123;</span><br><span class="line">    <span class="keyword">boolean</span> controlsVisible = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">int</span> scrolledDistance = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onScrollStateChanged</span><span class="params">(<span class="keyword">int</span> newState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (newState == RecyclerView.SCROLL_STATE_IDLE) &#123;</span><br><span class="line">            scrolledDistance = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onScrolled</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((controlsVisible &amp;&amp; dy &lt; <span class="number">0</span>) || (!controlsVisible &amp;&amp; dy &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            scrolledDistance += dy;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (scrolledDistance &lt; thresholdToShow &amp;&amp; controlsVisible) &#123;</span><br><span class="line">            <span class="comment">//UP</span></span><br><span class="line">            scrolledDistance = <span class="number">0</span>;</span><br><span class="line">            controlsVisible = <span class="keyword">false</span>;</span><br><span class="line">            view.onShow();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (scrolledDistance &gt;= thresholdToHide &amp;&amp; !controlsVisible) &#123;</span><br><span class="line">            <span class="comment">//DOWN</span></span><br><span class="line">            scrolledDistance = <span class="number">0</span>;</span><br><span class="line">            controlsVisible = <span class="keyword">true</span>;</span><br><span class="line">            view.onPause();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+          <h1 id="zygote的启动"><a href="#zygote的启动" class="headerlink" title="zygote的启动"></a>zygote的启动</h1><h2 id="zygote-的功能"><a href="#zygote-的功能" class="headerlink" title="zygote 的功能"></a>zygote 的功能</h2><p>zygote 进程的主要功能有两个：</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/01/09/Android/外部View随着RecyclerView的滚动而显示或隐藏/#more" rel="contents">
+              <a class="btn" href="/2021/03/07/Android/Framework/应用进程是如何启动的/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -862,7 +776,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/31/Android/自动滚播TextView/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/26/Android/自定义LayoutManager/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -876,7 +790,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/12/31/Android/自动滚播TextView/" class="post-title-link" itemprop="url">自动滚播TextView</a>
+            <a href="/2021/02/26/Android/自定义LayoutManager/" class="post-title-link" itemprop="url">自定义LayoutManager</a>
         </h1>
 
         <div class="post-meta">
@@ -886,7 +800,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-12-31 14:49:08" itemprop="dateCreated datePublished" datetime="2019-12-31T14:49:08+08:00">2019-12-31</time>
+              <time title="创建时间：2021-02-26 17:06:00" itemprop="dateCreated datePublished" datetime="2021-02-26T17:06:00+08:00">2021-02-26</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -895,23 +809,6 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/View/" itemprop="url" rel="index">
-                    <span itemprop="name">View</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -924,7 +821,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>要实现一个自动滚播的自定义View</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutoSwitchView</span> <span class="keyword">extends</span> <span class="title">AppCompatTextView</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_IDLE_TIME = <span class="number">3000</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_SWITCH_TIME = <span class="number">1000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mIdleTime = DEFAULT_IDLE_TIME;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mSwitchTime = DEFAULT_SWITCH_TIME;</span><br><span class="line">    <span class="keyword">private</span> Paint mPaint;</span><br><span class="line">    <span class="keyword">private</span> String mCurStr;</span><br><span class="line">    <span class="keyword">private</span> String mNextStr;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; mContentList;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mCurIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> mCurValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> mIsRunning = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> ValueAnimator mAnimator;</span><br><span class="line">    <span class="keyword">private</span> Paint.FontMetrics mFontMetrics;</span><br><span class="line">    <span class="keyword">private</span> Runnable mRunnable;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mWidth;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingLeft;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingRight;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingTop;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingBottom;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mHeight;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> mTextBaseY;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AutoSwitchView</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context);</span><br><span class="line">        init(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AutoSwitchView</span><span class="params">(Context context, @Nullable AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs);</span><br><span class="line">        init(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AutoSwitchView</span><span class="params">(Context context, @Nullable AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</span><br><span class="line">        init(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        mPaint = <span class="keyword">new</span> Paint();</span><br><span class="line">        mPaint.setTextAlign(Paint.Align.CENTER);</span><br><span class="line"></span><br><span class="line">        mAnimator = ValueAnimator.ofFloat(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">        mAnimator.setStartDelay(mIdleTime);</span><br><span class="line">        mAnimator.setDuration(mSwitchTime);</span><br><span class="line">        mAnimator.addUpdateListener(<span class="keyword">new</span> ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">                mCurValue = (<span class="keyword">float</span>) animation.getAnimatedValue();</span><br><span class="line">                <span class="comment">// 必须要加这个判断, 不然会出现问题</span></span><br><span class="line">                <span class="keyword">if</span> (mCurValue &lt; <span class="number">1.0</span>) &#123;</span><br><span class="line">                    invalidate();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        mAnimator.addListener(<span class="keyword">new</span> AnimatorListenerAdapter() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationEnd</span><span class="params">(Animator animation, <span class="keyword">boolean</span> isReverse)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (!mIsRunning) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                mCurIndex = (mCurIndex + <span class="number">1</span>) % mContentList.size();</span><br><span class="line">                mCurStr = mContentList.get(mCurIndex);</span><br><span class="line">                mNextStr = mContentList.get((mCurIndex + <span class="number">1</span>) % mContentList.size());</span><br><span class="line">                <span class="keyword">if</span> (mRunnable == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                            mAnimator.start();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;;</span><br><span class="line">                &#125;</span><br><span class="line">                postDelayed(mRunnable, mIdleTime);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationCancel</span><span class="params">(Animator animation)</span> </span>&#123;</span><br><span class="line">                mIsRunning = <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mContentList == <span class="keyword">null</span> || mContentList.size() == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">if</span> (mIsRunning) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mContentList.size() &gt; <span class="number">1</span>) &#123;</span><br><span class="line">            mCurStr = mContentList.get(<span class="number">0</span>);</span><br><span class="line">            mNextStr = mContentList.get(<span class="number">1</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mCurStr = mContentList.get(<span class="number">0</span>);</span><br><span class="line">            mNextStr = mContentList.get(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        mCurIndex = <span class="number">0</span>;</span><br><span class="line">        mIsRunning = <span class="keyword">true</span>;</span><br><span class="line">        mAnimator.start();</span><br><span class="line">        mAnimator.setStartDelay(mIdleTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mRunnable != <span class="keyword">null</span>) &#123;</span><br><span class="line">            removeCallbacks(mRunnable);</span><br><span class="line">        &#125;</span><br><span class="line">        mAnimator.cancel();</span><br><span class="line">        mIsRunning = <span class="keyword">false</span>;</span><br><span class="line">        mCurIndex = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentList</span><span class="params">(List&lt;String&gt; contentList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (contentList == <span class="keyword">null</span> || contentList.size() == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        mContentList = contentList;</span><br><span class="line">        start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line"></span><br><span class="line">        mWidth = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line">        mPaddingLeft = getPaddingLeft();</span><br><span class="line">        mPaddingRight = getPaddingRight();</span><br><span class="line">        mPaddingTop = getPaddingTop();</span><br><span class="line">        mPaddingBottom = getPaddingBottom();</span><br><span class="line"></span><br><span class="line">        mPaint.setTextSize(getTextSize());</span><br><span class="line">        mFontMetrics = mPaint.getFontMetrics();</span><br><span class="line"></span><br><span class="line">        mTextBaseY = -mFontMetrics.top + mPaddingTop;</span><br><span class="line">        mHeight = Math.round(mFontMetrics.bottom - mFontMetrics.top) + mPaddingTop + mPaddingBottom;</span><br><span class="line"></span><br><span class="line">        setMeasuredDimension(mWidth, mHeight);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> curStartX = mPaddingLeft + mPaint.measureText(mCurStr) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">float</span> nextStartX = mPaddingLeft + mPaint.measureText(mNextStr) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> baseY = <span class="number">2</span> * mTextBaseY * (<span class="number">0.5f</span> - mCurValue);</span><br><span class="line">        <span class="keyword">if</span> (baseY &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            canvas.drawText(mCurStr, curStartX, baseY, mPaint);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            canvas.drawText(mNextStr, nextStartX, <span class="number">2</span> * mTextBaseY + baseY, mPaint);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h1 id="LayoutManager-的常用方法"><a href="#LayoutManager-的常用方法" class="headerlink" title="LayoutManager 的常用方法"></a>LayoutManager 的常用方法</h1><h3 id="generateDefaultLayoutParams"><a href="#generateDefaultLayoutParams" class="headerlink" title="generateDefaultLayoutParams"></a>generateDefaultLayoutParams</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/26/Android/自定义LayoutManager/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -943,7 +848,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/21/Android/ViewModel-LiveData和LifeCricle/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/24/Flutter/redux源码/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -957,7 +862,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/12/21/Android/ViewModel-LiveData和LifeCricle/" class="post-title-link" itemprop="url">ViewModel,LiveData和Lifecycle</a>
+            <a href="/2021/01/24/Flutter/redux源码/" class="post-title-link" itemprop="url">redux源码</a>
         </h1>
 
         <div class="post-meta">
@@ -967,7 +872,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-12-21 20:19:41" itemprop="dateCreated datePublished" datetime="2019-12-21T20:19:41+08:00">2019-12-21</time>
+              <time title="创建时间：2021-01-24 21:40:51" itemprop="dateCreated datePublished" datetime="2021-01-24T21:40:51+08:00">2021-01-24</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -988,10 +893,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="ViewModel、Lifecycles和LiveData"><a href="#ViewModel、Lifecycles和LiveData" class="headerlink" title="ViewModel、Lifecycles和LiveData"></a>ViewModel、Lifecycles和LiveData</h1>
+          <p>Redux是一个Flutter状态管理工具。实现并不复杂，其核心是一个简单的观察者模式。我们从 观察者 和 被观察者 两个角度来分析 Redux</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/12/21/Android/ViewModel-LiveData和LifeCricle/#more" rel="contents">
+              <a class="btn" href="/2021/01/24/Flutter/redux源码/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1015,7 +920,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1061,7 +966,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1099,7 +1004,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/16/Android/scrollBy-scrollTo-和Scroller/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/14/Android/源码解析/OkHttp3源码-责任链的分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/06/16/Android/scrollBy-scrollTo-和Scroller/" class="post-title-link" itemprop="url">scrollBy(),scrollTo()和Scroller</a>
+            <a href="/2019/11/14/Android/源码解析/OkHttp3源码-责任链的分析/" class="post-title-link" itemprop="url">OkHttp3源码-责任链的分析</a>
         </h1>
 
         <div class="post-meta">
@@ -230,7 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-06-16 20:26:14" itemprop="dateCreated datePublished" datetime="2019-06-16T20:26:14+08:00">2019-06-16</time>
+              <time title="创建时间：2019-11-14 15:52:46" itemprop="dateCreated datePublished" datetime="2019-11-14T15:52:46+08:00">2019-11-14</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -262,10 +262,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="scrollBy-scrollTo-和Scroller"><a href="#scrollBy-scrollTo-和Scroller" class="headerlink" title="scrollBy(),scrollTo()和Scroller"></a>scrollBy(),scrollTo()和Scroller</h1>
+          <h1 id="okhttp3源码-责任链的分析"><a href="#okhttp3源码-责任链的分析" class="headerlink" title="okhttp3源码-责任链的分析"></a>okhttp3源码-责任链的分析</h1><p>okhttp3中一个请求封装为一个call, 无论是一个同步的Realcall还是一个异步的AsyncCall, 最终都是辗转调用自己的getResponseWithInterceptorChain()方法, 开始请求的操作流程</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/06/16/Android/scrollBy-scrollTo-和Scroller/#more" rel="contents">
+              <a class="btn" href="/2019/11/14/Android/源码解析/OkHttp3源码-责任链的分析/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -289,7 +289,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/04/Linux/mysql配置相关/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/13/Android/源码解析/OkHttp3源码-发起请求的主要流程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -303,7 +303,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/05/04/Linux/mysql配置相关/" class="post-title-link" itemprop="url">mysql配置相关</a>
+            <a href="/2019/11/13/Android/源码解析/OkHttp3源码-发起请求的主要流程/" class="post-title-link" itemprop="url">OkHttp3源码-发起请求的主要流程</a>
         </h1>
 
         <div class="post-meta">
@@ -313,7 +313,90 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-04 11:04:44" itemprop="dateCreated datePublished" datetime="2019-05-04T11:04:44+08:00">2019-05-04</time>
+              <time title="创建时间：2019-11-13 21:21:04" itemprop="dateCreated datePublished" datetime="2019-11-13T21:21:04+08:00">2019-11-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-12 14:54:54" itemprop="dateModified" datetime="2022-06-12T14:54:54+08:00">2022-06-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="OkHttp3源码解析-发起请求的主要流程"><a href="#OkHttp3源码解析-发起请求的主要流程" class="headerlink" title="OkHttp3源码解析-发起请求的主要流程"></a>OkHttp3源码解析-发起请求的主要流程</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/11/13/Android/源码解析/OkHttp3源码-发起请求的主要流程/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/12/Linux/docker的使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/12/Linux/docker的使用/" class="post-title-link" itemprop="url">docker的使用</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-12 16:09:50" itemprop="dateCreated datePublished" datetime="2019-11-12T16:09:50+08:00">2019-11-12</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -345,10 +428,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-尽量使用MariaDB而不是mysql"><a href="#1-尽量使用MariaDB而不是mysql" class="headerlink" title="1. 尽量使用MariaDB而不是mysql"></a>1. 尽量使用MariaDB而不是mysql</h2>
+          <h1 id="docker-的使用"><a href="#docker-的使用" class="headerlink" title="docker 的使用"></a>docker 的使用</h1><h2 id="Docker-和-虚拟机的区别"><a href="#Docker-和-虚拟机的区别" class="headerlink" title="Docker 和 虚拟机的区别:"></a>Docker 和 虚拟机的区别:</h2>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/05/04/Linux/mysql配置相关/#more" rel="contents">
+              <a class="btn" href="/2019/11/12/Linux/docker的使用/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -372,7 +455,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/02/Linux/apt常用命令/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/09/Android/Framework/handler机制源码解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -386,7 +469,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/05/02/Linux/apt常用命令/" class="post-title-link" itemprop="url">apt常用命令</a>
+            <a href="/2019/11/09/Android/Framework/handler机制源码解析/" class="post-title-link" itemprop="url">handler机制源码解析</a>
         </h1>
 
         <div class="post-meta">
@@ -396,168 +479,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-02 19:49:35" itemprop="dateCreated datePublished" datetime="2019-05-02T19:49:35+08:00">2019-05-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="apt常用命令"><a href="#apt常用命令" class="headerlink" title="apt常用命令"></a>apt常用命令</h1><p>参考：<br><a href="https://www.centos.bz/2017/07/ubuntu-apt-cache-version-list-install-specify-version/" target="_blank" rel="noopener">apt命令安装指定版本</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/02/Linux/apt常用命令/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/16/Android/Activity-class-does-not-exist/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/16/Android/Activity-class-does-not-exist/" class="post-title-link" itemprop="url">Activity class {} does not exist</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-16 19:23:35" itemprop="dateCreated datePublished" datetime="2019-04-16T19:23:35+08:00">2019-04-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/AndroidStudio/" itemprop="url" rel="index">
-                    <span itemprop="name">AndroidStudio</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Activity-class-does-not-exist"><a href="#Activity-class-does-not-exist" class="headerlink" title="Activity class {} does not exist"></a>Activity class {} does not exist</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/04/16/Android/Activity-class-does-not-exist/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/14/Android/Activity管理类的封装/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/14/Android/Activity管理类的封装/" class="post-title-link" itemprop="url">Activity管理类的封装</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-14 19:41:50" itemprop="dateCreated datePublished" datetime="2019-04-14T19:41:50+08:00">2019-04-14</time>
+              <time title="创建时间：2019-11-09 13:59:20" itemprop="dateCreated datePublished" datetime="2019-11-09T13:59:20+08:00">2019-11-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -589,10 +511,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>有的时候我们需要在一个activity1中销毁另一个制定的activity2。或者是在程序的某个位置销毁所有的activity，达到退出整个app的目的</p>
+          <h1 id="Handler机制源码解析"><a href="#Handler机制源码解析" class="headerlink" title="Handler机制源码解析"></a>Handler机制源码解析</h1><p>因为handler机制的大概源码网上都有，也很好理解，这里对关键源码做一些理解。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/04/14/Android/Activity管理类的封装/#more" rel="contents">
+              <a class="btn" href="/2019/11/09/Android/Framework/handler机制源码解析/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -616,7 +538,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/14/Android/Handler防止内存泄露/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/15/Android/RemoteView刷新View/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -630,7 +552,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/04/14/Android/Handler防止内存泄露/" class="post-title-link" itemprop="url">Handler防止内存泄露</a>
+            <a href="/2019/09/15/Android/RemoteView刷新View/" class="post-title-link" itemprop="url">RemoteView刷新view</a>
         </h1>
 
         <div class="post-meta">
@@ -640,162 +562,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-04-14 18:59:55" itemprop="dateCreated datePublished" datetime="2019-04-14T18:59:55+08:00">2019-04-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Handler防止内存泄露"><a href="#Handler防止内存泄露" class="headerlink" title="Handler防止内存泄露"></a>Handler防止内存泄露</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> MyHandler mHandler = <span class="keyword">new</span> MyHandler(<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">private</span> TextView mTextView ;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> WeakReference&lt;Context&gt; reference;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MyHandler</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">            reference = <span class="keyword">new</span> WeakReference&lt;&gt;(context);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">            MainActivity activity = (MainActivity) reference.get();</span><br><span class="line">            <span class="keyword">if</span>(activity != <span class="keyword">null</span>)&#123;</span><br><span class="line">                activity.mTextView.setText(<span class="string">""</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        mTextView = (TextView)findViewById(R.id.textview);</span><br><span class="line">        loadData();</span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">//loadData()方法是在子线程中，执行</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//...request</span></span><br><span class="line">        Message message = Message.obtain();</span><br><span class="line">        mHandler.sendMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">        <span class="comment">//如果你的Handler被delay（延时了）,可以做如下的处理</span></span><br><span class="line">        mHandler.removeCallbacksAndMessages(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/04/14/Android/Handler防止内存泄露/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/Java/Jni入门/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/13/Java/Jni入门/" class="post-title-link" itemprop="url">Jni入门</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-13 13:12:47" itemprop="dateCreated datePublished" datetime="2019-04-13T13:12:47+08:00">2019-04-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Jni入门"><a href="#Jni入门" class="headerlink" title="Jni入门"></a>Jni入门</h1><p>参考:<br><a href="http://wiki.jikexueyuan.com/project/jni-ndk-developer-guide/workflow.html" target="_blank" rel="noopener">JNI 开发流程 - JNI/NDK 开发指南 - 极客学院Wiki</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/04/13/Java/Jni入门/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/Android/自定义ViewGroup/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/13/Android/自定义ViewGroup/" class="post-title-link" itemprop="url">自定义ViewGroup</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-13 13:12:35" itemprop="dateCreated datePublished" datetime="2019-04-13T13:12:35+08:00">2019-04-13</time>
+              <time title="创建时间：2019-09-15 16:09:50" itemprop="dateCreated datePublished" datetime="2019-09-15T16:09:50+08:00">2019-09-15</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -833,10 +600,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="自定义ViewGroup"><a href="#自定义ViewGroup" class="headerlink" title="自定义ViewGroup"></a>自定义ViewGroup</h1><h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><p><a href="https://blog.csdn.net/xmxkf/article/details/51500304#3-%E6%94%AF%E6%8C%81layoutmargin%E5%B1%9E%E6%80%A7" target="_blank" rel="noopener">自定义LayoutParams</a><br><a href="https://blog.csdn.net/xmxkf/article/details/51490283" target="_blank" rel="noopener">关于onMeasure过程的理解</a><br><a href="https://juejin.im/post/5ad37c476fb9a028bc2e32af" target="_blank" rel="noopener">Measure测量流程全解析（简洁）</a></p>
+          <h1 id="RemoteView刷新View"><a href="#RemoteView刷新View" class="headerlink" title="RemoteView刷新View"></a>RemoteView刷新View</h1><h2 id="通知栏"><a href="#通知栏" class="headerlink" title="通知栏"></a>通知栏</h2><p>在Notification通知栏的相关开发中，RemoteView刷新view只要重新发送一遍Notification，保证message_id是相同的就可以了<br>但是由于在实际的需求中出现了异步刷新的场景。即，当要刷新时，先直接刷新textview，调起线程刷新获取image资源，在回调里调用RemoteView的setxxx方法，刷新ImageView。 在这种情况下，出现了刷新不及时的情况，图片的刷新有时成功有时不成功。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/04/13/Android/自定义ViewGroup/#more" rel="contents">
+              <a class="btn" href="/2019/09/15/Android/RemoteView刷新View/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -860,7 +627,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/C/多个cpp文件编译共享同一个-h文件的全局变量/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/28/Android/通知铃声的自定义遇到的问题-根据uri读取文件/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -874,7 +641,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/04/13/C/多个cpp文件编译共享同一个-h文件的全局变量/" class="post-title-link" itemprop="url">多个cpp文件编译共享同一个.h文件的全局变量</a>
+            <a href="/2019/08/28/Android/通知铃声的自定义遇到的问题-根据uri读取文件/" class="post-title-link" itemprop="url">通知铃声的自定义遇到的问题-根据uri读取文件</a>
         </h1>
 
         <div class="post-meta">
@@ -884,26 +651,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-04-13 13:12:22" itemprop="dateCreated datePublished" datetime="2019-04-13T13:12:22+08:00">2019-04-13</time>
+              <time title="创建时间：2019-08-28 23:07:53" itemprop="dateCreated datePublished" datetime="2019-08-28T23:07:53+08:00">2019-08-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+                <time title="修改时间：2021-10-03 10:27:00" itemprop="dateModified" datetime="2021-10-03T10:27:00+08:00">2021-10-03</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-C/" itemprop="url" rel="index">
-                    <span itemprop="name">C/C++</span>
-                  </a>
-                </span>
-            </span>
 
           
 
@@ -916,10 +672,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="多个cpp文件编译共享同一个-h文件的全局变量"><a href="#多个cpp文件编译共享同一个-h文件的全局变量" class="headerlink" title="多个cpp文件编译共享同一个.h文件的全局变量"></a>多个cpp文件编译共享同一个.h文件的全局变量</h1>
+          <h1 id="通知铃声自定义遇到的问题-根据uri读取文件"><a href="#通知铃声自定义遇到的问题-根据uri读取文件" class="headerlink" title="通知铃声自定义遇到的问题: 根据uri读取文件"></a>通知铃声自定义遇到的问题: 根据uri读取文件</h1>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/04/13/C/多个cpp文件编译共享同一个-h文件的全局变量/#more" rel="contents">
+              <a class="btn" href="/2019/08/28/Android/通知铃声的自定义遇到的问题-根据uri读取文件/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -943,7 +699,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/C/C语言结构体的内存对齐/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/15/Android/RecyclerView缓存机制总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -957,7 +713,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/04/13/C/C语言结构体的内存对齐/" class="post-title-link" itemprop="url">C语言结构体的内存对齐</a>
+            <a href="/2019/08/15/Android/RecyclerView缓存机制总结/" class="post-title-link" itemprop="url">RecyclerView缓存机制总结</a>
         </h1>
 
         <div class="post-meta">
@@ -967,7 +723,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-04-13 13:11:14" itemprop="dateCreated datePublished" datetime="2019-04-13T13:11:14+08:00">2019-04-13</time>
+              <time title="创建时间：2019-08-15 00:31:17" itemprop="dateCreated datePublished" datetime="2019-08-15T00:31:17+08:00">2019-08-15</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -982,8 +738,14 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-C/" itemprop="url" rel="index">
-                    <span itemprop="name">C/C++</span>
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/View/" itemprop="url" rel="index">
+                    <span itemprop="name">View</span>
                   </a>
                 </span>
             </span>
@@ -999,17 +761,260 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="C语言结构体的内存对齐"><a href="#C语言结构体的内存对齐" class="headerlink" title="C语言结构体的内存对齐"></a>C语言结构体的内存对齐</h1><h2 id="内存对齐原则"><a href="#内存对齐原则" class="headerlink" title="内存对齐原则"></a>内存对齐原则</h2><ul>
-<li><p>数据成员对齐规则：结构（struct或联合union）的数据成员，第一个数据成员放在offset为0的地方，以后每个数据成员存储的起始位置: min(#pragma pack()指定的数,这个数据%成员的自身长度)的倍数</p>
-</li>
-<li><p>结构体作为成员：如果一个结构里有某些结构体成员，则结构体成员要从min(#pragram pack() , 内部长度最长的数据成员)的整数倍地址开始存储。（struct a里存有struct b，b里有char，int，double等元素，那b应该从min(#pragram pack(), 8)的整数倍开始存储。）</p>
-</li>
-<li><p>结构体的总大小，也就是sizeof的结果，必须是 min(#pragram pack() , 长度最长的数据成员) 的整数倍</p>
-</li>
-</ul>
+          <h1 id="RecyclerView缓存机制总结"><a href="#RecyclerView缓存机制总结" class="headerlink" title="RecyclerView缓存机制总结"></a>RecyclerView缓存机制总结</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/04/13/C/C语言结构体的内存对齐/#more" rel="contents">
+              <a class="btn" href="/2019/08/15/Android/RecyclerView缓存机制总结/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/13/Android/Framework/事件分发机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/13/Android/Framework/事件分发机制/" class="post-title-link" itemprop="url">事件分发机制</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-13 21:12:59" itemprop="dateCreated datePublished" datetime="2019-08-13T21:12:59+08:00">2019-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-17 13:09:11" itemprop="dateModified" datetime="2021-11-17T13:09:11+08:00">2021-11-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/View/" itemprop="url" rel="index">
+                    <span itemprop="name">View</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="事件分发机制"><a href="#事件分发机制" class="headerlink" title="事件分发机制"></a>事件分发机制</h1><h2 id="dispatchTouchEvent"><a href="#dispatchTouchEvent" class="headerlink" title="dispatchTouchEvent"></a>dispatchTouchEvent</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/13/Android/Framework/事件分发机制/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/13/Android/LayoutInflater解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/13/Android/LayoutInflater解析/" class="post-title-link" itemprop="url">LayoutInflater解析</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-13 20:31:21" itemprop="dateCreated datePublished" datetime="2019-08-13T20:31:21+08:00">2019-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="LayoutInflater解析"><a href="#LayoutInflater解析" class="headerlink" title="LayoutInflater解析"></a>LayoutInflater解析</h1><h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">View result = root;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/13/Android/LayoutInflater解析/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/02/Android/Scale动画组合使用的坑/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/02/Android/Scale动画组合使用的坑/" class="post-title-link" itemprop="url">Scale动画组合使用的坑</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-02 09:43:37" itemprop="dateCreated datePublished" datetime="2019-08-02T09:43:37+08:00">2019-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/View/" itemprop="url" rel="index">
+                    <span itemprop="name">View</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Scale动画组合使用的坑"><a href="#Scale动画组合使用的坑" class="headerlink" title="Scale动画组合使用的坑"></a>Scale动画组合使用的坑</h1><h2 id="API"><a href="#API" class="headerlink" title="API"></a>API</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Animation scale = <span class="keyword">new</span> ScaleAnimation(<span class="number">0.6f</span>, <span class="number">1.03f</span>, <span class="number">0.6f</span>, <span class="number">1.03f</span>, Animation.RELATIVE_TO_SELF, <span class="number">1f</span>, Animation.RELATIVE_TO_SELF, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/02/Android/Scale动画组合使用的坑/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1033,7 +1038,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1079,7 +1084,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1117,7 +1122,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

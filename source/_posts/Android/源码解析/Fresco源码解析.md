@@ -19,7 +19,6 @@ fresco，facebook开源的针对android应用的图片加载框架，高效和�
 ## 2. 主要组成部分
 
 ![fresco基本结构](/images/fresco基本结构.jpg)
-
 * DraweeView：继承于ImageView，只是简单的读取xml文件的一些属性值和做一些初始化的工作，图层管理交由Hierarchy负责，图层数据获取交由ViewHolder负责。
 * DraweeHierarchy：由多层Drawable组成，每层Drawable提供某种功能（例如：缩放、圆角）。
 * DraweeController：控制数据的获取与图片加载，向pipeline发出请求，并接收相应事件，并根据不同事件控制Hierarchy，从DraweeView接收用户的事件，然后执行取消网络请求、回收资源等操作。
