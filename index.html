@@ -206,6 +206,144 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/07/10/Android/源码解析/mmkv原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/10/Android/源码解析/mmkv原理/" class="post-title-link" itemprop="url">mmkv原理</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-07-10 17:03:32 / 修改时间：19:36:49" itemprop="dateCreated datePublished" datetime="2022-07-10T17:03:32+08:00">2022-07-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="SharedPreferences的痛点"><a href="#SharedPreferences的痛点" class="headerlink" title="SharedPreferences的痛点"></a>SharedPreferences的痛点</h2><h3 id="只能全量读取和写入"><a href="#只能全量读取和写入" class="headerlink" title="只能全量读取和写入"></a>只能全量读取和写入</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/10/Android/源码解析/mmkv原理/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/06/12/Android/源码解析/Retrofit源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/06/12/Android/源码解析/Retrofit源码解析/" class="post-title-link" itemprop="url">Retrofit源码解析</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-12 18:21:16" itemprop="dateCreated datePublished" datetime="2022-06-12T18:21:16+08:00">2022-06-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-05 13:30:08" itemprop="dateModified" datetime="2022-07-05T13:30:08+08:00">2022-07-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RetrofitService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GET</span>(<span class="string">"query"</span>)</span><br><span class="line">    <span class="function">Observable&lt;PostInfo&gt; <span class="title">getPostInfoRx</span><span class="params">(@Query(<span class="string">"type"</span>)</span> String type, @<span class="title">Query</span><span class="params">(<span class="string">"postid"</span>)</span> String postid)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</span><br><span class="line">        .baseUrl(<span class="string">"http://www.kuaidi100.com/"</span>)</span><br><span class="line">        .addConverterFactory(GsonConverterFactory.create())</span><br><span class="line">        .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) <span class="comment">// 支持RxJava</span></span><br><span class="line">        .build();</span><br><span class="line">        </span><br><span class="line">RetrofitService service = retrofit.create(XxxInterface.class);</span><br><span class="line">Call&lt;PostInfo&gt; call = service.getPostInfo(<span class="string">"yuantong"</span>, <span class="string">"11111111111"</span>);</span><br><span class="line">call.enqueue(<span class="keyword">new</span> Callback&lt;PostInfo&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Call&lt;PostInfo&gt; call, Response&lt;PostInfo&gt; response)</span> </span>&#123;</span><br><span class="line">        Log.i(<span class="string">"http返回："</span>, response.body().toString() + <span class="string">""</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Call&lt;PostInfo&gt; call, Throwable t)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/12/Android/源码解析/Retrofit源码解析/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/02/Android/Framework/RequestLayout和Invalidate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -788,142 +926,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/25/Android/Framework/MultiDex原理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/25/Android/Framework/MultiDex原理/" class="post-title-link" itemprop="url">MultiDex原理</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-12-25 18:20:52 / 修改时间：19:04:06" itemprop="dateCreated datePublished" datetime="2021-12-25T18:20:52+08:00">2021-12-25</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>apk中的一个dex文件的方法索引是一个ushort类型，最大值为655535. 所以一个dex文件的最大方法数是65535.<br>为了规避安卓项目编译65536最大方法数的限制，需要做分dex</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/25/Android/Framework/MultiDex原理/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/27/技术Owner的职责/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/27/技术Owner的职责/" class="post-title-link" itemprop="url">技术Owner的职责</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-11-27 15:58:24 / 修改时间：16:09:40" itemprop="dateCreated datePublished" datetime="2021-11-27T15:58:24+08:00">2021-11-27</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>参与需求评审，完成可行性调研，完善细节。<ul>
-<li>要督促完成UI/UE评审，埋点评审</li>
-</ul>
-</li>
-<li>技术评审，输出技术方案，拆分需求子任务，给出详细排期</li>
-<li>开始开发，定期站会，同步风险<ul>
-<li>发生变更，更改排期</li>
-<li>需求提测前，推进case评审</li>
-<li>自测</li>
-</ul>
-</li>
-</ul>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -974,7 +976,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

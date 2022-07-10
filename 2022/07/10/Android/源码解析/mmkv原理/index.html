@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="SharedPreferences的痛点只能全量读取和写入">
+<meta name="keywords" content="源码解析,glide">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mmkv原理">
+<meta property="og:url" content="http://yoursite.com/2022/07/10/Android/源码解析/mmkv原理/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="SharedPreferences的痛点只能全量读取和写入">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-07-10T11:36:49.455Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mmkv原理">
+<meta name="twitter:description" content="SharedPreferences的痛点只能全量读取和写入">
+
+<link rel="canonical" href="http://yoursite.com/2022/07/10/Android/源码解析/mmkv原理/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>mmkv原理 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/07/10/Android/源码解析/mmkv原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mmkv原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-07-10 17:03:32 / 修改时间：19:36:49" itemprop="dateCreated datePublished" datetime="2022-07-10T17:03:32+08:00">2022-07-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="SharedPreferences的痛点"><a href="#SharedPreferences的痛点" class="headerlink" title="SharedPreferences的痛点"></a>SharedPreferences的痛点</h2><h3 id="只能全量读取和写入"><a href="#只能全量读取和写入" class="headerlink" title="只能全量读取和写入"></a>只能全量读取和写入</h3><a id="more"></a><p>sp保存数据的文件形式是xml。每次读取都去读xml文件，解析后加入内存缓存里。每次写入都更改内存缓存的值，然后全量写入到文件里</p>
+<h3 id="有anr的风险"><a href="#有anr的风险" class="headerlink" title="有anr的风险"></a>有anr的风险</h3><ul>
+<li><p>在第一次载入时会产生anr<br>有一个加锁配合while循环，如果第一次使用xml文件还没有加载完成，就会pending。xml文件的全量读取本身就不快，如果xml文件过大，在首次使用时就可能会anr，在app启动过程中问题会比较明显。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getBoolean</span><span class="params">(String key, <span class="keyword">boolean</span> defValue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">        awaitLoadedLocked();</span><br><span class="line">        Boolean v = (Boolean)mMap.get(key);</span><br><span class="line">        <span class="keyword">return</span> v != <span class="keyword">null</span> ? v : defValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">awaitLoadedLocked</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!mLoaded) &#123;</span><br><span class="line">        BlockGuard.getThreadPolicy().onReadFromDisk();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!mLoaded) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mLock.wait();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException unused) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mThrowable != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(mThrowable);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>commit写入导致anr<br>没啥说的，同步写入文件</p>
+</li>
+<li><p>apply写入导致anr<br>apply会异步写入，先写入到内存缓存，然后在子线程更新xml文件。<br>但是sp会将更新文件的问题加入到QueuedWork中。android的系统会在Activity的onStop,onPause等生命周期中，调用QueuedWork.waitToFinish，等待落盘的任务队列执行完成，如果任务队列中的任务很多，或者待写入的数据量很大时(sp文件是全量读写的)，在一些io性能差的中低端机型上就会很容易出现anr.</p>
+</li>
+</ul>
+<p>具体可以参考这个文章：<a href="https://juejin.cn/post/6844904033820377096" target="_blank" rel="noopener">https://juejin.cn/post/6844904033820377096</a><br><a href="https://www.jianshu.com/p/9ae0f6842689" target="_blank" rel="noopener">https://www.jianshu.com/p/9ae0f6842689</a></p>
+<h2 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h2><p>通过 mmap 内存映射文件，提供一段可供随时写入的内存块，App 只管往里面写数据，由操作系统负责将内存回写到文件，不必担心 crash 导致数据丢失。</p>
+<ul>
+<li>普通io文件操作的过程<br>Linux系统内存分为 内核空间 和 用户空间 。文件操作属于 内核空间。应用需要通过系统调用才能完成文件读取。<br>普通io操作需要先将文件拷贝到页缓存里(内核空间)，然后再从页缓存拷贝到用户空间。这需要两次拷贝。</li>
+<li>mmap文件读写<br>mmap创建了 用户空间 到 内核空间 的映射，返回对应的指针；<br>读取文件时，文件还是一样拷贝到页缓存里(内核空间)。 因为创建了内存映射，用户空间能直接获取到文件数据。<br>写文件时，直接写入到指针地址对应的内核空间，Linux系统机制会保证内核空间到文件磁盘的写入，这样即使进程crash，也不会导致数据丢失</li>
+</ul>
+<h2 id="数据存储优化"><a href="#数据存储优化" class="headerlink" title="数据存储优化"></a>数据存储优化</h2><ul>
+<li>数据组织<br>数据序列化方面我们选用 protobuf 协议，pb 在性能和空间占用上都有不错的表现。</li>
+<li>写入优化<br>考虑到主要使用场景是频繁地进行写入更新，我们需要有增量更新的能力。我们考虑将增量 kv 对象序列化后，append 到内存末尾。<br>这样同一个 key 会有新旧若干份数据，最新的数据在最后。写入速度会很快<br>读取只需要从后往前读，读到第一个key匹配即使最新的有效数据。</li>
+<li>空间增长<br>使用 append 实现增量更新带来了一个新的问题，就是不断 append 的话，文件大小会增长得不可控。我们需要在性能和空间上做个折中。<br>以内存 pagesize(内存页大小) 为单位申请空间，在空间用尽之前都是 append 模式；当 append 到文件末尾时，进行文件重整(去除重复key)、key 排重，尝试序列化保存排重结果；在程序启动第一次打开 mmkv 时，也会进行文件重整。<br>排重后空间还是不够用的话，将文件扩大一倍，直到空间足够。</li>
+</ul>
+<h2 id="多进程读写支持"><a href="#多进程读写支持" class="headerlink" title="多进程读写支持"></a>多进程读写支持</h2><p>在mmap的时候，只会返回映射内存的指针。在append和重整时可以加文件锁，保证自己的写文件成功。但是一个进程并不知道自己文件的数据是否被其他进程修改过。</p>
+<ul>
+<li>写指针的同步<br>因为mmkv的写入是直接append在数据末尾，mmap导致数据的大小和文件的大小并不一直，所以需要一个指针指向有效数据的末尾，称之为写指针。<br>mmkv 在每个进程内部缓存自己的写指针，然后在写入键值的同时，还要把最新的写指针位置也写到 mmap 内存中；这样每个进程只需要对比一下缓存的指针与 mmap 内存的写指针，如果不一样，就说明其他进程进行了写操作。<br>事实上 MMKV 原本就在文件头部保存了有效内存的大小，这个数值刚好就是写指针的内存偏移量，可以重用这个数值来校对写指针。</li>
+<li>内存重整的感知<br>使用一个单调递增的序列号，每次发生内存重整，就将序列号递增。将这个序列号也放到 mmap 内存中，每个进程内部也缓存一份，只需要对比序列号是否一致，就能够知道其他进程是否触发了内存重整。</li>
+<li>内存增长的感知<br>事实上 MMKV 在内存增长之前，会先尝试通过内存重整来腾出空间，重整后还不够空间才申请新的内存。所以内存增长可以跟内存重整一样处理。至于新的内存大小，可以通过查询文件大小来获得，无需在 mmap 内存另外存放。</li>
+</ul>
+<p>可以参考文档 <a href="https://cloud.tencent.com/developer/article/1354199" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1354199</a></p>
+<h2 id="mmkv的不足"><a href="#mmkv的不足" class="headerlink" title="mmkv的不足"></a>mmkv的不足</h2><p>主要是mmap的缺点，需要提前确定好文件的大小，即 映射内存的大小。但是，映射内存的大小并不是有效数据的大小。 映射内存只是提供了一个快捷操作文件的场地。 会造成存储空间的浪费，并且映射内存的大小必须是页缓存(pagesize)的整数倍</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/源码解析/" rel="tag"># 源码解析</a>
+              <a href="/tags/glide/" rel="tag"># glide</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2022/06/12/Android/源码解析/Retrofit源码解析/" rel="next" title="Retrofit源码解析">
+                  <i class="fa fa-chevron-left"></i> Retrofit源码解析
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SharedPreferences的痛点"><span class="nav-text">SharedPreferences的痛点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#只能全量读取和写入"><span class="nav-text">只能全量读取和写入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有anr的风险"><span class="nav-text">有anr的风险</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存映射"><span class="nav-text">内存映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据存储优化"><span class="nav-text">数据存储优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程读写支持"><span class="nav-text">多进程读写支持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmkv的不足"><span class="nav-text">mmkv的不足</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
