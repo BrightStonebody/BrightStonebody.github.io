@@ -13,24 +13,120 @@ categories:
 
 ## 基本概念
 **scrapped:** 
-A "scrapped" view is a view that is still attached to its parent RecyclerView but that has been marked for removal or reuse
+即 dettach 和 attach 。对一个view做dettach操作，会把这个view从 ViewGroup 的 children 数组里移除，但是不会重绘UI。 
+在 LayoutManager 布局时，会 dettach 掉所有的子view，再从 Recycler 中获取view（缓存或新创建）后再 addView。 因为做过 dettach ，已经从 children 数组里移除了。所以再addView不会造成问题。 
+
 
 ## RecyclerView中涉及到缓存的集合
 
 * mAttachedScrap
-    * 显示在屏幕中，未与RecyclerView分离但被标记移除的Holder。 实际上是从屏幕上分离出来的ViewHolder，但是又即将添加到屏幕上去的ViewHolder。
+    * 显示在屏幕中，未与RecyclerView分离但被标记移除的Holder。 LayoutManager 布局时的临时缓存，布局完成后为空
 * mChangedScrap
     * 显示在屏幕中，数据已经发生改变的Holder。notifxxx方法时产生
 * mCachedViews 
-    * 在屏幕外的Holder。缓存，幕刃大小为2。
+    * 在屏幕外的Holder。缓存，默认大小为2。
 * mRecyclerPool
     * 在屏幕外的Holder。当mCachedViews满时，存储至此。按照ViewType进行分类存储。默认大小为5。从中取出的Holder需要调用onBindViewHolder方法
 
 mAttachedScrap、mChangedScrap、mCachedViews中取出的Holder是直接可用的，不需要调用onCreatedViewHolder和onBindViewHolder方法。
-mRecyclerPool中取出的Holder是无效的，需要调用onBindViewHolder方法
-**很奇怪，按照网上mChangedScrap的解释，其中的Holder明显是需要调用onBindViewHolder方法的。但是网上的解释同时又都说不需要调用。。**
+
+### mAttachedScrap 和 mChangedScrap 的插入
+```java
+void scrapView(View view) {
+    final ViewHolder holder = getChildViewHolderInt(view);
+    if (holder.hasAnyOfTheFlags(ViewHolder.FLAG_REMOVED | ViewHolder.FLAG_INVALID)
+            || !holder.isUpdated() || canReuseUpdatedViewHolder(holder)) {
+        if (holder.isInvalid() && !holder.isRemoved() && !mAdapter.hasStableIds()) {
+            throw ..
+        }
+        holder.setScrapContainer(this, false);
+        mAttachedScrap.add(holder);
+    } else {
+        if (mChangedScrap == null) {
+            mChangedScrap = new ArrayList<ViewHolder>();
+        }
+        holder.setScrapContainer(this, true);
+        mChangedScrap.add(holder);
+    }
+}
+```
+LayoutManager 在布局之前会scrap所有的view。 会根据不同的情况放入到 mAttachedScrap 或者 mChangedScrap
+试了下，一般都是放在 mAttachedScrap 里，即使 holder.isUpdated() 为true。 所以 mAttachedScrap 里的ViewHolder也是有可能调用 onBind 的。
+mChangedScrap 试了下只在有一些动画需要 preLayout 的时候有用到
+
+> ViewHolder 只有在满足下面情况才会被添加到 mChangedScrap：当它关联的 item 发生了变化（notifyItemChanged 或者 notifyItemRangeChanged 被调用），并且 ItemAnimator 调用 ViewHolder#canReuseUpdatedViewHolder 方法时，返回了 false。否则，ViewHolder 会被添加到AttachedScrap 中。
+
+> canReuseUpdatedViewHolder 返回 “false” 表示我们要执行用一个 view 替换另一个 view 的动画，例如淡入淡出动画。 “true”表示动画在 view 内部发生。
+
+> mAttachedScrap 在 整个布局过程中都能使用，但是 changed scrap — 只能在预布局阶段使用。
+
+## mCachedViews 和 mRecyclerPool 的插入
+```java
+void recycleViewHolderInternal(ViewHolder holder) {
+    final boolean transientStatePreventsRecycling = holder
+            .doesTransientStatePreventRecycling();
+    @SuppressWarnings("unchecked") final boolean forceRecycle = mAdapter != null
+            && transientStatePreventsRecycling
+            && mAdapter.onFailedToRecycleView(holder);
+    boolean cached = false;
+    boolean recycled = false;
+    if (forceRecycle || holder.isRecyclable()) {
+        if (mViewCacheMax > 0
+                && !holder.hasAnyOfTheFlags(ViewHolder.FLAG_INVALID
+                | ViewHolder.FLAG_REMOVED
+                | ViewHolder.FLAG_UPDATE
+                | ViewHolder.FLAG_ADAPTER_POSITION_UNKNOWN)) {
+            // Retire oldest cached view
+            int cachedViewSize = mCachedViews.size();
+            if (cachedViewSize >= mViewCacheMax && cachedViewSize > 0) {
+                recycleCachedViewAt(0);
+                cachedViewSize--;
+            }
+
+            int targetCacheIndex = cachedViewSize;
+            if (ALLOW_THREAD_GAP_WORK
+                    && cachedViewSize > 0
+                    && !mPrefetchRegistry.lastPrefetchIncludedPosition(holder.mPosition)) {
+                int cacheIndex = cachedViewSize - 1;
+                while (cacheIndex >= 0) {
+                    int cachedPos = mCachedViews.get(cacheIndex).mPosition;
+                    if (!mPrefetchRegistry.lastPrefetchIncludedPosition(cachedPos)) {
+                        break;
+                    }
+                    cacheIndex--;
+                }
+                targetCacheIndex = cacheIndex + 1;
+            }
+            mCachedViews.add(targetCacheIndex, holder);
+            cached = true;
+        }
+        if (!cached) {
+            addViewHolderToRecycledViewPool(holder, true);
+            recycled = true;
+        }
+    }
+    ...
+}
+void addViewHolderToRecycledViewPool(@NonNull ViewHolder holder, boolean dispatchRecycled) {
+    ...
+    holder.mBindingAdapter = null;
+    holder.mOwnerRecyclerView = null; 
+    getRecycledViewPool().putRecycledView(holder);
+}
+```
+先尝试加入到 mCachedViews 集合，如果满了，就删除第一个
+为加入到 mCachedViews 的会加入到 recyclerPool 里
+mCacheViews 缓存是区分 viewType 的， recyclerPool 会区分存储，单个 viewType 容量是5
+判定 `!holder.hasAnyOfTheFlags(ViewHolder.FLAG_INVALID
+                | ViewHolder.FLAG_REMOVED
+                | ViewHolder.FLAG_UPDATE
+                | ViewHolder.FLAG_ADAPTER_POSITION_UNKNOWN` 为true，才会加入到 mCachedViews 。 所以从 mCachedViews 获取是不需要重新 onBind 的
+加入到 recyclerPool 时会设置 `holder.mBindingAdapter = null` 下面会说到这个
+
 
 ## RecyclerView获取Holder的顺序(sdk 28)
+LayoutManager 在布局的时候会调用 `getViewForPosition(int position)` 方法获取 VH 和 View 
+后续会调用到tryGetViewHolderForPositionByDeadline 中获取viewholder缓存，如果不存在会创建。
 
 1. getChangedScrapViewForPosition
 2. getScrapOrHiddenOrCachedHolderForPosition
@@ -40,11 +136,57 @@ mRecyclerPool中取出的Holder是无效的，需要调用onBindViewHolder方法
 6. getRecycledViewPool().getRecycledView
 7. mAdapter.createViewHolder
 
-## 四级缓存
-1. mAttachedScrap  mChangedScrap
-2. mCacheView
-3. mViewCacheExtension
-4. mRecyclerPool
+从各种缓存集合中获取 ViewHolder 。 
+
+## 获取的 ViewHolder 是否需要重新 bind
+```java
+boolean bound = false;
+if (mState.isPreLayout() && holder.isBound()) {
+    // do not update unless we absolutely have to.
+    holder.mPreLayoutPosition = position;
+} else if (!holder.isBound() || holder.needsUpdate() || holder.isInvalid()) {
+    final int offsetPosition = mAdapterHelper.findPositionOffset(position);
+    bound = tryBindViewHolderByDeadline(holder, offsetPosition, position, deadlineNs);
+}
+
+private boolean tryBindViewHolderByDeadline(@NonNull ViewHolder holder, int offsetPosition,
+       int position, long deadlineNs) {
+   holder.mBindingAdapter = null;
+   holder.mOwnerRecyclerView = RecyclerView.this;
+   final int viewType = holder.getItemViewType();
+   
+   mAdapter.bindViewHolder(holder, offsetPosition);
+   return true;
+}
+
+public final void bindViewHolder(@NonNull VH holder, int position) {
+   boolean rootBind = holder.mBindingAdapter == null;
+   if (rootBind) {
+       holder.mPosition = position;
+       if (hasStableIds()) {
+           holder.mItemId = getItemId(position);
+       }
+       holder.setFlags(ViewHolder.FLAG_BOUND,
+               ViewHolder.FLAG_BOUND | ViewHolder.FLAG_UPDATE | ViewHolder.FLAG_INVALID
+                       | ViewHolder.FLAG_ADAPTER_POSITION_UNKNOWN);
+       TraceCompat.beginSection(TRACE_BIND_VIEW_TAG);
+   }
+   holder.mBindingAdapter = this;
+   onBindViewHolder(holder, position, holder.getUnmodifiedPayloads());
+   ...
+}
+```
+
+`!holder.isBound()` ViewHolder 是否调用过 onBind 。在bind时，如果 holder.mBindingAdapter == null ，会设置这个 bound 标记位
+`holder.needsUpdate()` 调用 notifyXxxxx 方法时vh会为true
+`holder.isInvalid()` vh非法
+
+* 是否调用 vh.onBind 只和标记位有关系，和从哪个缓存集合中获取到的无关。 
+* 加入到 mCacheView 时会判断一定没有 needUpdate 和 Invalide 的标记位，所以mCacheView一定不需要重新bind
+* recyclerPool 加入元素时设置了 `holder.mBindingAdapter = null` ，所以一定需要重新 bind
+* mAttachedScrap 是否需要重新bind是不一定的
+
+   
 
 ## ListView的缓存机制
 
@@ -68,54 +210,4 @@ mRecyclerPool中取出的Holder是无效的，需要调用onBindViewHolder方法
 
 [Android ListView 与 RecyclerView 对比浅析--缓存机制](https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=2653578065&idx=2&sn=25e64a8bb7b5934cf0ce2e49549a80d6&chksm=84b3b156b3c43840061c28869671da915a25cf3be54891f040a3532e1bb17f9d32e244b79e3f&scene=21#wechat_redirect)
 
-
-## test
-
-**Recycler.onMeasure()**
-```java
-@Override
-protected  void  onMeasure(int widthSpec, int heightSpec)  {
-    if (mLayout == null) {
-        // 未设置LayoutManager，采用defaultMeasure
-        defaultOnMeasure(widthSpec, heightSpec);
-        return;
-    }
-     // 自动测量
-    if (mLayout.isAutoMeasureEnabled()) {
-        ...
-        // 交给 LayoutManager测量自身
-        mLayout.onMeasure(mRecycler, mState, widthSpec, heightSpec);
-        final  boolean measureSpecModeIsExactly =
-                    widthMode == MeasureSpec._EXACTLY_ && heightMode == MeasureSpec. _EXACTLY_ ;
-        // 当宽高都为 EXACTLY,结束测量
-        if (measureSpecModeIsExactly || mAdapter == null) {
-            return;
-        }
-        if (mState.mLayoutStep == State. _STEP_START_ ) {
-        // 进行第一步测量
-            dispatchLayoutStep1();
-        }
-        ...
-        // 进行第二步测量
-        dispatchLayoutStep2();
-        // now we can get the width and height from the children.
-        mLayout.setMeasuredDimensionFromChildren(widthSpec, heightSpec);
-      
-        // 如果 RecyclerView 宽高不是 exactly 并且至少一个child的宽高不是 exactly
-        // 就需要进行二次测量
-        if (mLayout.shouldMeasureTwice()) {
-            ...
-            dispatchLayoutStep2();
-            // now we can get the width and height from the children.
-            mLayout.setMeasuredDimensionFromChildren(widthSpec, heightSpec);
-        }
-    } else {
-        if (mHasFixSize) {
-            mLayout.onMeasure(mRecycler, mState, widthSpec, heightSpec);
-            return;
-        }
-
-        
-    }
-}
-```
+[深入理解 RecyclerView 的缓存机制](https://codeantenna.com/a/3A2N3H6x8Y)

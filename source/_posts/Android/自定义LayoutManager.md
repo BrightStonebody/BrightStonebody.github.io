@@ -14,7 +14,7 @@ tags:
 
 ### isAutoMeasureEnabled 和 onMeasure
 
-isAutoMeasureEnabled()是自测量模式。 如果要支持 wrap_content ，那必须重写这两个方法中的一个。 大部分情况下，isAutoMeasureEnabled 返回 true 即可。重写onMeasure()的情况也极少，除非像我那个PickerLayoutManger一样。
+isAutoMeasureEnabled()是自测量模式。 如果要支持 wrap_content ，那必须重写这两个方法中的一个。 大部分情况下，isAutoMeasureEnabled 返回 true 即可。
 
 ### canScrollHorizontally 和 canScrollVertically 
 
@@ -50,7 +50,7 @@ RecyclerView 滚动的时候回回调这个方法，但是它只是告诉你用�
 
 ### detachAndScrapAttachedViews()
 
-从 RecyclerView 暂时移除 child 并送入临时缓存。 之前一直很奇怪，暂时移除是个什么场景。 后来想明白了，在每次布局 child 之前，都需要吧调用一次这个方法，吧所有的 child 移除到临时缓存里。否则，在布局的时候 addView(child) ，如果 child 已经 add 到了 RecyclerView 里，会造成一些麻烦。
+从 RecyclerView 暂时移除 child 并送入临时缓存。 之前一直很奇怪，暂时移除是个什么场景。 后来想明白了，在每次布局 child 之前，都需要调用一次这个方法，把6所有的 child 移除到临时缓存里。否则，在布局的时候 addView(child) ，如果 child 已经 add 到了 RecyclerView 里，会造成一些麻烦。
 
 ### removeAndRecycleView
 
