@@ -58,7 +58,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="ConnectInterceptor的主要工作是创建一个连接. 由于建立连接涉及到tcp握手之类的操作, 所以开销是很大的, okhttp的一个特色在创建连接时使用到了ConnectionPool, 实现了连接的复用.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-08-16T10:27:54.367Z">
+<meta property="og:updated_time" content="2022-09-07T13:24:00.374Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OkHttp3源码-ConnectInterceptor">
 <meta name="twitter:description" content="ConnectInterceptor的主要工作是创建一个连接. 由于建立连接涉及到tcp握手之类的操作, 所以开销是很大的, okhttp的一个特色在创建连接时使用到了ConnectionPool, 实现了连接的复用.">
@@ -241,7 +241,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-16 18:27:54" itemprop="dateModified" datetime="2022-08-16T18:27:54+08:00">2022-08-16</time>
+                <time title="修改时间：2022-09-07 21:24:00" itemprop="dateModified" datetime="2022-09-07T21:24:00+08:00">2022-09-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -267,7 +267,7 @@
 
       
         <p>ConnectInterceptor的主要工作是创建一个连接. 由于建立连接涉及到tcp握手之类的操作, 所以开销是很大的, okhttp的一个特色在创建连接时使用到了ConnectionPool, 实现了连接的复用.</p><a id="more"></a>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h2><p><a href="okhttp源码分析（四）-ConnectInterceptor过滤器">https://www.jianshu.com/p/4bf4c796db6f</a><br><a href="OkHttp3源码解析(三">https://juejin.im/post/5b73abe55188256142142d89</a>——连接池复用)</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接:"></a>参考链接:</h2><p><a href="https://www.jianshu.com/p/4bf4c796db6f" target="_blank" rel="noopener">okhttp源码分析（四）-ConnectInterceptor过滤器</a><br><a href="https://juejin.im/post/5b73abe55188256142142d89" target="_blank" rel="noopener">OkHttp3源码解析(三)——连接池复用</a></p>
 <h2 id="intercept"><a href="#intercept" class="headerlink" title="intercept"></a>intercept</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> Response <span class="title">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    RealInterceptorChain realChain = (RealInterceptorChain) chain;</span><br><span class="line">    Request request = realChain.request();</span><br><span class="line">    StreamAllocation streamAllocation = realChain.streamAllocation();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We need the network to satisfy this request. Possibly for validating a conditional GET.</span></span><br><span class="line">    <span class="keyword">boolean</span> doExtensiveHealthChecks = !request.method().equals(<span class="string">"GET"</span>);</span><br><span class="line">    HttpCodec httpCodec = streamAllocation.newStream(client, chain, doExtensiveHealthChecks);</span><br><span class="line">    RealConnection connection = streamAllocation.connection();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> realChain.proceed(request, streamAllocation, httpCodec, connection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>ConnectInterceptor中的逻辑很简单, 只有那么一点点代码, 主要的功能都在StreamAllocation这个类里面. StreamAllocation这个类真的是一点都不简单.</p>
 <h2 id="StreamAllocation"><a href="#StreamAllocation" class="headerlink" title="StreamAllocation"></a>StreamAllocation</h2><h3 id="流-连接-请求"><a href="#流-连接-请求" class="headerlink" title="流, 连接, 请求"></a>流, 连接, 请求</h3><p>HTTP通信执行网络”请求”需要在”连接”上建立一个新的”流”. StreamAllocation称之流的桥梁，它负责为一次”请求”寻找”连接”并建立”流”<br>来看看StreamAllocation源代码上的官方注释:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &lt;ul&gt;</span></span><br><span class="line"><span class="comment"> *     &lt;li&gt;&lt;strong&gt;Connections:&lt;/strong&gt; physical socket connections to remote servers. These are</span></span><br><span class="line"><span class="comment"> *         potentially slow to establish so it is necessary to be able to cancel a connection</span></span><br><span class="line"><span class="comment"> *         currently being connected.</span></span><br><span class="line"><span class="comment"> *     &lt;li&gt;&lt;strong&gt;Streams:&lt;/strong&gt; logical HTTP request/response pairs that are layered on</span></span><br><span class="line"><span class="comment"> *         connections. Each connection has its own allocation limit, which defines how many</span></span><br><span class="line"><span class="comment"> *         concurrent streams that connection can carry. HTTP/1.x connections can carry 1 stream</span></span><br><span class="line"><span class="comment"> *         at a time, HTTP/2 typically carry multiple.</span></span><br><span class="line"><span class="comment"> *     &lt;li&gt;&lt;strong&gt;Calls:&lt;/strong&gt; a logical sequence of streams, typically an initial request and</span></span><br><span class="line"><span class="comment"> *         its follow up requests. We prefer to keep all streams of a single call on the same</span></span><br><span class="line"><span class="comment"> *         connection for better behavior and locality.</span></span><br><span class="line"><span class="comment"> * &lt;/ul&gt;</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure></p>
@@ -376,7 +376,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

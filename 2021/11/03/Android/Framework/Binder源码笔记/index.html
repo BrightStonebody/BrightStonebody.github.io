@@ -50,17 +50,17 @@
   };
 </script>
 
-  <meta name="description" content="Service 的启动 (独立进程的 Service )">
+  <meta name="description" content="ProcessStateProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 zygote 在fork出应用进程之后会在c层完成初始化启动 binder">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Binder源码笔记">
 <meta property="og:url" content="http://yoursite.com/2021/11/03/Android/Framework/Binder源码笔记/index.html">
 <meta property="og:site_name" content="BrightStone">
-<meta property="og:description" content="Service 的启动 (独立进程的 Service )">
+<meta property="og:description" content="ProcessStateProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 zygote 在fork出应用进程之后会在c层完成初始化启动 binder">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-11-09T14:29:00.433Z">
+<meta property="og:updated_time" content="2022-09-04T11:07:35.331Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Binder源码笔记">
-<meta name="twitter:description" content="Service 的启动 (独立进程的 Service )">
+<meta name="twitter:description" content="ProcessStateProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 zygote 在fork出应用进程之后会在c层完成初始化启动 binder">
 
 <link rel="canonical" href="http://yoursite.com/2021/11/03/Android/Framework/Binder源码笔记/">
 
@@ -240,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 22:29:00" itemprop="dateModified" datetime="2021-11-09T22:29:00+08:00">2021-11-09</time>
+                <time title="修改时间：2022-09-04 19:07:35" itemprop="dateModified" datetime="2022-09-04T19:07:35+08:00">2022-09-04</time>
               </span>
 
           
@@ -254,11 +254,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="Service-的启动-独立进程的-Service"><a href="#Service-的启动-独立进程的-Service" class="headerlink" title="Service 的启动 (独立进程的 Service )"></a>Service 的启动 (独立进程的 Service )</h1><a id="more"></a><h2 id="ProcessState"><a href="#ProcessState" class="headerlink" title="ProcessState"></a>ProcessState</h2><p>ProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 </p>
-<p>内部会打开设备 “/dev/binder” ，调用 mmap 函数，完成自己和内核空间的内存映射。</p>
+        <h2 id="ProcessState"><a href="#ProcessState" class="headerlink" title="ProcessState"></a>ProcessState</h2><p>ProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 zygote 在fork出应用进程之后会在c层完成初始化启动 binder</p><a id="more"></a>
+<p>内部会打开设备 “/dev/binder”（binder驱动）；调用 mmap 函数，完成自己和内核空间的内存映射，分配缓冲区；启动binder线程，不断循环和binder驱动交互</p>
 <p>ioctl 和 Binder 设备传递参数，设置了 binder 线程池的最大线程数</p>
 <h2 id="Binder线程池"><a href="#Binder线程池" class="headerlink" title="Binder线程池"></a>Binder线程池</h2><p>调用 ProcessState::startThreadPool() 启动 Binder 线程池。 调用之后，实际上就已经 run 了一个 Binder 主线程, 并开始 while 死循环接收 Binder 消息。<br>之后会根据情况，选择在 Binder 线程池中创建新的线程，但是创建出来的就不是一个死循环的线程了</p>
-<h1 id="通信"><a href="#通信" class="headerlink" title="通信"></a>通信</h1><h2 id="BpBinder-和-BBinder"><a href="#BpBinder-和-BBinder" class="headerlink" title="BpBinder 和 BBinder"></a>BpBinder 和 BBinder</h2><p>IBinder 对象是负责binder通信的实例。 BpBinder 是客户端和服务端交互的代理类，BBinder 代表服务端</p>
+<h1 id="通信"><a href="#通信" class="headerlink" title="通信"></a>通信</h1><h2 id="BpBinder-和-BBinder"><a href="#BpBinder-和-BBinder" class="headerlink" title="BpBinder 和 BBinder"></a>BpBinder 和 BBinder</h2><p>IBinder 对象是负责binder通信的实例。 BpBinder 是客户端和服务端交互的代理类，BBinder 代表服务端<br>在BpBinder类的内部有一个成员变量mHandle，它是一个int型变量。<br>对于每一个经过binder driver传输的BBinder对象，binder driver都会在驱动层为它构建一个binder_node数据结构；同时为这个binder_node生成一个“引用”：binder_ref<br>BpBinder的成员变量mHandle的值就是bidner_ref中的int型描述符，这样就建立起了用户层的Bpbinder和一个驱动空间的binder_ref数据结构的对应关系。通过 “BpBinder handle→binder_ref→binder_node→BBinder”这样的匹配关系，就可以建立一个Bpbinder对应一个BBinder的关系。 </p>
 <h2 id="BpBinder-transact"><a href="#BpBinder-transact" class="headerlink" title="BpBinder::transact"></a>BpBinder::transact</h2><p>发送数据的方法</p>
 <h2 id="IPCThreadState-self-gt-transact-…"><a href="#IPCThreadState-self-gt-transact-…" class="headerlink" title="IPCThreadState::self()-&gt;transact(…)"></a>IPCThreadState::self()-&gt;transact(…)</h2><p>真正数据通信的方法。 一个线程只会有一个实例， 使用 pthread_setspecific 实现，类似于 java 的 ThreadLocal<br>IPCThreadState 有两个缓存 mIn 和 mOut 分别负责数据的接收和发射</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-&gt;</span> transact(..)</span><br><span class="line">    -&gt; writeTransactionData(..)</span><br><span class="line">        -&gt; 将 cmd 和 data 写入到 mOut 中</span><br><span class="line">    -&gt; waitForResponse(..)</span><br><span class="line">        -&gt; talkWithDriver(doReceive)</span><br><span class="line">            -&gt; 将 bwr(一个和Binder驱动的结构体) bwr.write_buffer 指向 mOut.data()</span><br><span class="line">            -&gt; 将 bwr.read_buffer 指向 mIn.data()</span><br><span class="line">            -&gt; do-while 循环，调用 ioctl 函数 和 Binder 驱动通信，直到结束</span><br></pre></td></tr></table></figure>
@@ -325,7 +325,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Service-的启动-独立进程的-Service"><span class="nav-text">Service 的启动 (独立进程的 Service )</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ProcessState"><span class="nav-text">ProcessState</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Binder线程池"><span class="nav-text">Binder线程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信"><span class="nav-text">通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-和-BBinder"><span class="nav-text">BpBinder 和 BBinder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-transact"><span class="nav-text">BpBinder::transact</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPCThreadState-self-gt-transact-…"><span class="nav-text">IPCThreadState::self()-&gt;transact(…)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题："><span class="nav-text">问题：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-只有系统Service-才能记录到-ServiceManager-中，那么-应用的-Service-是如何查找到的"><span class="nav-text">1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ProcessState"><span class="nav-text">ProcessState</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Binder线程池"><span class="nav-text">Binder线程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信"><span class="nav-text">通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-和-BBinder"><span class="nav-text">BpBinder 和 BBinder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-transact"><span class="nav-text">BpBinder::transact</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPCThreadState-self-gt-transact-…"><span class="nav-text">IPCThreadState::self()-&gt;transact(…)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题："><span class="nav-text">问题：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-只有系统Service-才能记录到-ServiceManager-中，那么-应用的-Service-是如何查找到的"><span class="nav-text">1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -341,7 +341,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
