@@ -19,8 +19,7 @@ public void requestLayout() {
     if (mMeasureCache != null) mMeasureCache.clear();
 
     if (mAttachInfo != null && mAttachInfo.mViewRequestingLayout == null) {
-        // Only trigger request-during-layout logic if this is the view requesting it,
-        // not the views in its parent hierarchy
+        // 如果处于 Layout 则将该请求加入 ViewRootImpl 中的任务队列中
         ViewRootImpl viewRoot = getViewRootImpl();
         if (viewRoot != null && viewRoot.isInLayout()) {
             if (!viewRoot.requestLayoutDuringLayout(this)) {
@@ -43,6 +42,8 @@ public void requestLayout() {
     }
 }
 ```
+调用 requestLayout() 的view会给自己添加标记位 `PFLAG_FORCE_LAYOUT` , `PFLAG_INVALIDATED`
+并一直parent向上递归，这个view所有的祖先都会设置上标记位
 
 ## ViewRootImpl
 
@@ -79,35 +80,60 @@ public void requestLayout() {
 }
  ```
 
- measure时判断了PFLAG_FORCE_LAYOUT标记，需要时才做。
-  在 `mPrivateFlags |= PFLAG_LAYOUT_REQUIRED;` 中给layout过程做了标记
+ measure时判断了 PFLAG_FORCE_LAYOUT ，或者 measureSpec 发生了改变。 并不是所有的view都会重新measure 。在一个view调用 requestLayout 时，这个view和它的所有祖先一定会重新measure，其他view按需要判断是否重新measure。
+
+在 `mPrivateFlags |= PFLAG_LAYOUT_REQUIRED;` 中也给layout过程做了标记
 
  ```java
  public void layout(int l, int t, int r, int b) {
     ...
+
+    boolean changed = isLayoutModeOptical(mParent) ?
+                setOpticalFrame(l, t, r, b) : setFrame(l, t, r, b);
     //判断标记位是否为PFLAG_LAYOUT_REQUIRED，如果有，则对该View进行布局
     if (changed || (mPrivateFlags & PFLAG_LAYOUT_REQUIRED) == PFLAG_LAYOUT_REQUIRED) {
         onLayout(changed, l, t, r, b);
         //onLayout方法完成后，清除PFLAG_LAYOUT_REQUIRED标记位
         mPrivateFlags &= ~PFLAG_LAYOUT_REQUIRED;
-        ListenerInfo li = mListenerInfo;
-        if (li != null && li.mOnLayoutChangeListeners != null) {
-            ArrayList<OnLayoutChangeListener> listenersCopy =
-                    (ArrayList<OnLayoutChangeListener>)li.mOnLayoutChangeListeners.clone();
-            int numListeners = listenersCopy.size();
-            for (int i = 0; i < numListeners; ++i) {
-                listenersCopy.get(i).onLayoutChange(this, l, t, r, b, oldL, oldT, oldR, oldB);
-            }
-        }
     }
 
     //最后清除PFLAG_FORCE_LAYOUT标记位
     mPrivateFlags &= ~PFLAG_FORCE_LAYOUT;
     mPrivateFlags3 |= PFLAG3_IS_LAID_OUT;
 }
+
+protected boolean setFrame(int left, int top, int right, int bottom) {
+        boolean changed = false;
+        if (mLeft != left || mRight != right || mTop != top || mBottom != bottom) {
+            changed = true;
+
+            // Remember our drawn bit
+            int drawn = mPrivateFlags & PFLAG_DRAWN;
+
+            int oldWidth = mRight - mLeft;
+            int oldHeight = mBottom - mTop;
+            int newWidth = right - left;
+            int newHeight = bottom - top;
+            boolean sizeChanged = (newWidth != oldWidth) || (newHeight != oldHeight);
+
+            invalidate(sizeChanged);
+            ...
+            mPrivateFlags |= PFLAG_HAS_BOUNDS;
+            mPrivateFlags |= drawn;
+
+            if (sizeChanged) {
+                sizeChange(newWidth, newHeight, oldWidth, oldHeight);
+            }
+        }
+        return changed;
+    }
  ```
 
  layout时判断了PFLAG_LAYOUT_REQUIRED标记，需要时才做。
+ changed 获取有一个 `setFrame(...)` 方法，里面会判断view的layout是否改变，如果改变了，会调用 `invalidate()` 进行重新draw
+
+ ## 总结
+ 调用 View.requestLayout 方法后会依次调用 performMeasure, performLayout 和 performDraw 方法，调用者 View 及其父 View 会重新从上往下进行 measure, layout 流程，如果view顶点没有改变，不会执行 draw 流程
 
  # Invalidate
 
@@ -169,7 +195,7 @@ public final void invalidateChild(View child, final Rect dirty) {
         
         ...
 
-        do {
+        do { // 循环向上遍历祖先view
             View view = null;
             if (parent instanceof View) {
                 view = (View) parent;

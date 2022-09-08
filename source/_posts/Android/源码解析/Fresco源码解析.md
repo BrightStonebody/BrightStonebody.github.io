@@ -64,15 +64,16 @@ mControllerBuilder在setUri方法中创建了ImageRequest, 在build的过程中�
 
 #### 3.2.2 DraweeControllerBuilder.build
 
-在DraweeControllerBuilder.build方法中创建了DataSource. DataSource类似于Java里的Futures，代表数据的来源
+在DraweeControllerBuilder.build方法中创建了DataSource. 代表数据的来源，用于组装 produce 集合
 
 ```
 -> AbstractDraweeControllerBuilder.build
 --> AbstractDraweeControllerBuilder.buildController
 ----> PipelineDraweeControllerBuilder.obtainController // 创建controller并return
 -----> AbstractDraweeControllerBuilder.obtainDataSourceSupplier
-------> AbstractDraweeControllerBuilder.getDataSourceSupplierForRequest // 创建了Supplier<DataSource<IMAGE>>, 调用supplier.get方法就会创建Data
-Source
+------> AbstractDraweeControllerBuilder.getDataSourceSupplierForRequest // 创建了Supplier<DataSource<IMAGE>>, 调用supplier.get方法就会创建DataSource
+-------> PipelineDraweeControllerBuilder.getDataSourceForRequest
+--------> ImagePipeline.fetchDecodedImage(...)
 ```
 
 #### 3.2.3 setController
@@ -280,4 +281,312 @@ public synchronized void onNewResult(@Nullable T newResult, @Status int status) 
 存入磁盘缓存, 同样是在线程池中操作
 * newNetworkFetchProducer
 从网络中获取图片
+
+## 4. Fresco 在内存管理上的优势
+
+  - 在Dalvik虚拟机中，gc性能较差，会伴有stop-the-world的发生，导致卡顿，所以Fresco会将解码之后的Bitmap存放到Ashmem当中，并且每次解码完都会通过Native层的代码进行PinBitmap的操作，防止被系统回收。 Fresco使用了 CloseableReference 进行引用计数，手动回收bitmap对象。
+  - 在Art虚拟机中，gc性能得到了大幅的提升，所以没必要用各种骚操作，直接将Bitmap解码到Java堆当中即可。
+
+### 4.1 CloseableReference 引用计数
+
+[使用 CloseableReference 优雅的释放对象，来自 Fresco](https://juejin.cn/post/7026540580788240415#heading-3)
+
+CloseableReference 是 fresco 内部建立的一个机制，核心思想是 用static的集合屏蔽java的gc的内存回收，转变为类似c/c++的手动释放内存。
+在Dalvik虚拟机中，gc性能较差，bitmap的频繁gc会影响性能
+
+```java
+public final class CloseableReference<T> implements Cloneable, Closeable {
+
+// 构造方法是private，只能使用 of(...) 方法进行实例化
+  private CloseableReference(T t, ResourceReleaser<T> resourceReleaser) {
+    mSharedReference = new SharedReference<T>(t, resourceReleaser);
+  }
+
+  @Override
+  public void close() {
+    synchronized (this) {
+      if (mIsClosed) {
+        return;
+      }
+      mIsClosed = true;
+    }
+
+    mSharedReference.deleteReference();
+  }
+
+// clone 就是把引用计数+1
+  public synchronized CloseableReference<T> clone() {
+    return new CloseableReference<T>(mSharedReference);
+  }
+
+  private CloseableReference(SharedReference<T> sharedReference) {
+    mSharedReference = Preconditions.checkNotNull(sharedReference);
+    sharedReference.addReference();
+  }
+}
+
+public class SharedReference<T> {
+
+  public static Map<Object, Integer> getLiveObjects() {
+    return sLiveObjects;
+  }
+
+  public SharedReference(T value, ResourceReleaser<T> resourceReleaser) {
+    mValue = Preconditions.checkNotNull(value);
+    mResourceReleaser = Preconditions.checkNotNull(resourceReleaser);
+    mRefCount = 1;
+    // 添加进 static 的集合中，规避jvm的内存回收
+    addLiveReference(value);
+  }
+
+  private static void addLiveReference(Object value) {
+    synchronized (sLiveObjects) {
+      Integer count = sLiveObjects.get(value);
+      if (count == null) {
+        sLiveObjects.put(value, 1);
+      } else {
+        sLiveObjects.put(value, count + 1);
+      }
+    }
+  }
+
+  // 引用计数+1
+  public synchronized void addReference() {
+    mRefCount++;
+  }
+
+  // 引用计数-1
+  public void deleteReference() {
+    if (decreaseRefCount() == 0) {
+      T deleted;
+      synchronized (this) {
+        deleted = mValue;
+        mValue = null;
+      }
+      mResourceReleaser.release(deleted);
+      removeLiveReference(deleted);
+    }
+  }
+  
+  public synchronized int decreaseRefCount() {
+    mRefCount--;
+    return mRefCount;
+  }
+}
+```
+
+### 4.2 CloseableReference 在 LruCache 的使用
+
+CountingMemoryCache
+
+```java
+public class CountingMemoryCache<K, V> implements MemoryCache<K, V>, MemoryTrimmable {
+
+  /**
+  * 有两个集合， mExclusiveEntries 等待移除的entry，引用为0的entry的集合
+  * mCachedEntries 是缓存
+  **/
+  final CountingLruMap<K, Entry<K, V>> mExclusiveEntries;
+  final CountingLruMap<K, Entry<K, V>> mCachedEntries;
+
+  @Nullable
+  public CloseableReference<V> get(final K key) {
+    Entry<K, V> oldExclusive;
+    CloseableReference<V> clientRef = null;
+    synchronized (this) {
+      // 从 mExclusiveEntries ，引用会增加，一定不会回收
+      oldExclusive = mExclusiveEntries.remove(key);
+      Entry<K, V> entry = mCachedEntries.get(key);
+      if (entry != null) {
+        // 重要
+        clientRef = newClientReference(entry);
+      }
+    }
+    maybeNotifyExclusiveEntryRemoval(oldExclusive);
+    maybeUpdateCacheParams();
+    // 尝试回收 mExclusiveEntries 的元素
+    maybeEvictEntries();
+    return clientRef;
+  }
+
+  public CloseableReference<V> cache(
+      final K key,
+      final CloseableReference<V> valueRef,
+      final EntryStateObserver<K> observer
+  ) {
+
+    maybeUpdateCacheParams();
+
+    Entry<K, V> oldExclusive;
+    CloseableReference<V> oldRefToClose = null;
+    CloseableReference<V> clientRef = null;
+    synchronized (this) {
+      oldExclusive = mExclusiveEntries.remove(key);
+      // 从lrucache中找到得到旧的entry
+      Entry<K, V> oldEntry = mCachedEntries.remove(key);
+      if (oldEntry != null) {
+        makeOrphan(oldEntry);
+        oldRefToClose = referenceToClose(oldEntry);
+      }
+
+      if (canCacheNewValue(valueRef.get())) {
+        Entry<K, V> newEntry = Entry.of(key, valueRef, observer);
+        // 新entry加入集合
+        mCachedEntries.put(key, newEntry);
+        clientRef = newClientReference(newEntry);
+      }
+    }
+    // 旧entry引用计数-1
+    CloseableReference.closeSafely(oldRefToClose);
+    maybeNotifyExclusiveEntryRemoval(oldExclusive);
+
+    // 尝试回收
+    maybeEvictEntries();
+    return clientRef;
+  }
+
+  private synchronized CloseableReference<V> newClientReference(final Entry<K, V> entry) {
+    increaseClientCount(entry);
+    return CloseableReference.of(
+        entry.valueRef.get(),
+        new ResourceReleaser<V>() {
+          @Override
+          public void release(V unused) {
+            // 当有一次引用释放发生时，会回调这里
+            releaseClientReference(entry);
+          }
+        });
+  }
+
+  private void releaseClientReference(final Entry<K, V> entry) {
+    Preconditions.checkNotNull(entry);
+    boolean isExclusiveAdded;
+    CloseableReference<V> oldRefToClose;
+    synchronized (this) {
+      decreaseClientCount(entry);
+      isExclusiveAdded = maybeAddToExclusives(entry);
+      oldRefToClose = referenceToClose(entry);
+    }
+    // 引用计数-1
+    CloseableReference.closeSafely(oldRefToClose);
+    maybeNotifyExclusiveEntryInsertion(isExclusiveAdded ? entry : null);
+    maybeUpdateCacheParams();
+    // 尝试回收
+    maybeEvictEntries();
+  }
+}
+```
+
+这个cache就是将 LruCache 和 引用计数的思想结合
+
+### 4.3 针对 Dalvik 虚拟机的缓存优化
+
+在 DecodeProducer 中，进行了图片的解码。 最终调用解码是在 `ProgressiveDecoder#doDecode` 方法中
+
+```java
+    private void doDecode(EncodedImage encodedImage, @Status int status) {
+      ...
+      image = mImageDecoder.decode(encodedImage, length, quality, mImageDecodeOptions);
+      ...
+    }
+```
+
+mImageDecoder的实现类根据系统版本有所不同，在 api21 也就是 art虚拟机实现类是 `DefaultDecoder` 。 在 Dalvik虚拟机实现类是 `DalvikPurgeableDecoder`
+
+以jpg图片的解码举例 
+```java
+  @Override
+  public CloseableReference<Bitmap> decodeJPEGFromEncodedImageWithColorSpace(
+      final EncodedImage encodedImage,
+      Bitmap.Config bitmapConfig,
+      @Nullable Rect regionToDecode,
+      int length,
+      final boolean transformToSRGB) {
+    BitmapFactory.Options options = getBitmapFactoryOptions(
+        encodedImage.getSampleSize(),
+        bitmapConfig);
+    final CloseableReference<PooledByteBuffer> bytesRef = encodedImage.getByteBufferRef();
+    Preconditions.checkNotNull(bytesRef);
+    try {
+      Bitmap bitmap = decodeJPEGByteArrayAsPurgeable(bytesRef, length, options);
+      return pinBitmap(bitmap);
+    } finally {
+      CloseableReference.closeSafely(bytesRef);
+    }
+  }
+```
+
+这里做了两个操作，先解码得到bitmap，然后对pin这个bitmap。 pin的作用是让的bitmap对象避免被系统gc
+
+先来看一下解码
+```java
+
+  @Override
+  protected Bitmap decodeJPEGByteArrayAsPurgeable(
+      CloseableReference<PooledByteBuffer> bytesRef, int length, BitmapFactory.Options options) {
+    byte[] suffix = endsWithEOI(bytesRef, length) ? null : EOI;
+    return decodeFileDescriptorAsPurgeable(bytesRef, length, suffix, options);
+  }
+
+  private Bitmap decodeFileDescriptorAsPurgeable(
+      CloseableReference<PooledByteBuffer> bytesRef,
+      int inputLength,
+      byte[] suffix,
+      BitmapFactory.Options options) {
+    MemoryFile memoryFile = null;
+    try {
+      memoryFile = copyToMemoryFile(bytesRef, inputLength, suffix);
+      FileDescriptor fd = getMemoryFileDescriptor(memoryFile);
+      if (mWebpBitmapFactory != null) {
+        Bitmap bitmap = mWebpBitmapFactory.decodeFileDescriptor(fd, null, options);
+        return Preconditions.checkNotNull(bitmap, "BitmapFactory returned null");
+      } else {
+        throw new IllegalStateException("WebpBitmapFactory is null");
+      }
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    } finally {
+      if (memoryFile != null) {
+        memoryFile.close();
+      }
+    }
+  }
+```
+
+这里有一个 MemoryFile ， 这是安卓系统提供的用来使用匿名共享内存的类(ashmem) , 也就是说在 Dalvik 会将bitmap保存到 ashmem 里，避免被触碰到java层的oom限制。
+
+然后是 pin
+```java
+  public CloseableReference<Bitmap> pinBitmap(Bitmap bitmap) {
+    // jni调用pin
+    nativePinBitmap(bitmap);
+    // 使用 CloseableReference 。最终会在引用计数为0时，手动触发回收
+    return CloseableReference.of(bitmap, mUnpooledBitmapsCounter.getReleaser());
+  }
+
+/**
+      mUnpooledBitmapsReleaser = new ResourceReleaser<Bitmap>() {
+      @Override
+      public void release(Bitmap value) {
+        try {
+          decrease(value);
+        } finally {
+          value.recycle();
+        }
+      }
+    };
+**/
+```
+
+### Dalvik 和 Art 在gc上的差异
+[揭秘 ART 细节 ---- Garbage collection](https://www.cnblogs.com/jinkeep/p/3818180.html)
+
+1. art 新增了 large object space ，专供大对象使用
+2. Dalvik 在垃圾回收时，会暂停所有线程，在内存紧张时会频繁执行，容易造成卡顿丢帧。art优化了回收算法，会减少暂停线程的次数
+   
+  
+
+
+
+
 

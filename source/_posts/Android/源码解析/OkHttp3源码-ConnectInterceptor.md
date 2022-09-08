@@ -11,8 +11,8 @@ categories:
 ConnectInterceptor的主要工作是创建一个连接. 由于建立连接涉及到tcp握手之类的操作, 所以开销是很大的, okhttp的一个特色在创建连接时使用到了ConnectionPool, 实现了连接的复用.
 
 ## 参考链接:
-[https://www.jianshu.com/p/4bf4c796db6f](okhttp源码分析（四）-ConnectInterceptor过滤器)
-[https://juejin.im/post/5b73abe55188256142142d89](OkHttp3源码解析(三)——连接池复用)
+[okhttp源码分析（四）-ConnectInterceptor过滤器](https://www.jianshu.com/p/4bf4c796db6f)
+[OkHttp3源码解析(三)——连接池复用](https://juejin.im/post/5b73abe55188256142142d89)
 
 ## intercept
 
@@ -274,7 +274,7 @@ private RealConnection findConnection(int connectTimeout, int readTimeout, int w
   }
 ```
 
-## CollectionPool
+## ConnectionPool
 
 ### 主要成员变量
 
@@ -427,6 +427,8 @@ long cleanup(long now) {
     return 0;
 }
 ```
+当连接空闲时间超出限制 或者 空闲连接的数量超出限制时，会remove掉最长空闲时间的connection
+
 
 ### pruneAndGetAllocationCount
 
@@ -496,4 +498,6 @@ RealConnection get(Address address, StreamAllocation streamAllocation, Route rou
     connections.add(connection);
   }
 ```
+
+插入和获取connection的key是adress， 它是 host ，cdn ，port 等的抽象
 

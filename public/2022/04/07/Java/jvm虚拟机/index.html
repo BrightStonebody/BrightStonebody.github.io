@@ -57,7 +57,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="JVM架构jvm有几个区域：方法区、堆、Java栈、程序计数器、本地方法栈">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-04-07T16:57:54.279Z">
+<meta property="og:updated_time" content="2022-08-28T10:33:40.789Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jvm虚拟机">
 <meta name="twitter:description" content="JVM架构jvm有几个区域：方法区、堆、Java栈、程序计数器、本地方法栈">
@@ -240,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-08 00:57:54" itemprop="dateModified" datetime="2022-04-08T00:57:54+08:00">2022-04-08</time>
+                <time title="修改时间：2022-08-28 18:33:40" itemprop="dateModified" datetime="2022-08-28T18:33:40+08:00">2022-08-28</time>
               </span>
 
           
@@ -269,6 +269,12 @@
 <li><p>类加载子系统<br>读取class文件，加载Java类到内存。</p>
 </li>
 </ol>
+<h2 id="基于栈的jvm-和-基于寄存器的jvm"><a href="#基于栈的jvm-和-基于寄存器的jvm" class="headerlink" title="基于栈的jvm 和 基于寄存器的jvm"></a>基于栈的jvm 和 基于寄存器的jvm</h2><p>在虚拟机栈的每一个栈帧中(即每一个方法调用中），存在一个「操作数栈」，用于存放运算的临时数据。<br>基于栈 和 基于寄存器 的区别在于这个「操作数栈」</p>
+<ul>
+<li>基于栈<br>对于基于栈的jvm，这个「操作数栈」的区域当然是一个栈，方法体运行过程中生成的临时数据，会压入栈中，需要的时候再从栈中弹出。<br>实现比较简单，只是单纯的压栈出栈<br>对于每一条字节码指令，无需指定操作数地址，所以单个指令长度较短<br>因为要频繁的压栈出栈，所以字节码指令会增加</li>
+<li>基于寄存器<br>对于基于寄存器的jvm，这个「操作数栈】的区域变成了多个虚拟寄存器，方法体运行过程中的临时数据会存放到这些寄存器中。<br>避免了频繁的压栈出栈操作，所以字节码指令数量更少<br>因为要明确指定操作数地址，所以字节码单个指令长度会翻倍</li>
+</ul>
+<h3 id="为什么-dalvik-和-art-要基于寄存器"><a href="#为什么-dalvik-和-art-要基于寄存器" class="headerlink" title="为什么 dalvik 和 art 要基于寄存器"></a>为什么 dalvik 和 art 要基于寄存器</h3><p>从上面的分析看，很明显，基于寄存器的jvm运行更快！</p>
 <h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>类加载器负责动态加载Java类到Java虚拟机的内存空间中。</p>
 <ul>
 <li>双亲委托机制<br>“双亲委托机制”是指先委托父装载器寻找目标类，只有在找不到的情况下才从自己的类 路径中查找并装载目标类。这一点是从安全角度考虑的</li>
@@ -294,9 +300,13 @@
 </li>
 <li>老年代：<ul>
 <li>使用标记整理算法。标记需要清除对象，将存活的对象往内存的一端移动，再将需要清除要回收的对象。这样的算法可以避免内存碎片的产生</li>
+<li>大对象会一生成就会直接放到老年代。新生代容量较小，避免新生代频繁gc</li>
 </ul>
 </li>
 </ul>
+<h2 id="jar文件和dex文件的差异"><a href="#jar文件和dex文件的差异" class="headerlink" title="jar文件和dex文件的差异"></a>jar文件和dex文件的差异</h2><p>一个jar文件包含多个class文件，不同的class文件之间没有关联。 如果有相同的常量信息等数据，会产生冗余，增大文件大小。<br>一个dex文件包括索引区和数据区，多个类共用一个索引区。这样相同的常量信息等可以避免重复冗余，可以大大减小文件大小。 同时，因为只有一个文件，也可以减少文件io的开销。 </p>
+<h2 id="对象一定是在堆上的吗？"><a href="#对象一定是在堆上的吗？" class="headerlink" title="对象一定是在堆上的吗？"></a>对象一定是在堆上的吗？</h2><p>不一定，取决于不同jvm的设计优化。</p>
+<p>在虚拟机栈的调用中，jvm会对方法体力创建的对象做逃逸分析。 通过<strong>逃逸分析</strong>，可以分析出这个对象的引用是否只存在于方法体内部。<br>如果发现某个对象并没有逃逸到方法体之外的话，就可能对其进行优化。不会将对象分配到堆上，可以减少gc的消耗。<br>具体的方法是，把这个对象拆解成若干个其中包含的若干个局部变量来代替。这个过程就是<strong>标量替换</strong></p>
 
     </div>
 
@@ -359,7 +369,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM架构"><span class="nav-text">JVM架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-text">类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC垃圾回收机制"><span class="nav-text">GC垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何判断对象是否可以被回收"><span class="nav-text">如何判断对象是否可以被回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强引用、弱引用、软引用、虚引用"><span class="nav-text">强引用、弱引用、软引用、虚引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC算法"><span class="nav-text">GC算法</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM架构"><span class="nav-text">JVM架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于栈的jvm-和-基于寄存器的jvm"><span class="nav-text">基于栈的jvm 和 基于寄存器的jvm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么-dalvik-和-art-要基于寄存器"><span class="nav-text">为什么 dalvik 和 art 要基于寄存器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-text">类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC垃圾回收机制"><span class="nav-text">GC垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何判断对象是否可以被回收"><span class="nav-text">如何判断对象是否可以被回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强引用、弱引用、软引用、虚引用"><span class="nav-text">强引用、弱引用、软引用、虚引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC算法"><span class="nav-text">GC算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jar文件和dex文件的差异"><span class="nav-text">jar文件和dex文件的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象一定是在堆上的吗？"><span class="nav-text">对象一定是在堆上的吗？</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -375,7 +385,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

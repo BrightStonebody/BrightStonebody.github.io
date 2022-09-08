@@ -8,148 +8,21 @@ tags: Activity
 
 startActivity有很多重载方法，最终都会调用`startActivityForResult`
 
-```java
-    public void startActivityForResult(@RequiresPermission Intent intent, int requestCode, @Nullable Bundle options) {
-        if (mParent == null) {
-            options = transferSpringboardActivityOptions(options);
-            Instrumentation.ActivityResult ar =
-                mInstrumentation.execStartActivity(
-                    this, mMainThread.getApplicationThread(), mToken, this,
-                    intent, requestCode, options);
-            if (ar != null) {
-                mMainThread.sendActivityResult(
-                    mToken, mEmbeddedID, requestCode, ar.getResultCode(),
-                    ar.getResultData());
-            }
-            if (requestCode >= 0) {
-                // If this start is requesting a result, we can avoid making
-                // the activity visible until the result is received.  Setting
-                // this code during onCreate(Bundle savedInstanceState) or onResume() will keep the
-                // activity hidden during this time, to avoid flickering.
-                // This can only be done when a result is requested because
-                // that guarantees we will get information back when the
-                // activity is finished, no matter what happens to it.
-                mStartedActivity = true;
-            }
-
-            cancelInputsAndStartExitTransition(options);
-            // TODO Consider clearing/flushing other event sources and events for child windows.
-        } else {
-            ...
-        }
-    }
-```
-
-mParent 代表的是 ActivityGroup，是 Activity 很早的版本里才有的东西，在 api13 中已经被废弃。`mParent == null` 一定为 true
-
 然后的调用过程
 ```
--> Activit.startActivity(...)
+-> Activit.startActivityForResult(...)
  -> Instrumentation.execStartActivity(...)
+```
+
+在 `Instrumentation.execStartActivity` 调用了 `ActivityManager.getService().startActivity(...)` ，后续的流程进入到了系统进程
+
+```
   -> ActivityManagerService.startActivity(...)
    -> ...startActivityAsUser(...)
-```
-
-## startActivityAsUser
-
-```java
-    public final int startActivityAsUser(IApplicationThread caller, String callingPackage,
-            Intent intent, String resolvedType, IBinder resultTo, String resultWho, int requestCode,
-            int startFlags, ProfilerInfo profilerInfo, Bundle bOptions, int userId,
-            boolean validateIncomingUser) {
-        enforceNotIsolatedCaller("startActivity");
-
-        userId = mActivityStartController.checkTargetUser(userId, validateIncomingUser,
-                Binder.getCallingPid(), Binder.getCallingUid(), "startActivityAsUser");
-
-        // TODO: Switch to user app stacks here.
-        return mActivityStartController.obtainStarter(intent, "startActivityAsUser")
-                .setCaller(caller)
-                .setCallingPackage(callingPackage)
-                .setResolvedType(resolvedType)
-                .setResultTo(resultTo)
-                .setResultWho(resultWho)
-                .setRequestCode(requestCode)
-                .setStartFlags(startFlags)
-                .setProfilerInfo(profilerInfo)
-                .setActivityOptions(bOptions)
-                .setMayWait(userId)
-                .execute();
-    }
-```
-
-`mActivityStartController.obtainStarter` 会创建一个 ActivityStarter 
-
-```java
-    ActivityStarter setMayWait(int userId) {
-        mRequest.mayWait = true;
-        mRequest.userId = userId;
-
-        return this;
-    }
-```
-
-```java
-    int execute() {
-        try {
-            if (mRequest.mayWait) {
-                return startActivityMayWait(mRequest.caller, mRequest.callingUid,
-                        mRequest.callingPackage, mRequest.intent, mRequest.resolvedType,
-                        mRequest.voiceSession, mRequest.voiceInteractor, mRequest.resultTo,
-                        mRequest.resultWho, mRequest.requestCode, mRequest.startFlags,
-                        mRequest.profilerInfo, mRequest.waitResult, mRequest.globalConfig,
-                        mRequest.activityOptions, mRequest.ignoreTargetSecurity, mRequest.userId,
-                        mRequest.inTask, mRequest.reason,
-                        mRequest.allowPendingRemoteAnimationRegistryLookup);
-            } else {
-                return startActivity(mRequest.caller, mRequest.intent, mRequest.ephemeralIntent,
-                        mRequest.resolvedType, mRequest.activityInfo, mRequest.resolveInfo,
-                        mRequest.voiceSession, mRequest.voiceInteractor, mRequest.resultTo,
-                        mRequest.resultWho, mRequest.requestCode, mRequest.callingPid,
-                        mRequest.callingUid, mRequest.callingPackage, mRequest.realCallingPid,
-                        mRequest.realCallingUid, mRequest.startFlags, mRequest.activityOptions,
-                        mRequest.ignoreTargetSecurity, mRequest.componentSpecified,
-                        mRequest.outActivity, mRequest.inTask, mRequest.reason,
-                        mRequest.allowPendingRemoteAnimationRegistryLookup);
-            }
-        } finally {
-            onExecutionComplete();
-        }
-    }
-```
-
-`execute()` 中 `mRequest.mayWait` 为 true
-
-```java
-    private int startActivityMayWait(IApplicationThread caller, int callingUid,
-            String callingPackage, Intent intent, String resolvedType,
-            IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
-            IBinder resultTo, String resultWho, int requestCode, int startFlags,
-            ProfilerInfo profilerInfo, WaitResult outResult,
-            Configuration globalConfig, SafeActivityOptions options, boolean ignoreTargetSecurity,
-            int userId, TaskRecord inTask, String reason,
-            boolean allowPendingRemoteAnimationRegistryLookup) {
-            ...
-            int res = startActivity(caller, intent, ephemeralIntent, resolvedType, aInfo, rInfo,
-                    voiceSession, voiceInteractor, resultTo, resultWho, requestCode, callingPid,
-                    callingUid, callingPackage, realCallingPid, realCallingUid, startFlags, options,
-                    ignoreTargetSecurity, componentSpecified, outRecord, inTask, reason,
-                    allowPendingRemoteAnimationRegistryLookup);
-            ...
-            return res;
-        }
-    }
-
-    private int startActivity(final ActivityRecord r, ActivityRecord sourceRecord,
-                IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
-                int startFlags, boolean doResume, ActivityOptions options, TaskRecord inTask,
-                ActivityRecord[] outActivity) {
-        ...
-            result = startActivityUnchecked(r, sourceRecord, voiceSession, voiceInteractor,
-                    startFlags, doResume, options, inTask, outActivity);
-        ...
-        return result;
-    }
+    -> ActivityStarter.execute()
+     -> ...startActivityMayWait()
+      -> ...startActivity()
+       -> ...startActivityUnchecked(...)
 ```
 
 `startActivityUnchecked` 是一个很重要的方法，这个方法里会根据启动标志位和Activity启动模式来决定如何启动一个Activity以及是否要调用deliverNewIntent方法通知Activity有一个Intent试图重新启动它。
@@ -167,24 +40,24 @@ mParent 代表的是 ActivityGroup，是 Activity 很早的版本里才有的东
 在 `resumeTopActivityInnerLocked` 中会先对 resume 状态的 activity 执行 pause。 
 
 ```java
-    private boolean resumeTopActivityInnerLocked(ActivityRecord prev, ActivityOptions options) {
-        ...
-        boolean pausing = mStackSupervisor.pauseBackStacks(userLeaving, next, false);
-        if (mResumedActivity != null) {
-            pausing |= startPausingLocked(userLeaving, false, next, false);
-        }
-        ...
-        // 开始进行真正最终真正的activity启动
-        mStackSupervisor.startSpecificActivityLocked(next, true, true);
-        
-        try {
-            next.completeResumeLocked();
-        } catch (Exception e) {
-            ...
-        }
-        ...
-        return true;
+private boolean resumeTopActivityInnerLocked(ActivityRecord prev, ActivityOptions options) {
+    ...
+    boolean pausing = mStackSupervisor.pauseBackStacks(userLeaving, next, false);
+    if (mResumedActivity != null) {
+        pausing |= startPausingLocked(userLeaving, false, next, false);
     }
+    ...
+    // 开始进行真正最终真正的activity启动
+    mStackSupervisor.startSpecificActivityLocked(next, true, true);
+    
+    try {
+        next.completeResumeLocked();
+    } catch (Exception e) {
+        ...
+    }
+    ...
+    return true;
+}
 ```
 
 ## activity 的 pause 过程
@@ -192,55 +65,52 @@ mParent 代表的是 ActivityGroup，是 Activity 很早的版本里才有的东
 `startPausingLocked` 之后会执行 startPausingLocked
 
 ```java
-    final boolean startPausingLocked(boolean userLeaving, boolean uiSleeping,
-            ActivityRecord resuming, boolean pauseImmediately) {
-        ...
-        if (prev.app != null && prev.app.thread != null) {
-            try {
-                EventLogTags.writeAmPauseActivity(prev.userId, System.identityHashCode(prev),
-                        prev.shortComponentName, "userLeaving=" + userLeaving);
-                mService.updateUsageStats(prev, false);
-                // Android 9.0在这里引入了ClientLifecycleManager和
-                // ClientTransactionHandler来辅助管理Activity生命周期，
-                // 他会发送EXECUTE_TRANSACTION消息到ActivityThread.H里面继续处理。
-                mService.getLifecycleManager().scheduleTransaction(prev.app.thread, prev.appToken,
-                        PauseActivityItem.obtain(prev.finishing, userLeaving,
-                                prev.configChangeFlags, pauseImmediately));
-            } catch (Exception e) {
-                ...
-            }
-        } else {
-            mPausingActivity = null;
-            mLastPausedActivity = null;
-            mLastNoHistoryActivity = null;
+final boolean startPausingLocked(boolean userLeaving, boolean uiSleeping,
+        ActivityRecord resuming, boolean pauseImmediately) {
+    ...
+    if (prev.app != null && prev.app.thread != null) {
+        try {
+            mService.updateUsageStats(prev, false);
+            // Android 9.0在这里引入了ClientLifecycleManager和
+            // ClientTransactionHandler来辅助管理Activity生命周期，
+            // 注意这里是在系统进程， prev.app.thread 是应用进程的binder对象
+            mService.getLifecycleManager().scheduleTransaction(prev.app.thread, prev.appToken,
+                    PauseActivityItem.obtain(prev.finishing, userLeaving,
+                            prev.configChangeFlags, pauseImmediately));
+        } catch (Exception e) {
+            ...
         }
-        ...
+    } else {
+        mPausingActivity = null;
+        mLastPausedActivity = null;
+        mLastNoHistoryActivity = null;
     }
+    ...
+}
 ```
 
 ```java
+void scheduleTransaction(@NonNull IApplicationThread client, @NonNull IBinder activityToken,
+        @NonNull ActivityLifecycleItem stateRequest) throws RemoteException {
+    final ClientTransaction clientTransaction = transactionWithState(client, activityToken,
+            stateRequest);
+    scheduleTransaction(clientTransaction);
+}
 
-    void scheduleTransaction(@NonNull IApplicationThread client, @NonNull IBinder activityToken,
-            @NonNull ActivityLifecycleItem stateRequest) throws RemoteException {
-        final ClientTransaction clientTransaction = transactionWithState(client, activityToken,
-                stateRequest);
-        scheduleTransaction(clientTransaction);
-    }
+private static ClientTransaction transactionWithState(@NonNull IApplicationThread client,
+        @NonNull IBinder activityToken, @NonNull ActivityLifecycleItem stateRequest) {
+    final ClientTransaction clientTransaction = ClientTransaction.obtain(client, activityToken);
+    clientTransaction.setLifecycleStateRequest(stateRequest);
+    return clientTransaction;
+}
 
-    private static ClientTransaction transactionWithState(@NonNull IApplicationThread client,
-            @NonNull IBinder activityToken, @NonNull ActivityLifecycleItem stateRequest) {
-        final ClientTransaction clientTransaction = ClientTransaction.obtain(client, activityToken);
-        clientTransaction.setLifecycleStateRequest(stateRequest);
-        return clientTransaction;
+void scheduleTransaction(ClientTransaction transaction) throws RemoteException {
+    final IApplicationThread client = transaction.getClient();
+    transaction.schedule();
+    if (!(client instanceof Binder)) {
+        transaction.recycle();
     }
-    
-    void scheduleTransaction(ClientTransaction transaction) throws RemoteException {
-        final IApplicationThread client = transaction.getClient();
-        transaction.schedule();
-        if (!(client instanceof Binder)) {
-            transaction.recycle();
-        }
-    }
+}
 ```
 
 Android 9.0在这里引入了`ClientLifecycleManager`和 `ClientTransactionHandler`来辅助管理Activity生命周期，
@@ -249,16 +119,17 @@ Android 9.0在这里引入了`ClientLifecycleManager`和 `ClientTransactionHandl
 
 ```java
 // ClientTransaction
-    public void schedule() throws RemoteException {
-        mClient.scheduleTransaction(this);
-    }
+public void schedule() throws RemoteException {
+    mClient.scheduleTransaction(this);
+}
 ```
 
-`schedule()` 将工作转给了 mClient ，mClient 是 transactionWithState 中传入的，是一个 IApplicationThread， IApplicationThread 是 ActivityThread 的内部类。
+`schedule()` 将工作转给了 mClient ，mClient 是 transactionWithState 中传入的，是一个 IApplicationThread，这是一个APP进程的binder对象。 在 pause 流程中代表要pause的activity所在的进程。
+IApplicationThread 的实现是 ActivityThread 的内部类 ApplicationThread 。这里通过binder调用从 系统进程转到了应用进程。
 
 ```java
 
-// IAppliction
+// ApplicationThread
 @Override
 public void scheduleTransaction(ClientTransaction transaction) throws RemoteException {
     ActivityThread.this.scheduleTransaction(transaction);
@@ -271,14 +142,14 @@ void scheduleTransaction(ClientTransaction transaction) {
 }
 
 // ActivityThread
-    private void sendMessage(int what, Object obj, int arg1, int arg2, boolean async) {
-        Message msg = Message.obtain();
-        ...
-        if (async) {
-            msg.setAsynchronous(true);
-        }
-        mH.sendMessage(msg);
+private void sendMessage(int what, Object obj, int arg1, int arg2, boolean async) {
+    Message msg = Message.obtain();
+    ...
+    if (async) {
+        msg.setAsynchronous(true);
     }
+    mH.sendMessage(msg);
+}
 ```
 
 ### H extends Handler
@@ -304,10 +175,10 @@ msg.what 是 `ActivityThread.H.EXECUTE_TRANSACTION` 。将activity生命周期�
 ```java
     public void execute(ClientTransaction transaction) {
         final IBinder token = transaction.getActivityToken();
-        log("Start resolving transaction for client: " + mTransactionHandler + ", token: " + token);
 
+        // 如果有callback先执行callback，后面有使用到这个特性
         executeCallbacks(transaction);
-
+        
         executeLifecycleState(transaction);
         mPendingActions.clear();
         log("End resolving transaction");
@@ -325,70 +196,71 @@ msg.what 是 `ActivityThread.H.EXECUTE_TRANSACTION` 。将activity生命周期�
     }
 ```
 
-在 TransactionExecutor 中从 ClientTransaction 获取 ActivityLifecycleItem ， 并执行 execute 和 postExecute 。 由于我们传入的是 PauseActivityItem ， 所以真正执行的代码还是在 PauseActivityItem 里。
+在 TransactionExecutor 中从 ClientTransaction 获取 ActivityLifecycleItem ， 并执行 execute 和 postExecute 。 由于我们传入的是 PauseActivityItem ， 所以真正执行的代码还是在系统进程的 PauseActivityItem 里。
 
 ```java
-    @Override
-    public void execute(ClientTransactionHandler client, IBinder token,PendingTransactionActions pendingActions) {
-        client.handlePauseActivity(token, mFinished, mUserLeaving, mConfigChanges, pendingActions,
-                "PAUSE_ACTIVITY_ITEM");
-    }
+@Override
+public void execute(ClientTransactionHandler client, IBinder token,PendingTransactionActions pendingActions) {
+    // PauseActivityItem.execute 中调用的是 ClientTransactionHandler.handlePauseActivity // ActivityThread 继承了 ClientTransactionHandler。 其实调用的还是 ActivityThread
+    // 这里执行是在系统进程，client.xxxx 回到了应用进程，这是一个跨进程调用？？
 
-    @Override
-    public void postExecute(ClientTransactionHandler client, IBinder token, PendingTransactionActions pendingActions) {
-        if (mDontReport) {
-            return;
-        }
-        try {
-            // TODO(lifecycler): Use interface callback instead of AMS.
-            ActivityManager.getService().activityPaused(token);
-        } catch (RemoteException ex) {
-            throw ex.rethrowFromSystemServer();
-        }
+    client.handlePauseActivity(token, mFinished, mUserLeaving, mConfigChanges, pendingActions,
+            "PAUSE_ACTIVITY_ITEM");
+}
+
+@Override
+public void postExecute(ClientTransactionHandler client, IBinder token, PendingTransactionActions pendingActions) {
+    if (mDontReport) {
+        return;
     }
+    try {
+        // TODO(lifecycler): Use interface callback instead of AMS.
+        ActivityManager.getService().activityPaused(token);
+    } catch (RemoteException ex) {
+        throw ex.rethrowFromSystemServer();
+    }
+}
 ```
 
 ```java
-// PauseActivityItem.execute 中调用的是 ClientTransactionHandler.
-// handlePauseActivity ，但是， ActivityThread 继承了 ClientTransactionHandler。 其实调用的还是 ActivityThread 。。
-
-    @Override
-    public void handlePauseActivity(IBinder token, boolean finished, boolean userLeaving,
-            int configChanges, PendingTransactionActions pendingActions, String reason) {
-        ActivityClientRecord r = mActivities.get(token);
-        if (r != null) {
-            if (userLeaving) {
-                performUserLeavingActivity(r);
-            }
-
-            r.activity.mConfigChangeFlags |= configChanges;
-            performPauseActivity(r, finished, reason, pendingActions);
-
-            // Make sure any pending writes are now committed.
-            if (r.isPreHoneycomb()) {
-                QueuedWork.waitToFinish();
-            }
-            mSomeActivitiesChanged = true;
+// ActivityThread
+@Override
+public void handlePauseActivity(IBinder token, boolean finished, boolean userLeaving,
+        int configChanges, PendingTransactionActions pendingActions, String reason) {
+    ActivityClientRecord r = mActivities.get(token);
+    if (r != null) {
+        if (userLeaving) {
+            performUserLeavingActivity(r);
         }
-    }
 
-    private void performPauseActivityIfNeeded(ActivityClientRecord r, String reason) {
-        try {
-            r.activity.mCalled = false;
-            mInstrumentation.callActivityOnPause(r.activity);
-        } ...
-        r.setState(ON_PAUSE);
+        r.activity.mConfigChangeFlags |= configChanges;
+        performPauseActivity(r, finished, reason, pendingActions);
+
+        // Make sure any pending writes are now committed.
+        if (r.isPreHoneycomb()) {
+            QueuedWork.waitToFinish();
+        }
+        mSomeActivitiesChanged = true;
     }
+}
+
+private void performPauseActivityIfNeeded(ActivityClientRecord r, String reason) {
+    try {
+        r.activity.mCalled = false;
+        mInstrumentation.callActivityOnPause(r.activity);
+    } ...
+    r.setState(ON_PAUSE);
+}
 ```
 
 ```java
 // Instrumentation
-    public void callActivityOnPause(Activity activity) {
-        activity.performPause();
-    }
+public void callActivityOnPause(Activity activity) {
+    activity.performPause();
+}
 ```
 
-## 创建 App 进程
+## 新activity启动
 
 ```java
 // ActivityStackSupervisor
@@ -402,6 +274,7 @@ msg.what 是 `ActivityThread.H.EXECUTE_TRANSACTION` 。将activity生命周期�
 
         if (app != null && app.thread != null) {
             try {
+                // app.thread 不为空，表示对应的进程存在，直接启动activity
                 ...
                 realStartActivityLocked(r, app, andResume, checkConfig);
                 return;
@@ -409,7 +282,7 @@ msg.what 是 `ActivityThread.H.EXECUTE_TRANSACTION` 。将activity生命周期�
                 ...
             }
         }
-
+        // 进程不存在，创建进程
         mService.startProcessLocked(r.processName, r.info.applicationInfo, true, 0,
                 "activity", r.intent.getComponent(), false, false, true);
     }
@@ -483,10 +356,9 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
                 // Create activity launch transaction.
                 final ClientTransaction clientTransaction = ClientTransaction.obtain(app.thread,
                         r.appToken);
+                // 设置 callback ，先执行 activity 的 launch 和 onCreate
                 clientTransaction.addCallback(LaunchActivityItem.obtain(new Intent(r.intent),
                         System.identityHashCode(r), r.info,
-                        // TODO: Have this take the merged configuration instead of separate global
-                        // and override configs.
                         mergedConfiguration.getGlobalConfiguration(),
                         mergedConfiguration.getOverrideConfiguration(), r.compat,
                         r.launchedFromPackage, task.voiceInteractor, app.repProcState, r.icicle,
@@ -495,6 +367,7 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
 
                 // Set desired final state.
                 final ActivityLifecycleItem lifecycleItem;
+                // 再执行 onResume
                 if (andResume) {
                     lifecycleItem = ResumeActivityItem.obtain(mService.isNextTransitionForward());
                 } else {
@@ -502,7 +375,7 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
                 }
                 clientTransaction.setLifecycleStateRequest(lifecycleItem);
 
-                // Schedule transaction.
+                // Schedule transaction. 进入app进程
                 mService.getLifecycleManager().scheduleTransaction(clientTransaction);
                 ...
 
@@ -518,24 +391,24 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
 
 ```java
 // LaunchActivityItem
-    @Override
-    public void execute(ClientTransactionHandler client, IBinder token,
-            PendingTransactionActions pendingActions) {
-        ActivityClientRecord r = new ActivityClientRecord(token, mIntent, mIdent, mInfo,
-                mOverrideConfig, mCompatInfo, mReferrer, mVoiceInteractor, mState, mPersistentState,
-                mPendingResults, mPendingNewIntents, mIsForward,
-                mProfilerInfo, client);
-        client.handleLaunchActivity(r, pendingActions, null /* customIntent */);
-    }
+@Override
+public void execute(ClientTransactionHandler client, IBinder token,
+        PendingTransactionActions pendingActions) {
+    ActivityClientRecord r = new ActivityClientRecord(token, mIntent, mIdent, mInfo,
+            mOverrideConfig, mCompatInfo, mReferrer, mVoiceInteractor, mState, mPersistentState,
+            mPendingResults, mPendingNewIntents, mIsForward,
+            mProfilerInfo, client);
+    client.handleLaunchActivity(r, pendingActions, null /* customIntent */);
+}
 
 // ActivityThread
-    public Activity handleLaunchActivity(ActivityClientRecord r,
-            PendingTransactionActions pendingActions, Intent customIntent) {
-        ...
-        final Activity a = performLaunchActivity(r, customIntent);
-        ...
-        return a;
-    }
+public Activity handleLaunchActivity(ActivityClientRecord r,
+        PendingTransactionActions pendingActions, Intent customIntent) {
+    ...
+    final Activity a = performLaunchActivity(r, customIntent);
+    ...
+    return a;
+}
 ```
 
 ```java
@@ -553,7 +426,7 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
                     r.activityInfo.targetActivity);
         }
 
-        // 初始化ContextImpl和Activity
+        // 这个 appContext 是 activity 的 baseContext 。 不清楚作用是什么
         ContextImpl appContext = createBaseContextForActivity(r);
         Activity activity = null;
         try {
@@ -572,25 +445,16 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
         }
 
         try {
-            // 初始化Application
+            // 拿到Application
+            // 在 ActivityThread#bindApplication 的使用已经实例化了applicaiton对象了。
+            // 这里实际上不会创建
             Application app = r.packageInfo.makeApplication(false, mInstrumentation);
 
             if (activity != null) {
-                CharSequence title = r.activityInfo.loadLabel(appContext.getPackageManager());
-                Configuration config = new Configuration(mCompatConfiguration);
-                if (r.overrideConfig != null) {
-                    config.updateFrom(r.overrideConfig);
-                }
-
-                // 添加window
-                Window window = null;
-                if (r.mPendingRemoveWindow != null && r.mPreserveWindow) {
-                    window = r.mPendingRemoveWindow;
-                    r.mPendingRemoveWindow = null;
-                    r.mPendingRemoveWindowManager = null;
-                }
+                ...
                 // Application、Activity和ContextImpl互相关联
                 appContext.setOuterContext(activity);
+                // 调用 activity 的 attach 
                 activity.attach(appContext, this, getInstrumentation(), r.token,
                         r.ident, app, r.intent, r.activityInfo, title, r.parent,
                         r.embeddedID, r.lastNonConfigurationInstances, config,
@@ -609,6 +473,7 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
                 }
 
                 activity.mCalled = false;
+                // 调用 activity 的 onCreate 生命周期
                 if (r.isPersistable()) {
                     mInstrumentation.callActivityOnCreate(activity, r.state, r.persistentState);
                 } else {
@@ -646,9 +511,8 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
     }
 ```
 
-在 performLaunchActivity 中创建了 activity ，并将 context 和 application 与之绑定，执行 `activity.attach` 。 并添加 window ，设置主题
-
-接下来，performLaunchActivity 里通过调用 mInstrumentation.callActivityOnCreate ，开始进行 onCreate 的流程。
+在 performLaunchActivity 中创建了 activity ，并将 context 和 application 与之绑定，执行 `activity.attach` 。 
+接下来，performLaunchActivity 里通过调用 `mInstrumentation.callActivityOnCreate` ，开始进行 onCreate 的流程。
 
 ```java
 // Instrumentation
@@ -659,67 +523,67 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
     }
 ```
 
-### activity 的 onResume 
+### activity 的 onStart 
 
-前面我们走完了 activity 的 onCreate 过程，执行代码是在 LaunchActivityItem 中，然后 onResume 显然是在 ResumeActivityItem 里， 那 onOnStart 呢？？
+前面我们走完了 activity 的 onCreate 过程，执行代码是在 LaunchActivityItem 中，然后 onResume 显然是在 ResumeActivityItem 里， 那 onStart 呢？？
 
 再回到 ClientTransaction 的调度流程中来， 在 TransactionExecutor 里。
 
 ```java
 // TransactionExecutor
-    public void execute(ClientTransaction transaction) {
-        final IBinder token = transaction.getActivityToken();
+public void execute(ClientTransaction transaction) {
+    final IBinder token = transaction.getActivityToken();
 
-        executeCallbacks(transaction);
+    executeCallbacks(transaction);
 
-        executeLifecycleState(transaction);
-        mPendingActions.clear();
+    executeLifecycleState(transaction);
+    mPendingActions.clear();
+}
+
+private void executeLifecycleState(ClientTransaction transaction) {
+    final ActivityLifecycleItem lifecycleItem = transaction.getLifecycleStateRequest();
+    if (lifecycleItem == null) {
+        // No lifecycle request, return early.
+        return;
     }
 
-    private void executeLifecycleState(ClientTransaction transaction) {
-        final ActivityLifecycleItem lifecycleItem = transaction.getLifecycleStateRequest();
-        if (lifecycleItem == null) {
-            // No lifecycle request, return early.
-            return;
+    final IBinder token = transaction.getActivityToken();
+    final ActivityClientRecord r = mTransactionHandler.getActivityClient(token);
+
+    if (r == null) {
+        // Ignore requests for non-existent client records for now.
+        return;
+    }
+
+    // Cycle to the state right before the final requested state.
+    cycleToPath(r, lifecycleItem.getTargetState(), true /* excludeLastState */);
+
+    // Execute the final transition with proper parameters.
+    lifecycleItem.execute(mTransactionHandler, token, mPendingActions);
+    lifecycleItem.postExecute(mTransactionHandler, token, mPendingActions);
+}
+
+private void cycleToPath(ActivityClientRecord r, int finish,
+        boolean excludeLastState) {
+    final int start = r.getLifecycleState();
+    final IntArray path = mHelper.getLifecyclePath(start, finish, excludeLastState);
+    performLifecycleSequence(r, path);
+}
+
+/** Transition the client through previously initialized state sequence. */
+private void performLifecycleSequence(ActivityClientRecord r, IntArray path) {
+    final int size = path.size();
+    for (int i = 0, state; i < size; i++) {
+        state = path.get(i);
+        switch (state) {
+            ...
+            case ON_START:
+                mTransactionHandler.handleStartActivity(r, mPendingActions);
+                break;
+            ...
         }
-
-        final IBinder token = transaction.getActivityToken();
-        final ActivityClientRecord r = mTransactionHandler.getActivityClient(token);
-
-        if (r == null) {
-            // Ignore requests for non-existent client records for now.
-            return;
-        }
-
-        // Cycle to the state right before the final requested state.
-        cycleToPath(r, lifecycleItem.getTargetState(), true /* excludeLastState */);
-
-        // Execute the final transition with proper parameters.
-        lifecycleItem.execute(mTransactionHandler, token, mPendingActions);
-        lifecycleItem.postExecute(mTransactionHandler, token, mPendingActions);
     }
-
-    private void cycleToPath(ActivityClientRecord r, int finish,
-            boolean excludeLastState) {
-        final int start = r.getLifecycleState();
-        final IntArray path = mHelper.getLifecyclePath(start, finish, excludeLastState);
-        performLifecycleSequence(r, path);
-    }
-
-    /** Transition the client through previously initialized state sequence. */
-    private void performLifecycleSequence(ActivityClientRecord r, IntArray path) {
-        final int size = path.size();
-        for (int i = 0, state; i < size; i++) {
-            state = path.get(i);
-            switch (state) {
-                ...
-                case ON_START:
-                    mTransactionHandler.handleStartActivity(r, mPendingActions);
-                    break;
-                ...
-            }
-        }
-    }
+}
 ```
 
 在 TransactionExecutor 中先执行 callback ，然后 lifecycleItem.execute 。中间有一个 cycleToPath 方法。 cycleToPath 内部逻辑很明显，执行 start 和 finish 中间状态的逻辑。 对于 ResumeActivityItem 来说就会执行 onStart 的逻辑。。。 我佛了。
@@ -740,176 +604,303 @@ activity 之后的 start 过程和 create 过程基本一致。现在再来看�
             String reason) {
         ...
 
+        // 执行 activity#onResume
         final ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);
         ...
 
         final Activity a = r.activity;
 
-        ...
-
-        if (r.window == null && !a.mFinished && willBeVisible) {
-            r.window = r.activity.getWindow();
-            View decor = r.window.getDecorView();
-            decor.setVisibility(View.INVISIBLE);
-            ViewManager wm = a.getWindowManager();
-            WindowManager.LayoutParams l = r.window.getAttributes();
-            a.mDecor = decor;
-            l.type = WindowManager.LayoutParams.TYPE_BASE_APPLICATION;
-            l.softInputMode |= forwardBit;
-            if (r.mPreserveWindow) {
-                a.mWindowAdded = true;
-                r.mPreserveWindow = false;
-                ViewRootImpl impl = decor.getViewRootImpl();
-                if (impl != null) {
-                    impl.notifyChildRebuilt();
-                }
-            }
-            if (a.mVisibleFromClient) {
-                if (!a.mWindowAdded) {
-                    a.mWindowAdded = true;
-                    wm.addView(decor, l);
-                } else {
-                    a.onWindowAttributesChanged(l);
-                }
-            }
-        } else if (!willBeVisible) {
-            r.hideForNow = true;
-        }
+        ... // 绑定 ViewRootImpl
 
         ...
 
         Looper.myQueue().addIdleHandler(new Idler());
     }
-
-   public ActivityClientRecord performResumeActivity(IBinder token, boolean finalStateRequest,
-            String reason) {
-        ...
-        try {
-            r.activity.onStateNotSaved();
-            r.activity.mFragments.noteStateNotSaved();
-            checkAndBlockForNetworkAccess();
-            if (r.pendingIntents != null) {
-                deliverNewIntents(r, r.pendingIntents);
-                r.pendingIntents = null;
-            }
-            if (r.pendingResults != null) {
-                deliverResults(r, r.pendingResults, reason);
-                r.pendingResults = null;
-            }
-            r.activity.performResume(r.startsNotResumed, reason);
-
-            r.state = null;
-            r.persistentState = null;
-            r.setState(ON_RESUME);
-        } catch (Exception e) {
-            if (!mInstrumentation.onException(r.activity, e)) {
-                throw new RuntimeException("Unable to resume activity "
-                        + r.intent.getComponent().toShortString() + ": " + e.toString(), e);
-            }
-        }
-        ...
-        return r;
-    }
-
 ```
 
 handleResumeActivity 中操作了很多 window 相关的东西。 到这里 activity 的启动就完成了
 
-## activity 的 stop
+## activity 的 stop 和 destroy
 
-之前分析了 onPause 的流程， 但是没有看到 onStop ， 所以 onStop 是如何执行的呢。 在 activity 的生命周期中， activity a 启动 activity b ， b.onStop 应该在 a.onResume 之后执行。
+之前分析了 onPause 的流程， 但是没有看到 onStop ， 所以 onStop 是如何执行的呢。 
+onStop的执行有两种case：
+1.  activity a 启动 activity b ， a.onStop 应该在 a.onPause b.onResume 之后执行。
+2.  activity b 退出销毁，b.onStop 应该在 b.onPause 和 a.onResume 之后
 
-玄机竟然在 handleResumeActivity 里。。
+来直接看执行puase的地方
 
 ```java
-// ActivityThread
+public class PauseActivityItem extends ActivityLifecycleItem {
     @Override
-    public void handleResumeActivity(IBinder token, boolean finalStateRequest, boolean isForward,
-            String reason) {
-        ...
-
-        final ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);
-        ...
-
-        Looper.myQueue().addIdleHandler(new Idler());
+    public void execute(ClientTransactionHandler client, IBinder token,
+            PendingTransactionActions pendingActions) {
+        client.handlePauseActivity(token, mFinished, mUserLeaving, mConfigChanges, pendingActions, "PAUSE_ACTIVITY_ITEM");
     }
 
-    private class Idler implements MessageQueue.IdleHandler {
-        @Override
-        public final boolean queueIdle() {
-            ...
-            if (a.activity != null && !a.activity.mFinished) {
-                try {
-                    am.activityIdle(a.token, a.createdConfig, stopProfiling);
-                        a.createdConfig = null;
-                } catch (RemoteException ex) {
-                    throw ex.rethrowFromSystemServer();
-                }
-            }
-            ...
-            return false;
-        }
+    @Override
+    public int getTargetState() {
+        return ON_PAUSE;
     }
+
+    @Override
+    public void postExecute(ClientTransactionHandler client, IBinder token,
+            PendingTransactionActions pendingActions) {
+        ActivityManager.getService().activityPaused(token);
+    }
+}
 ```
+poseExecute 的执行在 execute 之后； pause完后会通知给ams。
 
 ```java
 // ActivityManagerService
-    public final void activityIdle(IBinder token, Configuration config, boolean stopProfiling) {
-        final long origId = Binder.clearCallingIdentity();
-        synchronized (this) {
-            ActivityStack stack = ActivityRecord.getStackLocked(token);
-            if (stack != null) {
-                ActivityRecord r =
-                        mStackSupervisor.activityIdleInternalLocked(token, false /* fromTimeout */,
-                                false /* processPausingActivities */, config);
-                if (stopProfiling) {
-                    if ((mProfileProc == r.app) && mProfilerInfo != null) {
-                        clearProfilerLocked();
-                    }
+@Override
+public final void activityPaused(IBinder token) {
+  synchronized(this) {
+      ActivityStack stack = ActivityRecord.getStackLocked(token);
+      if (stack != null) {
+          stack.activityPausedLocked(token, false);
+      }
+  }
+}
+
+// ActivityStack
+final void activityPausedLocked(IBinder token, boolean timeout) {
+  final ActivityRecord r = isInStackLocked(token);
+  if (r != null) {
+    // 去除anr判定
+      mHandler.removeMessages(PAUSE_TIMEOUT_MSG, r);
+      if (mPausingActivity == r) {
+          mService.mWindowManager.deferSurfaceLayout();
+          try {
+            // 打开新页面，进入下一步
+              completePauseLocked(true /* resumeNext */, null /* resumingActivity */);
+          } finally {
+              mService.mWindowManager.continueSurfaceLayout();
+          }
+          return;
+      } else {
+          if (r.isState(PAUSING)) {
+              r.setState(PAUSED, "activityPausedLocked");
+              if (r.finishing) {
+                // 退出当前页面，执行销毁流程
+                  finishCurrentActivityLocked(r, FINISH_AFTER_VISIBLE, false,
+                          "activityPausedLocked");
+              }
+          }
+      }
+  }
+  mStackSupervisor.ensureActivitiesVisibleLocked(null, 0, !PRESERVE_WINDOWS);
+}
+
+private void completePauseLocked(boolean resumeNext, ActivityRecord resuming) {
+    ActivityRecord prev = mPausingActivity;  
+    if (prev != null) {
+        prev.setWillCloseOrEnterPip(false);
+        final boolean wasStopping = prev.isState(STOPPING); // 正常应该为false？
+        prev.setState(PAUSED, "completePausedLocked");
+        if (prev.finishing) {
+            // 退出当前页面，执行销毁流程。 FINISH_AFTER_VISIBLE 注意这个标志位
+            prev = finishCurrentActivityLocked(prev, FINISH_AFTER_VISIBLE, false,
+                  "completedPausedLocked");
+        } else if (prev.app != null) {
+            if (mStackSupervisor.mActivitiesWaitingForVisibleActivity.remove(prev)) {
+                if (prev.deferRelaunchUntilPaused) {
+                    prev.relaunchActivityLocked(false /* andResume */,prev.preserveWindowOnDeferredRelaunch);
+                } else if (wasStopping) {
+                    prev.setState(STOPPING, "completePausedLocked");
+                } else if (!prev.visible || shouldSleepOrShutDownActivities()) {
+                    prev.setDeferHidingClient(false);
+                    // 添加到shopping等待集合中
+                    addToStopping(prev, true /* scheduleIdle */, false /* idleDelayed */);
+                }
+            } else {
+                prev = null;
+            }
+            ...
+            mPausingActivity = null;
+        }
+    }
+}
+
+final ActivityRecord finishCurrentActivityLocked(ActivityRecord r, int mode, boolean oomAdj, String reason) {
+    final ActivityRecord next = mStackSupervisor.topRunningActivityLocked(true /* considerKeyguardState */);
+  
+    if (mode == FINISH_AFTER_VISIBLE && (r.visible || r.nowVisible) // FINISH_AFTER_VISIBLE 注意这个标记位
+                  && next != null && !next.nowVisible) {
+        if (!mStackSupervisor.mStoppingActivities.contains(r)) {
+            addToStopping(r, false /* scheduleIdle */, false /* idleDelayed */);
+        }
+        r.setState(STOPPING, "finishCurrentActivityLocked");
+        ...
+        return r;
+    }
+    ...
+    if (mode == FINISH_IMMEDIATELY  // FINISH_IMMEDIATELY 注意这个标记位
+            || (prevState == PAUSED
+                && (mode == FINISH_AFTER_PAUSE || inPinnedWindowingMode()))
+            || finishingActivityInNonFocusedStack
+            || prevState == STOPPING
+            || prevState == STOPPED
+            || prevState == ActivityState.INITIALIZING) {
+        r.makeFinishingLocked();
+        boolean activityRemoved = destroyActivityLocked(r, true, "finish-imm:" + reason);
+        ...
+        return activityRemoved ? null : r;
+    }
+    ...
+}
+```
+
+上面的代码中，activity在pause之后，无论是finish还是非finish的流程。 都不会立刻执行 stop 和 destroy
+开始执行 stop 和 destroy ，是在下一个 activity resume 之后
+来看 resume 之后做了啥
+
+```java
+// ActivityThread
+@Override
+public void handleResumeActivity(IBinder token, boolean finalStateRequest, boolean isForward,
+        String reason) {
+    ...
+
+    final ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);
+    ...
+
+    Looper.myQueue().addIdleHandler(new Idler());
+}
+
+private class Idler implements MessageQueue.IdleHandler {
+    @Override
+    public final boolean queueIdle() {
+        ...
+        if (a.activity != null && !a.activity.mFinished) {
+            try {
+                am.activityIdle(a.token, a.createdConfig, stopProfiling);
+                    a.createdConfig = null;
+            } catch (RemoteException ex) {
+                throw ex.rethrowFromSystemServer();
+            }
+        }
+        ...
+        return false;
+    }
+}
+```
+
+在activity#resume 之后，会发送一个 idleHandler ， 在消息队列空闲时调用 ams#activityIdle 开始上一个activity的销毁流程。
+因为是一个 idleHandler ，只会在空闲时执行，所以，所以有可能一个页面退出后，很长时间都不执行 stop 和 destroy。 但是系统有一个10s的兜底，10s后一定会执行 stop 和 destroy
+
+```java
+// ActivityManagerService
+public final void activityIdle(IBinder token, Configuration config, boolean stopProfiling) {
+    final long origId = Binder.clearCallingIdentity();
+    synchronized (this) {
+        ActivityStack stack = ActivityRecord.getStackLocked(token);
+        if (stack != null) {
+            ActivityRecord r =
+                    mStackSupervisor.activityIdleInternalLocked(token, false /* fromTimeout */,
+                            false /* processPausingActivities */, config);
+            if (stopProfiling) {
+                if ((mProfileProc == r.app) && mProfilerInfo != null) {
+                    clearProfilerLocked();
                 }
             }
         }
-        Binder.restoreCallingIdentity(origId);
     }
+    Binder.restoreCallingIdentity(origId);
+}
 ```
 
 ```java
 // ActivityStackSupervisor.java
-    final ActivityRecord activityIdleInternalLocked(final IBinder token, boolean fromTimeout,
-            boolean processPausingActivities, Configuration config) {
-        ...
-        final ArrayList<ActivityRecord> stops = processStoppingActivitiesLocked(r, true /* remove */, processPausingActivities);
-        ...
+final ActivityRecord activityIdleInternalLocked(final IBinder token, boolean fromTimeout,
+        boolean processPausingActivities, Configuration config) {
+    ...
+    // 取出所有的之前 shopping 的 activity
+    final ArrayList<ActivityRecord> stops = processStoppingActivitiesLocked(r, true /* remove */, processPausingActivities);
+    ...
 
-        for (int i = 0; i < NS; i++) {
-            r = stops.get(i);
-            final ActivityStack stack = r.getStack();
-            if (stack != null) {
-                if (r.finishing) {
-                    stack.finishCurrentActivityLocked(r, ActivityStack.FINISH_IMMEDIATELY, false,
-                            "activityIdleInternalLocked");
-                } else {
-                    stack.stopActivityLocked(r);
-                }
+    for (int i = 0; i < NS; i++) {
+        r = stops.get(i);
+        final ActivityStack stack = r.getStack();
+        if (stack != null) {
+            if (r.finishing) {
+                // 如果是销毁一个activity
+                stack.finishCurrentActivityLocked(r, ActivityStack.FINISH_IMMEDIATELY, false, "activityIdleInternalLocked");
+            } else {
+                // 只是 stop
+                stack.stopActivityLocked(r);
             }
         }
-        ...
-
-        return r;
     }
+    ...
+
+    return r;
+}
 
 // ActivityStack
-    final void stopActivityLocked(ActivityRecord r) {
-        ...
-        mService.getLifecycleManager().scheduleTransaction(r.app.thread, r.appToken,
-                StopActivityItem.obtain(r.visible, r.configChangeFlags));
-        ...
+final ActivityRecord finishCurrentActivityLocked(ActivityRecord r, int mode, boolean oomAdj, String reason) {
+    ...
+    if (mode == FINISH_IMMEDIATELY  // 这里为true
+            || (prevState == PAUSED
+                && (mode == FINISH_AFTER_PAUSE || inPinnedWindowingMode()))
+            || finishingActivityInNonFocusedStack
+            || prevState == STOPPING
+            || prevState == STOPPED
+            || prevState == ActivityState.INITIALIZING) {
+        r.makeFinishingLocked();
+        boolean activityRemoved = destroyActivityLocked(r, true, "finish-imm:" + reason);
+        ....
+        return activityRemoved ? null : r;
     }
+    ...
+}
+
+final boolean destroyActivityLocked(ActivityRecord r, boolean removeFromApp, String reason) {
+    final boolean hadApp = r.app != null;
+    ...
+    if (hadApp) {
+        ...
+        try {
+            mService.getLifecycleManager().scheduleTransaction(r.app.thread, r.appToken,
+                    DestroyActivityItem.obtain(r.finishing, r.configChangeFlags));
+        } catch (Exception e) {
+            ...
+        }
+    }
+    ...
+    return removedFromHistory;
+}
+
+// ActivityStack
+final void stopActivityLocked(ActivityRecord r) {
+    ...
+    mService.getLifecycleManager().scheduleTransaction(r.app.thread, r.appToken,
+            StopActivityItem.obtain(r.visible, r.configChangeFlags));
+    ...
+}
 ```
 
-经过一番调用，最终还是一样，向 ClientLifecycleManager 发送了一个 StopActivityItem 。
+先判断 `r.finishing` 如果为true，表示页面退出，执行destroy； 如果为false，则只执行stop。
+经过一番调用，最终还是一样，向 ClientLifecycleManager 发送了一个 StopActivityItem 和 DestroyActivityItem。
 
-到此，activity 的启动流程就结束了。
+### stop 和 destroy 系统10s兜底
+在 `ActivityRecord.completeResumeLocked` 会在activity resume 之后调用，在这个方法中会调用 
+`ActivityStackSuperVisor.scheduleIdleTimeoutLocked()` 
+```java
+void scheduleIdleTimeoutLocked(ActivityRecord next) {
+    Message msg = mHandler.obtainMessage(IDLE_TIMEOUT_MSG, next);
+    mHandler.sendMessageDelayed(msg, IDLE_TIMEOUT); // IDLE_TIMEOUT 是 10*1000
+}
+
+// case IDLE_TIMEOUT_MSG: {
+//     activityIdleInternal((ActivityRecord) msg.obj, true /* processPausingActivities */);
+//     } break;
+// }
+```
+
+## anr的判定
+
+
 
 ## 参考
 

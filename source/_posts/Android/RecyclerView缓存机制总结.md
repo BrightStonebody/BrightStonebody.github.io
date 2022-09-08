@@ -22,13 +22,13 @@ categories:
 * mAttachedScrap
     * 显示在屏幕中，未与RecyclerView分离但被标记移除的Holder。 LayoutManager 布局时的临时缓存，布局完成后为空
 * mChangedScrap
-    * 显示在屏幕中，数据已经发生改变的Holder。notifxxx方法时产生
+    * 显示在屏幕中，和 mAttachedScrap 类似，在预布局的时候会用到
 * mCachedViews 
     * 在屏幕外的Holder。缓存，默认大小为2。
 * mRecyclerPool
     * 在屏幕外的Holder。当mCachedViews满时，存储至此。按照ViewType进行分类存储。默认大小为5。从中取出的Holder需要调用onBindViewHolder方法
 
-mAttachedScrap、mChangedScrap、mCachedViews中取出的Holder是直接可用的，不需要调用onCreatedViewHolder和onBindViewHolder方法。
+mCachedViews中取出的Holder是直接可用的，不需要调用onCreatedViewHolder和onBindViewHolder方法。
 
 ### mAttachedScrap 和 mChangedScrap 的插入
 ```java
@@ -177,7 +177,7 @@ public final void bindViewHolder(@NonNull VH holder, int position) {
 }
 ```
 
-`!holder.isBound()` ViewHolder 是否调用过 onBind 。在bind时，如果 holder.mBindingAdapter == null ，会设置这个 bound 标记位
+`!holder.isBound()` ViewHolder 是否调用过 onBind 。在bind时，如果 holder.mBindingAdapter == null ，会设置这个 bound 标记位。
 `holder.needsUpdate()` 调用 notifyXxxxx 方法时vh会为true
 `holder.isInvalid()` vh非法
 
