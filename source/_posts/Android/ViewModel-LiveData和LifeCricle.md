@@ -132,29 +132,29 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 }
 // 在页面销毁时，保存ViewModelStore
 public final Object onRetainNonConfigurationInstance() {
-     Object custom = onRetainCustomNonConfigurationInstance();
-     ViewModelStore viewModelStore = mViewModelStore;
-     if (viewModelStore == null) {
+    Object custom = onRetainCustomNonConfigurationInstance();
+    ViewModelStore viewModelStore = mViewModelStore;
+    if (viewModelStore == null) {
          // 如果NonConfigurationInstance保存了viewModelStore，把它取出来
         NonConfigurationInstances nc = getLastNonConfigurationInstance();
         if (nc != null) {
-            viewModelStore = nc.viewModelStore;
-          }
-       }
-     if (viewModelStore == null && custom == null) {
-          return null;
-       }
-      NonConfigurationInstances nci = new NonConfigurationInstances();
-      nci.custom = custom; 
-      //把viewModelStore放到NonConfigurationInstances中并返回
-      nci.viewModelStore = viewModelStore;
-      //这样当页面被重建而销毁时ViewModelStore就被保存起来了。
-      return nci;
+          viewModelStore = nc.viewModelStore;
+        }
+    }
+    if (viewModelStore == null && custom == null) {
+        return null;
+    }
+    NonConfigurationInstances nci = new NonConfigurationInstances();
+    nci.custom = custom; 
+    //把viewModelStore放到NonConfigurationInstances中并返回
+    nci.viewModelStore = viewModelStore;
+    //这样当页面被重建而销毁时ViewModelStore就被保存起来了。
+    return nci;
 }
 ```
 
 ViewModelStore在onCreate里会从NonConfigurationInstances里尝试取出，然后在onRetainNonConfigurationInstanc方法中保存到NonConfigurationInstances。
-onRetainNonConfigurationInstance何时被调用，数据又是怎样保存的呢？了解过Activity启动流程的都知道ActivityThread，它控制着Activity的生命周期，当ActivityThread执行performDestroyActivity这个方法时，会调用Activity#retainNonConfigurationInstances获取到保存的数据并保存到ActivityClientRecord中。
+onRetainNonConfigurationInstance何时被调用，数据又是怎样保存的呢？了解过Activity启动流程的都知道ActivityThread，它控制着Activity的生命周期，当ActivityThread执行performDestroyActivity这个方法时，会调用Activity#retainNonConfigurationInstances获取到保存的数据并保存到 ActivityClientRecord 中。 ActivityClientRecord 的集合 mActivities 是 ActivityThread 的成员变量，生命周期和应用进程保持一致。 
 
 ```java
 ActivityClientRecord performDestroyActivity(IBinder token, boolean finishing, int configChanges, boolean getNonConfigInstance, String reason) {
@@ -852,10 +852,9 @@ public abstract class LiveData<T> {
 }
 ```
 
-LifecycleBoundObserver继承自ObserverWrapper，并且实现了
+LifecycleBoundObserver继承自ObserverWrapper，并且实现了GenericLifecycleObserver接口。GenericLifecycleObserver接口继承自LifecycleObserver接口
 
 ```java
-GenericLifecycleObserver接口。GenericLifecycleObserver接口继承自LifecycleObserver接口
 public interface GenericLifecycleObserver extends LifecycleObserver {
     void onStateChanged(LifecycleOwner source, Lifecycle.Event event);
 }

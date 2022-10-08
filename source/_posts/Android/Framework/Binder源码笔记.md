@@ -45,3 +45,7 @@ IPCThreadState 有两个缓存 mIn 和 mOut 分别负责数据的接收和发射
 # 问题：
 ## 1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的
 应用 Service 是发布到 AMS 上的，客户端从 AMS 上去查找 Service 的 Binder 对象
+
+## 2. Serializable 和 Parcelable
+Serializable 序列化时使用了大量的反射， Parcelable 序列化过程是用户自定义的， Parcelable 更优越。
+Serializable 更适合用于网络传输和本地存储， 因为 Parcelable 可能由于安卓系统    。

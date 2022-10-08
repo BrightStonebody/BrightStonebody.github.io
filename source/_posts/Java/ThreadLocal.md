@@ -20,13 +20,13 @@ categories:
 
 ```java
 public void set(T value) {
-        Thread t = Thread.currentThread();
-        ThreadLocalMap map = getMap(t);
-        if (map != null)
-            map.set(this, value);
-        else
-            createMap(t, value);
-    }
+    Thread t = Thread.currentThread();
+    ThreadLocalMap map = getMap(t);
+    if (map != null)
+        map.set(this, value);
+    else
+        createMap(t, value);
+}
 ```
 
 createMap()方法：
@@ -63,14 +63,14 @@ public T get() {
 其中的ThreadLocalMap.Entry
 ```java
 static class Entry extends WeakReference<ThreadLocal<?>> {
-            /** The value associated with this ThreadLocal. */
-            Object value;
+    /** The value associated with this ThreadLocal. */
+    Object value;
 
-            Entry(ThreadLocal<?> k, Object v) {
-                super(k);
-                value = v;
-            }
-        }
+    Entry(ThreadLocal<?> k, Object v) {
+        super(k);
+        value = v;
+    }
+}
 ```
 **Entry中的key时ThreadLocal的弱引用， 所以在ThreadLocal的get方法中map.getEntry(this)传入的是自己**
 

@@ -38,8 +38,8 @@ Response getResponseWithInterceptorChain() throws IOException {
       throw new IOException("Canceled");
     }
     return response;
-  }
 }
+
 ```
 
 ### 每个拦截器的简单说明:
@@ -49,7 +49,6 @@ Response getResponseWithInterceptorChain() throws IOException {
 * 4. CacheInterceptor：负责控制缓存，缓存的逻辑就在这里面。如果发现有缓存的话, 就直接返回response了, 不会进行后面的流程
 * 5. ConnectInterceptor：负责进行连接主机，在这里会完成socket连接，并将连接返回。
 * 6. CallServerInterceptor：和服务器通信，完成Http请求。
-所以我们可以总结出网络请求的调用流程：
 
 Chain是Interceptor声明在Interceptor内部的一个接口. RealInterceptorChian实现了Chain接口, 来看看这个类
 

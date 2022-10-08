@@ -380,7 +380,7 @@ public class SharedReference<T> {
 CountingMemoryCache
 
 ```java
-public class CountingMemoryCache<K, V> implements MemoryCache<K, V>, MemoryTrimmable {
+public class 65<K, V> implements MemoryCache<K, V>, MemoryTrimmable {
 
   /**
   * 有两个集合， mExclusiveEntries 等待移除的entry，引用为0的entry的集合

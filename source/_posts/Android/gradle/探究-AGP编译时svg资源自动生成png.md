@@ -101,7 +101,7 @@ public interface ResourcePreprocessor extends Serializable {
     void generateFile(@NonNull File toBeGenerated, @NonNull File original) throws IOException;
 }
 ```
-它的实现类是 VectorDrawableRenderer ，看名字可以判定，这就是svg->png的实现类（罪魁祸首）。。。先寻找它被调用的地方。
+它的实现类是 VectorDrawableRenderer ，看名字可以判定，这就是 svg->png 的实现类（罪魁祸首）。。。先寻找它被调用的地方。
 
 ### 关键2 ResourceSet#loadFromFiles
 ```java
@@ -143,7 +143,7 @@ private List<ResourceMergerItem> getResourceMergerItemsForGeneratedFiles(@NonNul
 }
 ```
 
-这里的 mPreprocessor 就是 VectorDrawableRenderer ，mPreprocessor.getFilesToBeGenerated(file) 会返回 svg 资源文件和png兼容资源文件的集合。里面不详细看了，主要是根据useSupportLibrary 和generatedDensities 这两个gradle参数生成png文件的绝对路径。 
+这里的 mPreprocessor 就是 VectorDrawableRenderer ，`mPreprocessor.getFilesToBeGenerated(file)` 会返回 svg 资源文件和png兼容资源文件的集合。里面不详细看了，主要是根据useSupportLibrary 和generatedDensities 这两个gradle参数生成png文件的绝对路径。 
 这里的png路径是 build/generated/res/pngs/debug 。 这和 MergeResources task 的目标路径并不相同。
 getResourceMergerItemsForGeneratedFiles 方法最终会将每一个资源文件抽象为ResourceMergerItem ，并返回他们的集合。
 
@@ -294,6 +294,7 @@ mResourceCompiler.submitCompile 正式提交编译。
 mResourceCompiler 的实现在子module和app有所不同，
 在module，实例是CopyToOutputDirectoryResourceCompilationService 
 在app，实例是 WorkerExecutorResourceCompilationService
+
 - 子module的资源 "编译"
 ```kotlin
 object CopyToOutputDirectoryResourceCompilationService : ResourceCompilationService {
@@ -315,6 +316,7 @@ object CopyToOutputDirectoryResourceCompilationService : ResourceCompilationServ
 在子module比较简单，就是把 request 里的 inputFile 拷贝到目标目录。
 如果是svg生成png的case，是 build/generated/res/pngs/ 文件拷贝到 build/intermediates/package_res/
 如果是工程中的一般资源文件，是`src/main/res` 文件拷贝到 build/intermediates/package_res/
+
 - app的资源编译
 ```kotlin
 class WorkerExecutorResourceCompilationService(...) : ResourceCompilationService {
@@ -463,14 +465,6 @@ AGP提供了 variant.getAllRawAndroidResources().files 这个api，在app下使�
 /Users/xx/.gradle/caches/transforms-2/files-2.1/5fddbd55bd0ad4a84e0959052d0c417d/coordinatorlayout-1.0.0/res
 /Users/xx/.gradle/caches/transforms-2/files-2.1/05736e5c1eb0ab8976aa5868fca67ffe/core-1.3.1/res
 
-// 不知道是什么目录，空的
-/Users/xx/PluginX/app/build/generated/res/rs/debug
-/Users/xx/PluginX/app/build/generated/res/resValues/debug
-/Users/xx/PluginX/app/build/generated/res/microapk/debug
-
-// 工程开发目录 /src/main/res
-/Users/xx/PluginX/app/src/main/res
-/Users/xx/PluginX/app/src/debug/res
 ```
 
 结合上面 MergeResources 的分析。
@@ -483,6 +477,7 @@ AGP提供了 variant.getAllRawAndroidResources().files 这个api，在app下使�
 TODO：是否可以在 mergeDebugResources 之后进行 hook ？
 
 
-参考:
-Android中Gradle原理以及机制深入分析
-gradle编译打包过程分析之ProcessAndroidResources
+## 参考:
+[Android中Gradle原理以及机制深入分析](http://www.youkmi.cn/2020/01/01/android-zhong-gradle-yuan-li-yi-ji-ji-zhi-shen-ru-fen-xi/)
+[gradle编译打包过程分析之ProcessAndroidResources](https://juejin.cn/post/7060337237761720334)
+[McImage插件解析（旧版本）](https://smallsoho.com/android/2017/04/07/McImage%E6%8F%92%E4%BB%B6%E8%A7%A3%E6%9E%90/)

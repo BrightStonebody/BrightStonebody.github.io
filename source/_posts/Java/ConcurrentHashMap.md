@@ -264,6 +264,10 @@ ConcurrentHashMap 的扩容在transfer方法中；
 * 当有新的线程想要在这个hash位置插入元素时，发现这里有一个 ForwardingNode ，会协助一起扩容，帮助将原数组的元素迁移到新数组。 以 transferIndex 作为起点，stride容量内的元素自己负责协助拷贝
 * 对于线程安全，在扩容拷贝的时候，会对hash数组要拷贝的位置进行 synchronized 加锁。在计算 transferIndex 的会使用 cas+自旋 机制保证线程安全。
 
+多线程协助扩容触发的时机： 
+1. 当添加元素时，发现添加的元素对用的桶位为 fwd 节点，就会先去协助扩容，然后再添加元素
+2. 当添加完元素后，判断当前元素个数达到了扩容阈值，此时发现sizeCtl的值小于0，并且新数组不为空，这个时候，会去协助扩容
+
 ```java
 private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
     int n = tab.length, stride;
@@ -350,6 +354,7 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
             synchronized (f) {
                 if (tabAt(tab, i) == f) {
                     ... // 省略代码，和 HashMap 的扩容拷贝基本一致
+                    setTabAt(tab, i, fwd);
                     advance = true;
                 }
             }

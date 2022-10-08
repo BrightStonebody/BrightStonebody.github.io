@@ -90,7 +90,7 @@ categories:
 
 **getResponseWithInterceptorChain()方法是请求发出的最终执行方法.** 也就是说RealCall中调用execute()就已经直接同步开始了请求操作.
 
-但是dispatcher是请求的分发类, 如果, 直接开始了请求操作, 那么在dispatcher.executed方法和dispatcher.finished方法都干了什么呢? 
+但是dispatcher是请求的分发类, 如果, 直接开始了请求操作, 那么在 `dispatcher.executed` 方法和 `dispatcher.finished` 方法都干了什么呢? 
 
 详细的内容可以看Dispatcher的源码解析.
 
