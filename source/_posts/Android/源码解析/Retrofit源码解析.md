@@ -87,6 +87,13 @@ final class BuiltInConverters extends Converter.Factory {
 ```
 这里首先插入了一个 BuiltInConverters 内置的转换器。 当返回类型是 ResponseBody 的时候就会使用 BuiltInConverters ，返回 ResponseBody 就和 okhttp 的返回一致了。
 
+## Retrofit的重要部分
+1. responseConverter : response的转换器
+GsonConverterFactory 将string类型的返回值转换为javabean
+2. callAdapter : call适配器。 
+DefaultCallAdapterFactory 生产默认的适配器。 默认的行为是将子线程的请求callback切换到主线程。
+RxJava2CallAdapterFactory 适配rxjava
+
 ## retrofit.create(XxxInterface.class)
 
 ```java
@@ -228,6 +235,7 @@ OkHttpCall 实现了 Retrofit 的 call 到 OkHttpCall 的转换
 adapt 最终会调用 CallAdapter 的 adapt
 
 ```java
+// OkHttpCall#enqueue
  @Override 
  public void enqueue(final Callback<T> callback) {
     okhttp3.Call call;
@@ -330,6 +338,39 @@ DefaultCallAdapterFactory
 
 enqueue 里的返回 onResponse 和 onFailure 都是在 callbackExecutor
 callbackExecutor 也是在 retrofit 构建时传入的， 默认是 `Android.MainThreadExecutor` 也就是说默认 enqueue 的 callback 默认是执行在主线程的
+
+## 对kotlin协程的支持
+
+动态代理的api接口的方法调用支持suspend协程，具体的方法是使用 suspendCancellableCoroutine 
+
+```java
+suspend fun <T : Any> Call<T>.await(): T {
+  return suspendCancellableCoroutine { continuation ->
+    continuation.invokeOnCancellation {
+      cancel()
+    }
+    enqueue(object : Callback<T> {
+      override fun onResponse(call: Call<T>, response: Response<T>) {
+        if (response.isSuccessful) {
+          val body = response.body()
+          if (body == null) {
+            ...
+            continuation.resumeWithException(e)
+          } else {
+            continuation.resume(body)
+          }
+        } else {
+          continuation.resumeWithException(HttpException(response))
+        }
+      }
+
+      override fun onFailure(call: Call<T>, t: Throwable) {
+        continuation.resumeWithException(t)
+      }
+    })
+  }
+}
+```
 
 
 

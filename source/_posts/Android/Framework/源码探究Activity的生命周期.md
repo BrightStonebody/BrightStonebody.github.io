@@ -201,8 +201,8 @@ msg.what 是 `ActivityThread.H.EXECUTE_TRANSACTION` 。将activity生命周期�
 ```java
 @Override
 public void execute(ClientTransactionHandler client, IBinder token,PendingTransactionActions pendingActions) {
-    // PauseActivityItem.execute 中调用的是 ClientTransactionHandler.handlePauseActivity // ActivityThread 继承了 ClientTransactionHandler。 其实调用的还是 ActivityThread
-    // 这里执行是在系统进程，client.xxxx 回到了应用进程，这是一个跨进程调用？？
+    // PauseActivityItem.execute 中调用的是 ClientTransactionHandler.handlePauseActivity 
+    // ActivityThread 继承了 ClientTransactionHandler。 其实调用的还是 ActivityThread
 
     client.handlePauseActivity(token, mFinished, mUserLeaving, mConfigChanges, pendingActions,
             "PAUSE_ACTIVITY_ITEM");
@@ -356,7 +356,7 @@ startSpecificActivityLocked 中会判断要跳转的 activity 所在的进程是
                 // Create activity launch transaction.
                 final ClientTransaction clientTransaction = ClientTransaction.obtain(app.thread,
                         r.appToken);
-                // 设置 callback ，先执行 activity 的 launch 和 onCreate
+                // 设置 callback ，先执行 activity 的 attach 和 onCreate
                 clientTransaction.addCallback(LaunchActivityItem.obtain(new Intent(r.intent),
                         System.identityHashCode(r), r.info,
                         mergedConfiguration.getGlobalConfiguration(),
