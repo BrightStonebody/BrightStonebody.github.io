@@ -57,7 +57,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="OSI五层网络模型 物理层利用传输介质为数据提供物理连接，传输比特流。 wifi 、光纤 等 数据链路层在两个相邻结点之间传送数据，传输数据帧 网络层提供路由和寻址的功能，使两终端系统能够互连且决定最佳路径。 IP协议 传输层向用户提供可靠的端到端的差错和流量控制，保证报文的正确传输，负责向两个主机中进程之间的通信提供服务。 TCP ， UDP 应用层 为用户提供的服务。 http，https 协">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-09-03T08:56:14.217Z">
+<meta property="og:updated_time" content="2022-09-24T09:14:51.005Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络相关知识点">
 <meta name="twitter:description" content="OSI五层网络模型 物理层利用传输介质为数据提供物理连接，传输比特流。 wifi 、光纤 等 数据链路层在两个相邻结点之间传送数据，传输数据帧 网络层提供路由和寻址的功能，使两终端系统能够互连且决定最佳路径。 IP协议 传输层向用户提供可靠的端到端的差错和流量控制，保证报文的正确传输，负责向两个主机中进程之间的通信提供服务。 TCP ， UDP 应用层 为用户提供的服务。 http，https 协">
@@ -240,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-03 16:56:14" itemprop="dateModified" datetime="2022-09-03T16:56:14+08:00">2022-09-03</time>
+                <time title="修改时间：2022-09-24 17:14:51" itemprop="dateModified" datetime="2022-09-24T17:14:51+08:00">2022-09-24</time>
               </span>
 
           
@@ -285,6 +285,27 @@
 <p><strong>http2.0</strong></p>
 <p>多路复用。<br>多个请求<strong>并行</strong>的复用一个连接。<br>和 keep-alive 的区别： http1.1 的复用是串行的，如果有一个请求耗时较长会阻塞。http2.0 是并行复用，不会阻塞</p>
 <h2 id="https"><a href="#https" class="headerlink" title="https"></a>https</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">client ---- 请求https连接  ----&gt; server</span><br><span class="line">client &lt;--- 公钥          ----&gt; server</span><br><span class="line">client ---- 生成秘钥，并用公钥加密</span><br><span class="line">client ---- 公钥加密后的秘钥 ---&gt; server</span><br><span class="line">       使用私钥解密，得到秘钥 ---- server</span><br><span class="line">client &lt;--- client 和 server使用秘钥通信 ---&gt; server // 对称加密</span><br></pre></td></tr></table></figure>
+<h2 id="get-和-post-的区别"><a href="#get-和-post-的区别" class="headerlink" title="get 和 post 的区别"></a>get 和 post 的区别</h2><ol>
+<li>get相对于post请求更安全，以为get请求的参数暴露在url上</li>
+<li>get请求一般有长度限制，但是这并不是协议规定的长度限制。而是浏览器或服务器因为性能原因而做出的限制。</li>
+<li>okhttp缓存的key是url。 而post请求包含了body。 所以okhttp只能缓存get请求。</li>
+</ol>
+<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p>WebSocket 支持客户端和服务端双向通信</p>
+<h3 id="使用http协议建立连接"><a href="#使用http协议建立连接" class="headerlink" title="使用http协议建立连接"></a>使用http协议建立连接</h3><p>客户端发起协议升级请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET / HTTP/1.1</span><br><span class="line">Host: localhost:8080</span><br><span class="line">Origin: http://127.0.0.1:3000</span><br><span class="line">Connection: Upgrade</span><br><span class="line">Upgrade: websocket</span><br><span class="line">Sec-WebSocket-Version: 13</span><br><span class="line">Sec-WebSocket-Key: w4v7O6xFTi36lq3RNcgctw==</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Connection: Upgrade：<br>表示要升级协议</li>
+<li>Upgrade: websocket：表示要升级到websocket协议。</li>
+<li>Sec-WebSocket-Version: 13：表示websocket的版本。如果服务端不支持该版本，需要返回一个Sec-WebSocket-Versionheader，里面包含服务端支持的版本号。</li>
+<li>Sec-WebSocket-Key：与后面服务端响应首部的Sec-WebSocket-Accept是配套的，提供基本的防护，比如恶意的连接，或者无意的连接。</li>
+</ul>
+<p>服务端返回</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 101 Switching Protocols</span><br><span class="line">Connection:Upgrade</span><br><span class="line">Upgrade: websocket</span><br><span class="line">Sec-WebSocket-Accept: Oy4NRAQ13jhfONC7bP8dTKb4PTU=</span><br></pre></td></tr></table></figure>
+<p>返回101状态码，表示WebSocket建立成功</p>
+<h3 id="ping、pong"><a href="#ping、pong" class="headerlink" title="ping、pong"></a>ping、pong</h3><p>保持tcp连接不断开</p>
+<h3 id="WebSocket-和-keep-alive-的区别"><a href="#WebSocket-和-keep-alive-的区别" class="headerlink" title="WebSocket 和 keep-alive 的区别"></a>WebSocket 和 keep-alive 的区别</h3><p>http 的 keep-alive 是为了复用tcp连接。 每一次http请求都必须发送完整的http报文。 只能由客户端发起请求，服务端被动响应。</p>
+<p>WebSocket 的报文比http报文格式简单，支持服务端主动给客户端发消息。</p>
+
     </div>
 
     
@@ -346,7 +367,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OSI五层网络模型"><span class="nav-text">OSI五层网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-三次握手"><span class="nav-text">TCP 三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-四次挥手"><span class="nav-text">TCP 四次挥手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#和UDP相比，为什么TCP是可靠的"><span class="nav-text">和UDP相比，为什么TCP是可靠的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http"><span class="nav-text">http</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#http版本迭代"><span class="nav-text">http版本迭代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#https"><span class="nav-text">https</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OSI五层网络模型"><span class="nav-text">OSI五层网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP"><span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-三次握手"><span class="nav-text">TCP 三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-四次挥手"><span class="nav-text">TCP 四次挥手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#和UDP相比，为什么TCP是可靠的"><span class="nav-text">和UDP相比，为什么TCP是可靠的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http"><span class="nav-text">http</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#http版本迭代"><span class="nav-text">http版本迭代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#https"><span class="nav-text">https</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get-和-post-的区别"><span class="nav-text">get 和 post 的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebSocket"><span class="nav-text">WebSocket</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用http协议建立连接"><span class="nav-text">使用http协议建立连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ping、pong"><span class="nav-text">ping、pong</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebSocket-和-keep-alive-的区别"><span class="nav-text">WebSocket 和 keep-alive 的区别</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -362,7 +383,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-count">73</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -375,7 +396,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -57,7 +57,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="ProcessStateProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 zygote 在fork出应用进程之后会在c层完成初始化启动 binder">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-09-04T11:07:35.331Z">
+<meta property="og:updated_time" content="2022-09-12T11:22:39.451Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Binder源码笔记">
 <meta name="twitter:description" content="ProcessStateProcessState 是一个系统 Service 进程的单例，一个进程只有一个 ProcessState 实例。 zygote 在fork出应用进程之后会在c层完成初始化启动 binder">
@@ -240,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-04 19:07:35" itemprop="dateModified" datetime="2022-09-04T19:07:35+08:00">2022-09-04</time>
+                <time title="修改时间：2022-09-12 19:22:39" itemprop="dateModified" datetime="2022-09-12T19:22:39+08:00">2022-09-12</time>
               </span>
 
           
@@ -263,6 +263,7 @@
 <h2 id="IPCThreadState-self-gt-transact-…"><a href="#IPCThreadState-self-gt-transact-…" class="headerlink" title="IPCThreadState::self()-&gt;transact(…)"></a>IPCThreadState::self()-&gt;transact(…)</h2><p>真正数据通信的方法。 一个线程只会有一个实例， 使用 pthread_setspecific 实现，类似于 java 的 ThreadLocal<br>IPCThreadState 有两个缓存 mIn 和 mOut 分别负责数据的接收和发射</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-&gt;</span> transact(..)</span><br><span class="line">    -&gt; writeTransactionData(..)</span><br><span class="line">        -&gt; 将 cmd 和 data 写入到 mOut 中</span><br><span class="line">    -&gt; waitForResponse(..)</span><br><span class="line">        -&gt; talkWithDriver(doReceive)</span><br><span class="line">            -&gt; 将 bwr(一个和Binder驱动的结构体) bwr.write_buffer 指向 mOut.data()</span><br><span class="line">            -&gt; 将 bwr.read_buffer 指向 mIn.data()</span><br><span class="line">            -&gt; do-while 循环，调用 ioctl 函数 和 Binder 驱动通信，直到结束</span><br></pre></td></tr></table></figure>
 <h1 id="问题："><a href="#问题：" class="headerlink" title="问题："></a>问题：</h1><h2 id="1-只有系统Service-才能记录到-ServiceManager-中，那么-应用的-Service-是如何查找到的"><a href="#1-只有系统Service-才能记录到-ServiceManager-中，那么-应用的-Service-是如何查找到的" class="headerlink" title="1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的"></a>1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的</h2><p>应用 Service 是发布到 AMS 上的，客户端从 AMS 上去查找 Service 的 Binder 对象</p>
+<h2 id="2-Serializable-和-Parcelable"><a href="#2-Serializable-和-Parcelable" class="headerlink" title="2. Serializable 和 Parcelable"></a>2. Serializable 和 Parcelable</h2><p>Serializable 序列化时使用了大量的反射， Parcelable 序列化过程是用户自定义的， Parcelable 更优越。<br>Serializable 更适合用于网络传输和本地存储， 因为 Parcelable 可能由于安卓系统    。</p>
 
     </div>
 
@@ -325,7 +326,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ProcessState"><span class="nav-text">ProcessState</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Binder线程池"><span class="nav-text">Binder线程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信"><span class="nav-text">通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-和-BBinder"><span class="nav-text">BpBinder 和 BBinder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-transact"><span class="nav-text">BpBinder::transact</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPCThreadState-self-gt-transact-…"><span class="nav-text">IPCThreadState::self()-&gt;transact(…)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题："><span class="nav-text">问题：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-只有系统Service-才能记录到-ServiceManager-中，那么-应用的-Service-是如何查找到的"><span class="nav-text">1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ProcessState"><span class="nav-text">ProcessState</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Binder线程池"><span class="nav-text">Binder线程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通信"><span class="nav-text">通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-和-BBinder"><span class="nav-text">BpBinder 和 BBinder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BpBinder-transact"><span class="nav-text">BpBinder::transact</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPCThreadState-self-gt-transact-…"><span class="nav-text">IPCThreadState::self()-&gt;transact(…)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题："><span class="nav-text">问题：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-只有系统Service-才能记录到-ServiceManager-中，那么-应用的-Service-是如何查找到的"><span class="nav-text">1. 只有系统Service 才能记录到 ServiceManager 中，那么 应用的 Service 是如何查找到的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Serializable-和-Parcelable"><span class="nav-text">2. Serializable 和 Parcelable</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -341,7 +342,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-count">73</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -354,7 +355,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

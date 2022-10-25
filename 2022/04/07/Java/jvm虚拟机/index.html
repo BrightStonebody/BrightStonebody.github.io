@@ -57,7 +57,7 @@
 <meta property="og:site_name" content="BrightStone">
 <meta property="og:description" content="JVM架构jvm有几个区域：方法区、堆、Java栈、程序计数器、本地方法栈">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-08-28T10:33:40.789Z">
+<meta property="og:updated_time" content="2022-09-13T05:13:50.101Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jvm虚拟机">
 <meta name="twitter:description" content="JVM架构jvm有几个区域：方法区、堆、Java栈、程序计数器、本地方法栈">
@@ -240,7 +240,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-28 18:33:40" itemprop="dateModified" datetime="2022-08-28T18:33:40+08:00">2022-08-28</time>
+                <time title="修改时间：2022-09-13 13:13:50" itemprop="dateModified" datetime="2022-09-13T13:13:50+08:00">2022-09-13</time>
               </span>
 
           
@@ -304,6 +304,10 @@
 </ul>
 </li>
 </ul>
+<h3 id="GC-Root"><a href="#GC-Root" class="headerlink" title="GC Root"></a>GC Root</h3><p>虚拟机栈（栈帧中的本地变量表）中引用的对象</p>
+<p>本地方法栈中 JNI（即一般说的 Native 方法）引用的对象</p>
+<p>方法区中类静态属性引用的对象</p>
+<p>方法区中常量引用的对象</p>
 <h2 id="jar文件和dex文件的差异"><a href="#jar文件和dex文件的差异" class="headerlink" title="jar文件和dex文件的差异"></a>jar文件和dex文件的差异</h2><p>一个jar文件包含多个class文件，不同的class文件之间没有关联。 如果有相同的常量信息等数据，会产生冗余，增大文件大小。<br>一个dex文件包括索引区和数据区，多个类共用一个索引区。这样相同的常量信息等可以避免重复冗余，可以大大减小文件大小。 同时，因为只有一个文件，也可以减少文件io的开销。 </p>
 <h2 id="对象一定是在堆上的吗？"><a href="#对象一定是在堆上的吗？" class="headerlink" title="对象一定是在堆上的吗？"></a>对象一定是在堆上的吗？</h2><p>不一定，取决于不同jvm的设计优化。</p>
 <p>在虚拟机栈的调用中，jvm会对方法体力创建的对象做逃逸分析。 通过<strong>逃逸分析</strong>，可以分析出这个对象的引用是否只存在于方法体内部。<br>如果发现某个对象并没有逃逸到方法体之外的话，就可能对其进行优化。不会将对象分配到堆上，可以减少gc的消耗。<br>具体的方法是，把这个对象拆解成若干个其中包含的若干个局部变量来代替。这个过程就是<strong>标量替换</strong></p>
@@ -369,7 +373,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM架构"><span class="nav-text">JVM架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于栈的jvm-和-基于寄存器的jvm"><span class="nav-text">基于栈的jvm 和 基于寄存器的jvm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么-dalvik-和-art-要基于寄存器"><span class="nav-text">为什么 dalvik 和 art 要基于寄存器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-text">类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC垃圾回收机制"><span class="nav-text">GC垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何判断对象是否可以被回收"><span class="nav-text">如何判断对象是否可以被回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强引用、弱引用、软引用、虚引用"><span class="nav-text">强引用、弱引用、软引用、虚引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC算法"><span class="nav-text">GC算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jar文件和dex文件的差异"><span class="nav-text">jar文件和dex文件的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象一定是在堆上的吗？"><span class="nav-text">对象一定是在堆上的吗？</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM架构"><span class="nav-text">JVM架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于栈的jvm-和-基于寄存器的jvm"><span class="nav-text">基于栈的jvm 和 基于寄存器的jvm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么-dalvik-和-art-要基于寄存器"><span class="nav-text">为什么 dalvik 和 art 要基于寄存器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-text">类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC垃圾回收机制"><span class="nav-text">GC垃圾回收机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何判断对象是否可以被回收"><span class="nav-text">如何判断对象是否可以被回收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强引用、弱引用、软引用、虚引用"><span class="nav-text">强引用、弱引用、软引用、虚引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC算法"><span class="nav-text">GC算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-Root"><span class="nav-text">GC Root</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jar文件和dex文件的差异"><span class="nav-text">jar文件和dex文件的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象一定是在堆上的吗？"><span class="nav-text">对象一定是在堆上的吗？</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -385,7 +389,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-count">73</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -398,7 +402,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
