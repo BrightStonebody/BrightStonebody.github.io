@@ -45,6 +45,7 @@ static int indexFor(int h, int length) {  //jdk1.7的源码，jdk1.8没有这个
                         do {
                             next = e.next;
                             // 因为 oldCap 始终为2的倍数。 (e.hash & oldCap) 只会有0或1两个值，由此决定是位置 j 还是 j+oldCap
+                            // hash数组下标i的元素的hash值并不是一样的，put元素时计算下标i对hashcode做了运算
                             if ((e.hash & oldCap) == 0) {
                                 if (loTail == null)
                                     loHead = e;

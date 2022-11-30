@@ -361,4 +361,49 @@ void dispatchDetachedFromWindow() {
 
 
 
+# 如何在子线程刷新UI
+
+因为ViewRootImpl的校验线程，只是校验ViewRootImpl实例化的线程和当前线程是否是同一个。 ViewRootImpl 是在 WindowManagerGlobal#addView 的是否创建的。 所以只要保证window的创建在子线程即可。 
+
+```kotlin
+import android.graphics.PixelFormat
+import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Message
+import android.view.WindowManager
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.example.test.R
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.lang.Thread.sleep
+
+
+class TestActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_test)
+
+        val newThread = HandlerThread("work Thread")
+        newThread.start()
+        val newThreadHandler = object : Handler(newThread.getLooper()) {
+            override fun handleMessage(msg: Message) {
+
+                val dialog = object : BottomSheetDialog(this@TestActivity) {
+                    override fun onCreate(savedInstanceState: Bundle?) {
+                        super.onCreate(savedInstanceState)
+                        val tvNewThreadText = TextView(this@TestActivity)
+                        tvNewThreadText.setText("子线程内更新 UI ${Thread.currentThread()}")
+                        setContentView(tvNewThreadText)
+                    }
+                }
+                dialog.show()
+            }
+        }
+        newThreadHandler.sendEmptyMessageDelayed(0, 2000)
+    }
+}
+```
+
 

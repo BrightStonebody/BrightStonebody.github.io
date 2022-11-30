@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","width":280,"display":"always","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":20},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":true},
+    path: 'search.xml',
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Async首先看一个例子，先后调用两个挂起函数">
+<meta name="keywords" content="Kotlin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kotlin协程">
+<meta property="og:url" content="http://yoursite.com/2020/07/15/Kotlin/kotlin协程/index.html">
+<meta property="og:site_name" content="BrightStone">
+<meta property="og:description" content="Async首先看一个例子，先后调用两个挂起函数">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-10-03T01:57:41.027Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kotlin协程">
+<meta name="twitter:description" content="Async首先看一个例子，先后调用两个挂起函数">
+
+<link rel="canonical" href="http://yoursite.com/2020/07/15/Kotlin/kotlin协程/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>kotlin协程 | BrightStone</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BrightStone</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/Kotlin/kotlin协程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kotlin协程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-15 11:30:02" itemprop="dateCreated datePublished" datetime="2020-07-15T11:30:02+08:00">2020-07-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kotlin/" itemprop="url" rel="index">
+                    <span itemprop="name">Kotlin</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Async"><a href="#Async" class="headerlink" title="Async"></a>Async</h2><p>首先看一个例子，先后调用两个挂起函数</p><a id="more"></a>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlin.system.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = doSomethingUsefulOne()</span><br><span class="line">        <span class="keyword">val</span> two = doSomethingUsefulTwo()</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one + two&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">doSomethingUsefulOne</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    delay(<span class="number">1000L</span>) <span class="comment">// 假设我们在这里做了些有用的事</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">13</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">doSomethingUsefulTwo</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    delay(<span class="number">1000L</span>) <span class="comment">// 假设我们在这里也做了一些有用的事</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">29</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** 输出</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">The answer is 42</span></span><br><span class="line"><span class="comment">Completed in 2017 ms</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">**/</span></span><br></pre></td></tr></table></figure>
+<p>可以发现，两个挂起函数是同步执行的，有先后顺序</p>
+<p>使用async</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlin.system.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> time = measureTimeMillis &#123;</span><br><span class="line">        <span class="keyword">val</span> one = async &#123; doSomethingUsefulOne() &#125;</span><br><span class="line">        <span class="keyword">val</span> two = async &#123; doSomethingUsefulTwo() &#125;</span><br><span class="line">        println(<span class="string">"The answer is <span class="subst">$&#123;one.await() + two.await()&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"Completed in <span class="variable">$time</span> ms"</span>)    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">doSomethingUsefulOne</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    delay(<span class="number">1000L</span>) <span class="comment">// 假设我们在这里做了些有用的事</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">13</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">doSomethingUsefulTwo</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    delay(<span class="number">1000L</span>) <span class="comment">// 假设我们在这里也做了些有用的事</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">29</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** 输出</span></span><br><span class="line"><span class="comment">The answer is 42</span></span><br><span class="line"><span class="comment">Completed in 1024 ms</span></span><br><span class="line"><span class="comment">**/</span></span><br></pre></td></tr></table></figure>
+<p>在结果耗时上，两个挂起方法达到了异步的效果。这得益于<code>async</code>关键字<br>在概念上，<code>async</code> 就类似于 launch。它启动了一个单独的协程，这是一个轻量级的线程并与其它所有的协程一起并发的工作。不同之处在于 launch 返回一个 Job 并且不附带任何结果值，而 async 返回一个 Deferred —— 一个轻量级的非阻塞 future， 这代表了一个将会在稍后提供结果的 promise。你可以使用 .await() 在一个延期的值上得到它的最终结果， 但是 Deferred 也是一个 Job，所以如果需要的话，你可以取消它。</p>
+<h2 id="调度器与线程"><a href="#调度器与线程" class="headerlink" title="调度器与线程"></a>调度器与线程</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    launch &#123; <span class="comment">// 运行在父协程的上下文中，即 runBlocking 主协程</span></span><br><span class="line">        println(<span class="string">"main runBlocking      : I'm working in thread <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    launch(Dispatchers.Unconfined) &#123; <span class="comment">// 不受限的——将工作在主线程中</span></span><br><span class="line">        println(<span class="string">"Unconfined            : I'm working in thread <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    launch(Dispatchers.Default) &#123; <span class="comment">// 将会获取默认调度器</span></span><br><span class="line">        println(<span class="string">"Default               : I'm working in thread <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    launch(newSingleThreadContext(<span class="string">"MyOwnThread"</span>)) &#123; <span class="comment">// 将使它获得一个新的线程</span></span><br><span class="line">        println(<span class="string">"newSingleThreadContext: I'm working in thread <span class="subst">$&#123;Thread.currentThread().name&#125;</span>"</span>)</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** 输出 注意先后顺序</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Unconfined            : I'm working in thread main <span class="doctag">@coroutine</span>#3</span></span><br><span class="line"><span class="comment">Default               : I'm working in thread DefaultDispatcher-worker-1 <span class="doctag">@coroutine</span>#4</span></span><br><span class="line"><span class="comment">main runBlocking      : I'm working in thread main <span class="doctag">@coroutine</span>#2</span></span><br><span class="line"><span class="comment">newSingleThreadContext: I'm working in thread MyOwnThread <span class="doctag">@coroutine</span>#5</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">**/</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>launch { …… }</code> :<ul>
+<li>当调用 launch { …… } 时不传参数，它从启动了它的 CoroutineScope 中承袭了上下文（以及调度器）。在这个案例中，它从 main 线程中的 runBlocking 主协程承袭了上下文。</li>
+</ul>
+</li>
+<li><code>launch(Dispatchers.Default) { …… }</code> :<ul>
+<li>当协程在 GlobalScope 中启动时，使用的是由<code>Dispatchers.Default</code>代表的默认调度器。 默认调度器使用共享的后台线程池。 所以<code>launch(Dispatchers.Default) { …… }</code>与<code>GlobalScope.launch { …… }</code>使用相同的调度器。<br><code>Dispatchers.Default</code>适合CPU密集型的任务，比如解析JSON文件，排序一个较大的list</li>
+</ul>
+</li>
+<li><code>launch(Dispatchers.IO) { …… }</code> :<ul>
+<li>针对磁盘和网络IO进行了优化，适合IO密集型的任务，比如：读写文件，操作数据库以及网络请求 </li>
+</ul>
+</li>
+<li><code>launch(newSingleThreadContext(&quot;...&quot;)) { ... }</code> :<ul>
+<li><code>newSingleThreadContext</code> 为协程的运行启动了一个线程。 一个专用的线程是一种非常昂贵的资源。 在真实的应用程序中两者都必须被释放，当不再需要的时候，使用 <code>close</code> 函数，或存储在一个顶层变量中使它在整个应用程序中被重用。???</li>
+</ul>
+</li>
+<li><code>launch(Dispatchers.Unconfined) { ... }</code> :<ul>
+<li>完全没搞懂这玩意儿..</li>
+</ul>
+</li>
+</ul>
+<h2 id="在Android中使用协程作用域"><a href="#在Android中使用协程作用域" class="headerlink" title="在Android中使用协程作用域"></a>在Android中使用协程作用域</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> mainScope = MainScope()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">destroy</span><span class="params">()</span></span> &#123;</span><br><span class="line">        mainScope.cancel()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">doSomething</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// 在示例中启动了 10 个协程，且每个都工作了不同的时长</span></span><br><span class="line">        repeat(<span class="number">10</span>) &#123; i -&gt;</span><br><span class="line">            mainScope.launch &#123;</span><br><span class="line">                delay((i + <span class="number">1</span>) * <span class="number">200L</span>) <span class="comment">// 延迟 200 毫秒、400 毫秒、600 毫秒等等不同的时间</span></span><br><span class="line">                println(<span class="string">"Coroutine <span class="variable">$i</span> is done"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="comment">// Activity 类结束</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">val</span> activity = Activity()</span><br><span class="line">    activity.doSomething() <span class="comment">// 运行测试函数</span></span><br><span class="line">    println(<span class="string">"Launched coroutines"</span>)</span><br><span class="line">    delay(<span class="number">500L</span>) <span class="comment">// 延迟半秒钟</span></span><br><span class="line">    println(<span class="string">"Destroying activity!"</span>)</span><br><span class="line">    activity.destroy() <span class="comment">// 取消所有的协程</span></span><br><span class="line">    delay(<span class="number">1000</span>) <span class="comment">// 为了在视觉上确认它们没有工作    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过创建一个 CoroutineScope 实例来管理协程的生命周期，并使它与 activity 的生命周期相关联。CoroutineScope 可以通过 CoroutineScope() 创建或者通过MainScope() 工厂函数。前者创建了一个通用作用域，而后者为使用 <code>Dispatchers.Main</code> 作为默认调度器的 UI 应用程序 创建作用域.</p>
+<p>在上面的程序中, 当Actiivty被destroy()时, 会 cancel() 协程作用域, 从而终止所有的协程</p>
+<h2 id="异步流"><a href="#异步流" class="headerlink" title="异步流"></a>异步流</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> kotlinx.coroutines.*</span><br><span class="line"><span class="keyword">import</span> kotlinx.coroutines.flow.*</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">foo</span><span class="params">()</span></span>: Flow&lt;<span class="built_in">Int</span>&gt; = flow &#123; <span class="comment">// 流构建器</span></span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">        delay(<span class="number">100</span>) <span class="comment">// 假装我们在这里做了一些有用的事情</span></span><br><span class="line">        emit(i) <span class="comment">// 发送下一个值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> = runBlocking&lt;<span class="built_in">Unit</span>&gt; &#123;</span><br><span class="line">    <span class="comment">// 启动并发的协程以验证主线程并未阻塞</span></span><br><span class="line">    launch &#123;</span><br><span class="line">        <span class="keyword">for</span> (k <span class="keyword">in</span> <span class="number">1</span>..<span class="number">3</span>) &#123;</span><br><span class="line">            println(<span class="string">"I'm not blocked <span class="variable">$k</span>"</span>)</span><br><span class="line">            delay(<span class="number">100</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 收集这个流</span></span><br><span class="line">    foo().collect &#123; value -&gt; println(value) &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** 输出</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">I'm not blocked 1</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">I'm not blocked 2</span></span><br><span class="line"><span class="comment">2</span></span><br><span class="line"><span class="comment">I'm not blocked 3</span></span><br><span class="line"><span class="comment">3</span></span><br><span class="line"><span class="comment">**/</span></span><br></pre></td></tr></table></figure>
+<p>上方的程序: </p>
+<ul>
+<li>名为 flow 的 Flow 类型构建器函数。</li>
+<li>flow { … } 构建块中的代码可以挂起。</li>
+<li>函数 foo() 不再标有 suspend 修饰符。</li>
+<li>流使用 emit 函数 发射 值。</li>
+<li>流使用 collect 函数 收集 值。</li>
+</ul>
+<p>kotlin支持对flow进行各种操作, 比如: flat, reduce, zip等等, 类似RxJava的各种运算</p>
+<h2 id="suspendCancellableCoroutine"><a href="#suspendCancellableCoroutine" class="headerlink" title="suspendCancellableCoroutine"></a>suspendCancellableCoroutine</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">loadPageSuspend</span><span class="params">(productCategoryType: <span class="type">Int</span>, page: <span class="type">Int</span>)</span></span>: ProductListLoadResultBean =</span><br><span class="line">            suspendCancellableCoroutine &#123; cnt -&gt;</span><br><span class="line">                ProductManagementAPI.requestProductList(</span><br><span class="line">                        category = productCategoryType,</span><br><span class="line">                        page = page,</span><br><span class="line">                        keyword = getKeyword(),</span><br><span class="line">                        orderBy = getOrderType(),</span><br><span class="line">                        desc =  isOrderDesc(),</span><br><span class="line">                        listener = <span class="keyword">object</span> : INetRequestListener&lt;ProductListLoadResultBean&gt; &#123;</span><br><span class="line">                            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onSuccess</span><span class="params">(result: <span class="type">DataHull</span>&lt;<span class="type">ProductListLoadResultBean</span>&gt;?)</span></span> &#123;</span><br><span class="line">                                result?.let &#123;</span><br><span class="line">                                    cnt.resumeWith(Result.success(it.<span class="keyword">data</span>))</span><br><span class="line"></span><br><span class="line">                                &#125; ?: kotlin.run &#123;</span><br><span class="line">                                    cnt.resumeWithException(Exception())</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onError</span><span class="params">(error: <span class="type">DataHull</span>&lt;<span class="type">ProductListLoadResultBean</span>&gt;?, isNetError: <span class="type">Boolean</span>)</span></span> &#123;</span><br><span class="line">                                cnt.resumeWithException(Exception(error?.stateBean?.message))</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                        &#125;</span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Kotlin/" rel="tag"># Kotlin</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/06/27/Android/Android自定义注解/" rel="next" title="Android自定义注解">
+                  <i class="fa fa-chevron-left"></i> Android自定义注解
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2020/07/23/Java/Java获取泛型类型/" rel="prev" title="Java获取泛型类型">
+                  Java获取泛型类型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Async"><span class="nav-text">Async</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调度器与线程"><span class="nav-text">调度器与线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在Android中使用协程作用域"><span class="nav-text">在Android中使用协程作用域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步流"><span class="nav-text">异步流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#suspendCancellableCoroutine"><span class="nav-text">suspendCancellableCoroutine</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="BrightStone"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">BrightStone</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BrightStone</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.5.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

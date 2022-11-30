@@ -206,6 +206,150 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/04/Android/Fragment可见性总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/04/Android/Fragment可见性总结/" class="post-title-link" itemprop="url">Fragment可见性总结</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-04 18:28:37" itemprop="dateCreated datePublished" datetime="2020-10-04T18:28:37+08:00">2020-10-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="onResume-onPause"><a href="#onResume-onPause" class="headerlink" title="onResume()/onPause()"></a>onResume()/onPause()</h2><p><strong>不要用这两个方法为可见性依据做操作。</strong> 触发onResume()/onPause()的场景有很多</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/04/Android/Fragment可见性总结/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/22/Flutter/RenderObject-原理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="BrightStone">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BrightStone">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/22/Flutter/RenderObject-原理/" class="post-title-link" itemprop="url">RenderObject 原理</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-22 16:28:21" itemprop="dateCreated datePublished" datetime="2020-09-22T16:28:21+08:00">2020-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ParentData-和各种-Mixin"><a href="#ParentData-和各种-Mixin" class="headerlink" title="ParentData 和各种 Mixin"></a>ParentData 和各种 Mixin</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">BoxParentData --|&gt; ParentData</span><br><span class="line">ContainerParentDataMixin --|&gt; ParentData</span><br><span class="line">ContainerBoxParentData --|&gt; BoxParentData</span><br><span class="line">ContainerBoxParentData --|&gt; ContainerParentDataMixin</span><br><span class="line"></span><br><span class="line">RenderObject *-- ParentData</span><br><span class="line">RenderObjectWithChildMixin --|&gt; RenderObject</span><br><span class="line">ContainerRenderObjectMixin --|&gt; RenderObject</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class ContainerParentDataMixin&#123;</span><br><span class="line">+ previousSlibling</span><br><span class="line">+ nextSibling</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class ContainerRenderObjectMixin &#123;</span><br><span class="line">+ firstChild *-- ContainerParentDataMixin</span><br><span class="line">+ lastChild</span><br><span class="line">+ childCount</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class BoxParentData&#123;</span><br><span class="line">+ offset</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class RenderObject&#123;</span><br><span class="line">+ parentData</span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/22/Flutter/RenderObject-原理/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/14/Flutter/flutter-ui源码-初步/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -361,7 +505,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/Android/kotlin协程/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/Kotlin/kotlin协程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -375,7 +519,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/07/15/Android/kotlin协程/" class="post-title-link" itemprop="url">kotlin协程</a>
+            <a href="/2020/07/15/Kotlin/kotlin协程/" class="post-title-link" itemprop="url">kotlin协程</a>
         </h1>
 
         <div class="post-meta">
@@ -420,7 +564,7 @@
           <h2 id="Async"><a href="#Async" class="headerlink" title="Async"></a>Async</h2><p>首先看一个例子，先后调用两个挂起函数</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/07/15/Android/kotlin协程/#more" rel="contents">
+              <a class="btn" href="/2020/07/15/Kotlin/kotlin协程/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -847,170 +991,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/09/Android/外部View随着RecyclerView的滚动而显示或隐藏/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/09/Android/外部View随着RecyclerView的滚动而显示或隐藏/" class="post-title-link" itemprop="url">外部View随着RecyclerView的滚动而显示或隐藏</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-01-09 23:01:39" itemprop="dateCreated datePublished" datetime="2020-01-09T23:01:39+08:00">2020-01-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>外部的View上滑显示, 下滑隐藏<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">mOutsideOnScrollListener = <span class="keyword">new</span> OnScrollListener() &#123;</span><br><span class="line">    <span class="keyword">boolean</span> controlsVisible = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">int</span> scrolledDistance = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onScrollStateChanged</span><span class="params">(<span class="keyword">int</span> newState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (newState == RecyclerView.SCROLL_STATE_IDLE) &#123;</span><br><span class="line">            scrolledDistance = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onScrolled</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((controlsVisible &amp;&amp; dy &lt; <span class="number">0</span>) || (!controlsVisible &amp;&amp; dy &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            scrolledDistance += dy;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (scrolledDistance &lt; thresholdToShow &amp;&amp; controlsVisible) &#123;</span><br><span class="line">            <span class="comment">//UP</span></span><br><span class="line">            scrolledDistance = <span class="number">0</span>;</span><br><span class="line">            controlsVisible = <span class="keyword">false</span>;</span><br><span class="line">            view.onShow();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (scrolledDistance &gt;= thresholdToHide &amp;&amp; !controlsVisible) &#123;</span><br><span class="line">            <span class="comment">//DOWN</span></span><br><span class="line">            scrolledDistance = <span class="number">0</span>;</span><br><span class="line">            controlsVisible = <span class="keyword">true</span>;</span><br><span class="line">            view.onPause();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/01/09/Android/外部View随着RecyclerView的滚动而显示或隐藏/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/31/Android/自动滚播TextView/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="BrightStone">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BrightStone">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/12/31/Android/自动滚播TextView/" class="post-title-link" itemprop="url">自动滚播TextView</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-12-31 14:49:08" itemprop="dateCreated datePublished" datetime="2019-12-31T14:49:08+08:00">2019-12-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-03 09:57:41" itemprop="dateModified" datetime="2021-10-03T09:57:41+08:00">2021-10-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/View/" itemprop="url" rel="index">
-                    <span itemprop="name">View</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>要实现一个自动滚播的自定义View</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AutoSwitchView</span> <span class="keyword">extends</span> <span class="title">AppCompatTextView</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_IDLE_TIME = <span class="number">3000</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_SWITCH_TIME = <span class="number">1000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mIdleTime = DEFAULT_IDLE_TIME;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mSwitchTime = DEFAULT_SWITCH_TIME;</span><br><span class="line">    <span class="keyword">private</span> Paint mPaint;</span><br><span class="line">    <span class="keyword">private</span> String mCurStr;</span><br><span class="line">    <span class="keyword">private</span> String mNextStr;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; mContentList;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mCurIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> mCurValue;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> mIsRunning = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> ValueAnimator mAnimator;</span><br><span class="line">    <span class="keyword">private</span> Paint.FontMetrics mFontMetrics;</span><br><span class="line">    <span class="keyword">private</span> Runnable mRunnable;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mWidth;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingLeft;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingRight;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingTop;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mPaddingBottom;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mHeight;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> mTextBaseY;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AutoSwitchView</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context);</span><br><span class="line">        init(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AutoSwitchView</span><span class="params">(Context context, @Nullable AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs);</span><br><span class="line">        init(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AutoSwitchView</span><span class="params">(Context context, @Nullable AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context, attrs, defStyleAttr);</span><br><span class="line">        init(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        mPaint = <span class="keyword">new</span> Paint();</span><br><span class="line">        mPaint.setTextAlign(Paint.Align.CENTER);</span><br><span class="line"></span><br><span class="line">        mAnimator = ValueAnimator.ofFloat(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">        mAnimator.setStartDelay(mIdleTime);</span><br><span class="line">        mAnimator.setDuration(mSwitchTime);</span><br><span class="line">        mAnimator.addUpdateListener(<span class="keyword">new</span> ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">                mCurValue = (<span class="keyword">float</span>) animation.getAnimatedValue();</span><br><span class="line">                <span class="comment">// 必须要加这个判断, 不然会出现问题</span></span><br><span class="line">                <span class="keyword">if</span> (mCurValue &lt; <span class="number">1.0</span>) &#123;</span><br><span class="line">                    invalidate();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        mAnimator.addListener(<span class="keyword">new</span> AnimatorListenerAdapter() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationEnd</span><span class="params">(Animator animation, <span class="keyword">boolean</span> isReverse)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (!mIsRunning) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                mCurIndex = (mCurIndex + <span class="number">1</span>) % mContentList.size();</span><br><span class="line">                mCurStr = mContentList.get(mCurIndex);</span><br><span class="line">                mNextStr = mContentList.get((mCurIndex + <span class="number">1</span>) % mContentList.size());</span><br><span class="line">                <span class="keyword">if</span> (mRunnable == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                            mAnimator.start();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;;</span><br><span class="line">                &#125;</span><br><span class="line">                postDelayed(mRunnable, mIdleTime);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationCancel</span><span class="params">(Animator animation)</span> </span>&#123;</span><br><span class="line">                mIsRunning = <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mContentList == <span class="keyword">null</span> || mContentList.size() == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">if</span> (mIsRunning) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mContentList.size() &gt; <span class="number">1</span>) &#123;</span><br><span class="line">            mCurStr = mContentList.get(<span class="number">0</span>);</span><br><span class="line">            mNextStr = mContentList.get(<span class="number">1</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mCurStr = mContentList.get(<span class="number">0</span>);</span><br><span class="line">            mNextStr = mContentList.get(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        mCurIndex = <span class="number">0</span>;</span><br><span class="line">        mIsRunning = <span class="keyword">true</span>;</span><br><span class="line">        mAnimator.start();</span><br><span class="line">        mAnimator.setStartDelay(mIdleTime);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mRunnable != <span class="keyword">null</span>) &#123;</span><br><span class="line">            removeCallbacks(mRunnable);</span><br><span class="line">        &#125;</span><br><span class="line">        mAnimator.cancel();</span><br><span class="line">        mIsRunning = <span class="keyword">false</span>;</span><br><span class="line">        mCurIndex = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentList</span><span class="params">(List&lt;String&gt; contentList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (contentList == <span class="keyword">null</span> || contentList.size() == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        mContentList = contentList;</span><br><span class="line">        start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line"></span><br><span class="line">        mWidth = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line">        mPaddingLeft = getPaddingLeft();</span><br><span class="line">        mPaddingRight = getPaddingRight();</span><br><span class="line">        mPaddingTop = getPaddingTop();</span><br><span class="line">        mPaddingBottom = getPaddingBottom();</span><br><span class="line"></span><br><span class="line">        mPaint.setTextSize(getTextSize());</span><br><span class="line">        mFontMetrics = mPaint.getFontMetrics();</span><br><span class="line"></span><br><span class="line">        mTextBaseY = -mFontMetrics.top + mPaddingTop;</span><br><span class="line">        mHeight = Math.round(mFontMetrics.bottom - mFontMetrics.top) + mPaddingTop + mPaddingBottom;</span><br><span class="line"></span><br><span class="line">        setMeasuredDimension(mWidth, mHeight);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> curStartX = mPaddingLeft + mPaint.measureText(mCurStr) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">float</span> nextStartX = mPaddingLeft + mPaint.measureText(mNextStr) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span> baseY = <span class="number">2</span> * mTextBaseY * (<span class="number">0.5f</span> - mCurValue);</span><br><span class="line">        <span class="keyword">if</span> (baseY &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            canvas.drawText(mCurStr, curStartX, baseY, mPaint);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            canvas.drawText(mNextStr, nextStartX, <span class="number">2</span> * mTextBaseY + baseY, mPaint);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1061,7 +1041,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-count">73</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

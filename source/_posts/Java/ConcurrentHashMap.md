@@ -132,6 +132,32 @@ private HashEntry<K,V> scanAndLockForPut(K key, int hash, V value) {
 * 为正数，其记录的是数组的扩容阈值
 * 小于0，并且不是-1，表示数组正在扩容， -(1+n)，表示此时有n个线程正在共同完成数组的扩容操
 
+### get天然线程安全
+
+Node 数据结构的 val 和 next 属性都是加了 volatile 关键字的，修改能立刻感知到
+
+```java
+    public V get(Object key) {
+        Node<K,V>[] tab; Node<K,V> e, p; int n, eh; K ek;
+        int h = spread(key.hashCode());
+        if ((tab = table) != null && (n = tab.length) > 0 &&
+            (e = tabAt(tab, (n - 1) & h)) != null) {
+            if ((eh = e.hash) == h) {
+                if ((ek = e.key) == key || (ek != null && key.equals(ek)))
+                    return e.val;
+            }
+            else if (eh < 0) // hash<0说明是fwd，节点， ForwardingNode重写了find方法，会到nextTable中去查找元素
+                return (p = e.find(h, key)) != null ? p.val : null; 
+            while ((e = e.next) != null) {
+                if (e.hash == h &&
+                    ((ek = e.key) == key || (ek != null && key.equals(ek))))
+                    return e.val;
+            }
+        }
+        return null;
+    }
+```
+
 ### put时如何保证线程安全
 * 在put时对table哈希数组的每一个hash位置，如果为该位置为null，cas判断，然后在改位置添加元素；如果该位置不为null，则对该hash位置进行Synchronize加锁，将新元素加载链表or红黑树上。 
 
